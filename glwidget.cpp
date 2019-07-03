@@ -360,6 +360,8 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 }
 
 
+
+//鼠标移动事件
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
 //    m_logo.readPCDFile();
