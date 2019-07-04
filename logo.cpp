@@ -55,6 +55,7 @@
 #include<QFile>
 
 
+//字符串解析，读取pcd文件时候用
 static char *strsep(char **s, const char *ct)
 {
     char *sbegin = *s;
@@ -70,22 +71,14 @@ static char *strsep(char **s, const char *ct)
     return sbegin;
 }
 
-Logo::Logo()
-    : m_count(0)
+Logo::Logo(QObject *parent):
+    QObject(parent)
 {
     m_data.resize(2500 * 6 *10);
 
     index = 1;
+    m_count = 0;
 
-//    m_data.resize(100 * 6);
-//    const GLfloat x1 = +0.06f;
-//    const GLfloat y1 = -0.14f;
-//    const GLfloat x2 = +0.14f;
-//    const GLfloat y2 = -0.06f;
-//    const GLfloat x3 = +0.08f;
-//    const GLfloat y3 = +0.0000f;
-//    const GLfloat x4 = +0.30f;
-//    const GLfloat y4 = +0.22f;
 
     const GLfloat x1 = +0.0f;
     const GLfloat y1 = -0.0f;
@@ -256,7 +249,7 @@ void Logo::readPCDFile()
 //     qDebug()<<QString::fromUtf8("m_data点云数量")<<m_data.size()<<endl;
 }
 
-
+//连续读取pcd文件的测试槽函数
 void Logo::readPCDFile1()
 {
     double max = 0;
@@ -269,10 +262,7 @@ void Logo::readPCDFile1()
 //     int pointSize = cloud->points.size();
 
 
-
-//    QString fileName = "12-25/" + QString::number(index) + ".pcd";
-      QString fileName = "PCD2/position" + QString::number(index) + ".pcd";
-
+    QString fileName = "PCD2/position" + QString::number(index) + ".pcd";
     index++;
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QIODevice::Text))
@@ -299,44 +289,17 @@ void Logo::readPCDFile1()
         while(subcnt < 3)
         {
             lineSubStr = strsep(&substr, " ");
-//            point[cnt][subcnt] = atof(lineSubStr);
-//            qDebug()<< lineSubStr << ",index = "<<cnt<<endl;
             QString str = QString(lineSubStr);
-//            if(subcnt == 2)
-//            {
-//            }else if(subcnt == 0)
-//            {
-//            }else if(subcnt == 1)
-//            {
-//            }
-
             m_data[i+subcnt] = str.toFloat()/100.0;
-
             subcnt++;
         }
 
         i += 6;
     }
-
-
      m_data.resize(cnt * 6);
+}
 
-//     qDebug()<<"data's size = "<<m_data.size()<<endl;
+Logo::~Logo()
+{
 
-//     qDebug()<<QString::fromUtf8("dian点云数量")<<pointSize<<endl;
-//     int j = 0;
-//     for(int i=0; i<subcnt; i++)
-//     {
-//         float x = cloud->points[i].x/100.0;
-//         float y = cloud->points[i].y/100.0;
-//         float z = cloud->points[i].z/100.0;
-
-//         m_data[j] = x;
-//         m_data[j+1] = y;
-//         m_data[j+2] = z;
-//         j =j+6;
-//     }
-
-
-//     qDebug()<<QString::fromUtf8("m_data点云数量")<<m_data.size()<<endl;
 }

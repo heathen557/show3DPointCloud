@@ -59,6 +59,8 @@
 #include "logo.h"
 #include<QTimer>
 #include<QtNetwork/QTcpSocket>
+#include<QThread>
+#include<recvpcdthread.h>
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
 
@@ -125,6 +127,7 @@ private:
     QTimer readFileTimer;
     QTcpSocket m_tcpSocket;
     QByteArray m_buffer;
+
 
 
 };

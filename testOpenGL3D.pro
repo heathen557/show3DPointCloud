@@ -28,13 +28,15 @@ SOURCES += main.cpp\
         glwidget.cpp \
         logo.cpp \
     globaldata.cpp \
-    WriteLog.cpp
+    WriteLog.cpp \
+
 
 HEADERS  += mainwindow.h \
             glwidget.h \
             logo.h \
     globaldata.h \
-    WriteLog.h
+    WriteLog.h \
+
 
 FORMS    += mainwindow.ui
 

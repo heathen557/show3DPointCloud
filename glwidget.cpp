@@ -59,6 +59,9 @@
 #include<QJsonArray>
 
 
+
+QVector<GLfloat> m_data;
+
 GLWidget::GLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
       m_xRot(0),
@@ -83,13 +86,14 @@ GLWidget::GLWidget(QWidget *parent)
     m_scale = 0.1;
     translate_x = 0;
     translate_y = 0;
+
     linkServer();
 }
 
 void GLWidget::linkServer()
 {
-    m_tcpSocket.connectToHost("10.0.1.221",6000);
-//  m_tcpSocket.connectToHost("127.0.0.1",6000);
+    //    m_tcpSocket.connectToHost("10.0.1.221",6000);
+    m_tcpSocket.connectToHost("127.0.0.1",6000);
 
     if(!m_tcpSocket.waitForConnected(300))
     {
@@ -97,9 +101,9 @@ void GLWidget::linkServer()
         return;
     }else
     {
-//        QMessageBox::information(this, "QT网络通信", "ok");
+        //        QMessageBox::information(this, "QT网络通信", "ok");
     }
-     connect(&m_tcpSocket, SIGNAL(readyRead()), this, SLOT(ClientRecvData()));
+    connect(&m_tcpSocket, SIGNAL(readyRead()), this, SLOT(ClientRecvData()));
 }
 
 void GLWidget::ClientRecvData()
@@ -118,9 +122,9 @@ void GLWidget::ClientRecvData()
     m_buffer.append(buffer);
     int totallen = m_buffer.size();
 
+
     while(totallen)
     {
-
         if(totallen < 6)    //不足6个字节（头部）
         {
             qDebug()<<QString::fromLocal8Bit("bagHead less six byte!!!!!");
@@ -129,9 +133,9 @@ void GLWidget::ClientRecvData()
 
         //先进行包头判断，0x5A 0x5A , 因为有可能接收到的不是完整的报文
         int index = m_buffer.indexOf("ZZ");
-        qDebug()<<"find the char index = "<< index<<endl;
         if(index<0)   //没有找到包头
         {
+            qDebug()<<" 没有找到包头 "<<endl;
             m_buffer.clear();
             totallen = m_buffer.size();
             break;
@@ -141,26 +145,31 @@ void GLWidget::ClientRecvData()
             totallen = m_buffer.size();
         }
 
+
         QDataStream packet(m_buffer);
         packet>>flag>>len;       //获取长度 len  信息头暂时不用
-//        qDebug()<<QString::fromLocal8Bit("json's data length = ")<<len  ;
+        //      qDebug()<<" total ="<<totallen<<"   len="<<len<<endl;
+
         QByteArray json_Array;  //存储解析好的JSON 数据
 
         if(totallen-6>=len) //若是数据部分长度大于 或者等于 指定长度，说明后面可能有冗余数据
         {
             json_Array = m_buffer.mid(6,len);   //传递到下面做JSON数据解析
+            qDebug()<<" frame ="<<json_Array<<endl;
+
+
             m_buffer = m_buffer.right(totallen-6-len);
             totallen = m_buffer.size();
             qDebug()<<QString::fromLocal8Bit("data Receive is ok or too much , m_buffer = ")<<m_buffer.size()<<endl;
+
         }
         else        //说明此时数据不够,等待下一次处理
         {
-            qDebug()<<QString::fromLocal8Bit("data Receive is less ");
             break;
         }
+
+
         //以上数据为数据预处理
-
-
 
 
         QJsonParseError jsonError;
@@ -173,7 +182,7 @@ void GLWidget::ClientRecvData()
                 {                                                                                    // 包含指定的 key
                     QJsonValue val_flag = object.value("table");                                    // 获取指定 key 对应的 value
                     int flag = val_flag.toInt();
-                    qDebug() << "table " << flag;
+                    //                    qDebug() << "table " << flag;
                     if(1 == flag)              //query机型基本参数返回表
                     {
                         QJsonValue value_msg = object.value("msg");
@@ -186,31 +195,31 @@ void GLWidget::ClientRecvData()
                             for(int i=0; i<size_; i++)
                             {
 
-                                  QJsonObject pointObject =  msgArr[i].toObject();
-                                  if (pointObject.contains("x") && pointObject.contains("y") && pointObject.contains("z"))
-                                  {
-                                      QJsonValue val_x = pointObject.value("x");             // 获取指定 key 对应的 value
-                                      float value_x = val_x.toDouble();
+                                QJsonObject pointObject =  msgArr[i].toObject();
+                                if (pointObject.contains("x") && pointObject.contains("y") && pointObject.contains("z"))
+                                {
+                                    QJsonValue val_x = pointObject.value("x");             // 获取指定 key 对应的 value
+                                    float value_x = val_x.toDouble();
 
-                                      QJsonValue val_y = pointObject.value("y");             // 获取指定 key 对应的 value
-                                      float value_y= val_y.toDouble();
+                                    QJsonValue val_y = pointObject.value("y");             // 获取指定 key 对应的 value
+                                    float value_y= val_y.toDouble();
 
-                                      QJsonValue val_z = pointObject.value("z");             // 获取指定 key 对应的 value
-                                      float value_z= val_z.toDouble();
+                                    QJsonValue val_z = pointObject.value("z");             // 获取指定 key 对应的 value
+                                    float value_z= val_z.toDouble();
 
-                                      qDebug()<<"x="<<value_x<<" y="<<value_x<<"  z="<<value_z<<endl;
+                                    //                                      qDebug()<<"x="<<value_x<<" y="<<value_x<<"  z="<<value_z<<endl;
 
-                                      m_logo.m_data[j] = value_x/10.0;
-                                      m_logo.m_data[j+1] = value_y/10.0;
-                                      m_logo.m_data[j+2] = value_z/10.0;
+                                    m_data[j] = value_x;
+                                    m_data[j+1] = value_y;
+                                    m_data[j+2] = value_z;
 
-                                      j += 6;
+                                    j += 6;
 
-                                  }
+                                }
 
                             }
 
-                            m_logo.m_data.resize(size_ * 6);
+                            m_data.resize(size_ * 6);
                         }     //if(value_msg.isArray())
 
                         update();    //刷新OPENGL 显示
@@ -329,32 +338,32 @@ static const char *fragmentShaderSourceCore = NULL;
 
 
 static const char *vertexShaderSource =
-    "attribute vec4 vertex;\n"
-    "attribute vec3 normal;\n"
-    "varying vec3 vert;\n"
-    "varying vec3 vertNormal;\n"
-    "uniform mat4 projMatrix;\n"
-    "uniform mat4 mvMatrix;\n"
-    "uniform mat3 normalMatrix;\n"
-    "void main() {\n"
-    "   vert = vertex.xyz;\n"
-    "   vertNormal = normalMatrix * normal;\n"
-    "   gl_Position = projMatrix * mvMatrix * vertex;\n"
-    "}\n";
+        "attribute vec4 vertex;\n"
+        "attribute vec3 normal;\n"
+        "varying vec3 vert;\n"
+        "varying vec3 vertNormal;\n"
+        "uniform mat4 projMatrix;\n"
+        "uniform mat4 mvMatrix;\n"
+        "uniform mat3 normalMatrix;\n"
+        "void main() {\n"
+        "   vert = vertex.xyz;\n"
+        "   vertNormal = normalMatrix * normal;\n"
+        "   gl_Position = projMatrix * mvMatrix * vertex;\n"
+        "}\n";
 
 
 //static const char *fragmentShaderSource = NULL;
 static const char *fragmentShaderSource =
-    "varying highp vec3 vert;\n"
-    "varying highp vec3 vertNormal;\n"
-    "uniform highp vec3 lightPos;\n"
-    "void main() {\n"
-    "   highp vec3 L = normalize(lightPos - vert);\n"
-    "   highp float NL = max(dot(normalize(vertNormal), L), 0.0);\n"
-    "   highp vec3 color = vec3(1.0, 1.0, 1.0);\n"
-    "   highp vec3 col = clamp(color * 0.8 + color * 0.8 * NL, 0.0, 1.0);\n"
-    "   gl_FragColor = vec4(col, 1.0);\n"
-    "}\n";
+        "varying highp vec3 vert;\n"
+        "varying highp vec3 vertNormal;\n"
+        "uniform highp vec3 lightPos;\n"
+        "void main() {\n"
+        "   highp vec3 L = normalize(lightPos - vert);\n"
+        "   highp float NL = max(dot(normalize(vertNormal), L), 0.0);\n"
+        "   highp vec3 color = vec3(1.0, 1.0, 1.0);\n"
+        "   highp vec3 col = clamp(color * 0.8 + color * 0.8 * NL, 0.0, 1.0);\n"
+        "   gl_FragColor = vec4(col, 1.0);\n"
+        "}\n";
 
 void GLWidget::initializeGL()
 {
@@ -401,7 +410,7 @@ void GLWidget::initializeGL()
     // Our camera never changes in this example.
     m_camera.setToIdentity();
     m_camera.translate(0, 0, -1);
-//    m_camera.translate(0.0,0.0, -10);    //相当于平移相机的位置
+    //    m_camera.translate(0.0,0.0, -10);    //相当于平移相机的位置
 
     // Light position is fixed.
     m_program->setUniformValue(m_lightPosLoc, QVector3D(10, 10, 10));
@@ -422,17 +431,17 @@ void GLWidget::setupVertexAttribs()
 
 void GLWidget::paintGL()
 {
-     m_logoVbo.create();
-     m_logoVbo.bind();
-     m_logoVbo.allocate(m_logo.constData(), m_logo.count() * sizeof(GLfloat));
+    m_logoVbo.create();
+    m_logoVbo.bind();
+    m_logoVbo.allocate(m_logo.constData(), m_logo.count() * sizeof(GLfloat));
 
-     // Store the vertex attribute bindings for the program.
-     setupVertexAttribs();
+    // Store the vertex attribute bindings for the program.
+    setupVertexAttribs();
 
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
-//    glEnable(GL_CULL_FACE);
+    //    glEnable(GL_CULL_FACE);
 
     m_world.setToIdentity();
 
@@ -454,7 +463,7 @@ void GLWidget::paintGL()
 
 
 
-//    m_world.scale(1.0+0.5, 1.0+0.5, 5.0+0.5);
+    //    m_world.scale(1.0+0.5, 1.0+0.5, 5.0+0.5);
 
 
     QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
@@ -464,10 +473,10 @@ void GLWidget::paintGL()
     QMatrix3x3 normalMatrix = m_world.normalMatrix();
     m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
 
-//    glDrawArrays(GL_TRIANGLES, 0, m_logo.vertexCount());
+    //    glDrawArrays(GL_TRIANGLES, 0, m_logo.vertexCount());
     glDrawArrays(GL_POINTS, 0, m_logo.vertexCount());
 
-//    glDrawArrays(GL_LINES, m_logo.vertexCount()-500, m_logo.vertexCount());
+    //    glDrawArrays(GL_LINES, m_logo.vertexCount()-500, m_logo.vertexCount());
 
     m_program->release();
 }
@@ -475,7 +484,7 @@ void GLWidget::paintGL()
 void GLWidget::resizeGL(int w, int h)
 {
     m_proj.setToIdentity();
-//    m_proj.perspective(45.0f, GLfloat(w) / h, 0.01f, 100.0f);
+    //    m_proj.perspective(45.0f, GLfloat(w) / h, 0.01f, 100.0f);
 
     m_proj.perspective(60.0f, GLfloat(w) / h, 0.1f, 1000.0f);
 
@@ -492,8 +501,8 @@ void GLWidget::resizeGL(int w, int h)
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
 
-        m_lastPos = event->pos();
-        qDebug()<<"m_lastPos ="<<m_lastPos<<endl;
+    m_lastPos = event->pos();
+    qDebug()<<"m_lastPos ="<<m_lastPos<<endl;
 
 
 }
@@ -503,10 +512,10 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if(event->button() & Qt::MidButton)
     {
-       qDebug()<<"mid_x = "<<event->x()-m_lastPos.x()<<"  mid_y="<<event->y()-m_lastPos.y()<<endl;
+        qDebug()<<"mid_x = "<<event->x()-m_lastPos.x()<<"  mid_y="<<event->y()-m_lastPos.y()<<endl;
 
-       translate_x = (event->x() - m_lastPos.x())/1000.0;
-       translate_y = -(event->y() - m_lastPos.y())/800.0;
+        translate_x = (event->x() - m_lastPos.x())/1000.0;
+        translate_y = -(event->y() - m_lastPos.y())/800.0;
 
 
 
@@ -518,7 +527,7 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 //鼠标移动事件
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-//    m_logo.readPCDFile();
+    //    m_logo.readPCDFile();
 
     int dx = event->x() - m_lastPos.x();
     int dy = event->y() - m_lastPos.y();
@@ -537,12 +546,12 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 void GLWidget::wheelEvent(QWheelEvent *event)
 {
     if(event->delta()>0){//如果滚轮往上滚
-//        qDebug()<<"已经检测到向上滚轮"<<endl;
+        //        qDebug()<<"已经检测到向上滚轮"<<endl;
         m_scale += 0.03;
         update();
 
     }else{//同样的 如果向下滚轮
-//        qDebug()<<"已经检测到向下滚轮..."<<endl;
+        //        qDebug()<<"已经检测到向下滚轮..."<<endl;
         m_scale -= 0.03;
         update();
     }
@@ -550,7 +559,7 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 
 void GLWidget::readFileSlot()
 {
-    m_logo.readPCDFile1();
+    //    m_logo.readPCDFile1();
 
 
     update();

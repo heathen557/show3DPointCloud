@@ -66,17 +66,28 @@
 #pragma comment(lib, "gdi32.lib")
 #include<qwidget.h>
 
-class Logo
+
+extern QVector<GLfloat> m_data;
+
+class Logo: public QObject
 {
+     Q_OBJECT
 public:
-    Logo();
+//    Logo();
+    explicit Logo(QObject *parent = 0);
+    ~Logo();
+
     const GLfloat *constData() const { return m_data.constData(); }
     int count() const { return m_count; }
     int vertexCount() const { return m_count / 6; }
     void readPCDFile();
 
     void readPCDFile1();
-    QVector<GLfloat> m_data;
+
+
+    int m_count;
+    int index;
+
 
 private slots:
 
@@ -87,9 +98,6 @@ private slots:
 
 
 
-    int m_count;
-
-    int index;
 };
 
 #endif // LOGO_H
