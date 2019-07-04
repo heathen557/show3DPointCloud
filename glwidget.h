@@ -58,6 +58,7 @@
 #include <QMatrix4x4>
 #include "logo.h"
 #include<QTimer>
+#include<QtNetwork/QTcpSocket>
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
 
@@ -79,6 +80,9 @@ public slots:
     void cleanup();
     void readFileSlot();
 
+    void linkServer();
+    void ClientRecvData();  //接收点云数据的槽函数
+
 signals:
     void xRotationChanged(int angle);
     void yRotationChanged(int angle);
@@ -92,6 +96,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event);
+
 
 private:
     void setupVertexAttribs();
@@ -118,6 +123,8 @@ private:
     float translate_x;  //平移x
     float translate_y;  //平移y
     QTimer readFileTimer;
+    QTcpSocket m_tcpSocket;
+    QByteArray m_buffer;
 
 
 };

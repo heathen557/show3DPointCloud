@@ -53,6 +53,11 @@
 #include <QOpenGLShaderProgram>
 #include <QCoreApplication>
 #include <math.h>
+#include<QMessageBox>
+#include<QJsonParseError>
+#include<QJsonObject>
+#include<QJsonArray>
+
 
 GLWidget::GLWidget(QWidget *parent)
     : QOpenGLWidget(parent),
@@ -78,7 +83,156 @@ GLWidget::GLWidget(QWidget *parent)
     m_scale = 0.1;
     translate_x = 0;
     translate_y = 0;
+    linkServer();
 }
+
+void GLWidget::linkServer()
+{
+    m_tcpSocket.connectToHost("10.0.1.221",6000);
+//  m_tcpSocket.connectToHost("127.0.0.1",6000);
+
+    if(!m_tcpSocket.waitForConnected(300))
+    {
+        QMessageBox::information(this, "QT网络通信", "连接服务端失败！");
+        return;
+    }else
+    {
+//        QMessageBox::information(this, "QT网络通信", "ok");
+    }
+     connect(&m_tcpSocket, SIGNAL(readyRead()), this, SLOT(ClientRecvData()));
+}
+
+void GLWidget::ClientRecvData()
+{
+    quint32 mesg_len=0;
+    qint64  readbyte = m_tcpSocket.bytesAvailable();
+    if(readbyte<=0)
+    {
+        qDebug()<<QString::fromLocal8Bit("接收到的数据长度为空!")<<endl;
+        return;
+    }
+    QByteArray buffer;
+    quint16 flag;   //包头的标识 2个字节
+    quint32 len;    //包头报文长度，json字符串的长度，4个字节
+    buffer = m_tcpSocket.readAll();
+    m_buffer.append(buffer);
+    int totallen = m_buffer.size();
+
+    while(totallen)
+    {
+
+        if(totallen < 6)    //不足6个字节（头部）
+        {
+            qDebug()<<QString::fromLocal8Bit("bagHead less six byte!!!!!");
+            break;
+        }
+
+        //先进行包头判断，0x5A 0x5A , 因为有可能接收到的不是完整的报文
+        int index = m_buffer.indexOf("ZZ");
+        qDebug()<<"find the char index = "<< index<<endl;
+        if(index<0)   //没有找到包头
+        {
+            m_buffer.clear();
+            totallen = m_buffer.size();
+            break;
+        }else if(index>0)   //包头前面存在冗余
+        {
+            m_buffer = m_buffer.right(totallen - index);
+            totallen = m_buffer.size();
+        }
+
+        QDataStream packet(m_buffer);
+        packet>>flag>>len;       //获取长度 len  信息头暂时不用
+//        qDebug()<<QString::fromLocal8Bit("json's data length = ")<<len  ;
+        QByteArray json_Array;  //存储解析好的JSON 数据
+
+        if(totallen-6>=len) //若是数据部分长度大于 或者等于 指定长度，说明后面可能有冗余数据
+        {
+            json_Array = m_buffer.mid(6,len);   //传递到下面做JSON数据解析
+            m_buffer = m_buffer.right(totallen-6-len);
+            totallen = m_buffer.size();
+            qDebug()<<QString::fromLocal8Bit("data Receive is ok or too much , m_buffer = ")<<m_buffer.size()<<endl;
+        }
+        else        //说明此时数据不够,等待下一次处理
+        {
+            qDebug()<<QString::fromLocal8Bit("data Receive is less ");
+            break;
+        }
+        //以上数据为数据预处理
+
+
+
+
+        QJsonParseError jsonError;
+        QJsonDocument doucment = QJsonDocument::fromJson(json_Array, &jsonError);                     // 转化为 JSON 文档
+        if (!doucment.isNull() && (jsonError.error == QJsonParseError::NoError))
+        {                                                                                            // 解析未发生错误
+            if (doucment.isObject()) {
+                QJsonObject object = doucment.object();                                              // 转化为对象
+                if (object.contains("table"))
+                {                                                                                    // 包含指定的 key
+                    QJsonValue val_flag = object.value("table");                                    // 获取指定 key 对应的 value
+                    int flag = val_flag.toInt();
+                    qDebug() << "table " << flag;
+                    if(1 == flag)              //query机型基本参数返回表
+                    {
+                        QJsonValue value_msg = object.value("msg");
+                        if(value_msg.isArray())
+                        {
+                            QJsonArray msgArr = value_msg.toArray();
+                            int size_ = msgArr.size();
+
+                            int j = 0;
+                            for(int i=0; i<size_; i++)
+                            {
+
+                                  QJsonObject pointObject =  msgArr[i].toObject();
+                                  if (pointObject.contains("x") && pointObject.contains("y") && pointObject.contains("z"))
+                                  {
+                                      QJsonValue val_x = pointObject.value("x");             // 获取指定 key 对应的 value
+                                      float value_x = val_x.toDouble();
+
+                                      QJsonValue val_y = pointObject.value("y");             // 获取指定 key 对应的 value
+                                      float value_y= val_y.toDouble();
+
+                                      QJsonValue val_z = pointObject.value("z");             // 获取指定 key 对应的 value
+                                      float value_z= val_z.toDouble();
+
+                                      qDebug()<<"x="<<value_x<<" y="<<value_x<<"  z="<<value_z<<endl;
+
+                                      m_logo.m_data[j] = value_x/10.0;
+                                      m_logo.m_data[j+1] = value_y/10.0;
+                                      m_logo.m_data[j+2] = value_z/10.0;
+
+                                      j += 6;
+
+                                  }
+
+                            }
+
+                            m_logo.m_data.resize(size_ * 6);
+                        }     //if(value_msg.isArray())
+
+                        update();    //刷新OPENGL 显示
+                    }   //if(1 == flag)
+
+                }  //if (object.contains("@table"))
+
+            }else     //不是Json对象
+            {
+                qDebug()<<QString::fromLocal8Bit("the data is not a json object");
+
+                break;
+            }
+        }else        //documnt is not null
+        {
+            qDebug()<<QString::fromLocal8Bit("data analyze error,can't translate to QJsonDocument file ~~~ ");
+            break;
+        }
+
+    }//while
+}
+
 
 GLWidget::~GLWidget()
 {

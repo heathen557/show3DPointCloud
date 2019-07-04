@@ -277,7 +277,7 @@ void Logo::readPCDFile1()
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QIODevice::Text))
     {
-        qDebug()<<"readPCDFile read over!"<<endl;
+//        qDebug()<<"readPCDFile read over!"<<endl;
          return;
     }
 

@@ -76,6 +76,7 @@ public:
     void readPCDFile();
 
     void readPCDFile1();
+    QVector<GLfloat> m_data;
 
 private slots:
 
@@ -85,7 +86,7 @@ private slots:
 
 
 
-    QVector<GLfloat> m_data;
+
     int m_count;
 
     int index;
