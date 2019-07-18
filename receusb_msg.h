@@ -43,9 +43,12 @@ public:
     QTimer showTimer;
     QImage microQimage;
     QImage macroQimage;
-
     int lastSpadNum;
 
+    pcl::PointCloud<pcl::PointXYZI> tempcloud_XYZI;
+    int cloudIndex;
+
+    float  LSB ; //时钟频率
 
 
 signals:

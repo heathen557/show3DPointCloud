@@ -190,7 +190,7 @@ Logo::Logo(QObject *parent):
 //        extrude(x8, y8, x5, y5);
     }
 
-    readPCDFile();
+//    readPCDFile();
 
     double x_min=100,y_min=100,z_min=100;
     double x_max=0,y_max=0,z_max=0;
@@ -305,46 +305,13 @@ void Logo::readPCDFile()
 //连续读取pcd文件的测试槽函数
 void Logo::readPCDFile1()
 {
-    double max = 0;
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
-    pcl::PointCloud<pcl::PointXYZ>::Ptr outcloud(new pcl::PointCloud<pcl::PointXYZ>);
-    char strfilepath[256] = "counter1.pcd";
-    QString fileName = "12-25/" + QString::number(index)+".pcd";
-    index++;
-
-
-     if (-1 == pcl::io::loadPCDFile(fileName.toLatin1().data(), *cloud)) {
-         qDebug()<<"读取PCD文件失败"<<endl;
-         return ;
-     }
-
-     int pointSize = cloud->points.size();
-
-     qDebug()<<"cloud->size()"<<pointSize<<endl;
-
-
-
-    QTime t1 = QTime::currentTime();
-    qDebug()<<"BEGIN = "<< t1.toString("hh:mm:ss.zzz")<<endl;
-//  基于统计运算的滤波算法
-    pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
-    sor.setInputCloud(cloud);
-    sor.setMeanK(20);
-    sor.setStddevMulThresh(0.001);
-    sor.filter(*outcloud);
-
-    t1 = QTime::currentTime();
-    qDebug()<<"END = "<< t1.toString("hh:mm:ss.zzz")<<endl;
-
-
-    //显示滤波以后的数据
-    qDebug()<<"outCloud->points.size() = "<<outcloud->points.size()<<endl;
+    qDebug()<<"the pointCloud num =  "<<cloud.points.size()<<endl;
     int m = 0;
-    for(int n=0; n<outcloud->points.size(); n++)
+    for(int n=0; n<cloud.points.size(); n++)
     {
-        m_data[0+m] = outcloud->points[n].x;
-        m_data[1+m] = outcloud->points[n].y;
-        m_data[2+m] = outcloud->points[n].z;
+        m_data[0+m] = cloud.points[n].x;
+        m_data[1+m] = cloud.points[n].y;
+        m_data[2+m] = cloud.points[n].z;
 
         if(0 == n%5)
         {
@@ -362,6 +329,70 @@ void Logo::readPCDFile1()
         m += 6;
     }
     m_data.resize(m);
+
+
+
+
+
+
+
+//    double max = 0;
+//    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+//    pcl::PointCloud<pcl::PointXYZ>::Ptr outcloud(new pcl::PointCloud<pcl::PointXYZ>);
+//    char strfilepath[256] = "counter1.pcd";
+//    QString fileName = "12-25/" + QString::number(index)+".pcd";
+//    index++;
+
+
+//     if (-1 == pcl::io::loadPCDFile(fileName.toLatin1().data(), *cloud)) {
+//         qDebug()<<"读取PCD文件失败"<<endl;
+//         return ;
+//     }
+
+//     int pointSize = cloud->points.size();
+
+//     qDebug()<<"cloud->size()"<<pointSize<<endl;
+
+
+
+//    QTime t1 = QTime::currentTime();
+//    qDebug()<<"BEGIN = "<< t1.toString("hh:mm:ss.zzz")<<endl;
+////  基于统计运算的滤波算法
+//    pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+//    sor.setInputCloud(cloud);
+//    sor.setMeanK(20);
+//    sor.setStddevMulThresh(0.001);
+//    sor.filter(*outcloud);
+
+//    t1 = QTime::currentTime();
+//    qDebug()<<"END = "<< t1.toString("hh:mm:ss.zzz")<<endl;
+
+
+//    //显示滤波以后的数据
+//    qDebug()<<"outCloud->points.size() = "<<outcloud->points.size()<<endl;
+//    int m = 0;
+//    for(int n=0; n<outcloud->points.size(); n++)
+//    {
+//        m_data[0+m] = outcloud->points[n].x;
+//        m_data[1+m] = outcloud->points[n].y;
+//        m_data[2+m] = outcloud->points[n].z;
+
+//        if(0 == n%5)
+//        {
+//            m_data[3+m] =1.0;
+//            m_data[4+m] = 0.0;
+//        }
+//         else
+//        {
+//            m_data[3+m] =0.0;
+//            m_data[4+m] = 1.0;
+//        }
+
+//        m_data[5+m] = 0.0;
+
+//        m += 6;
+//    }
+//    m_data.resize(m);
 
 }
 

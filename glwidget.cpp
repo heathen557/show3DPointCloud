@@ -422,7 +422,7 @@ void GLWidget::initializeGL()
 
     // Our camera never changes in this example.
     m_camera.setToIdentity();
-    m_camera.translate(0, 0, -10);
+    m_camera.translate(0, 0, -50);
     //    m_camera.translate(0.0,0.0, -10);    //相当于平移相机的位置
 
     // Light position is fixed.
@@ -572,7 +572,7 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 
 void GLWidget::readFileSlot()
 {
-//    m_logo.readPCDFile1();
+    m_logo.readPCDFile1();
 
     update();
 

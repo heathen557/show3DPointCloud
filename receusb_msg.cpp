@@ -50213,6 +50213,13 @@ ReceUSB_Msg::ReceUSB_Msg(QObject *parent) : QObject(parent),
     cloud.height = 1;
     cloud.points.resize(cloud.width);
 
+
+    tempcloud_XYZI.width = 16384;
+    tempcloud_XYZI.height = 1;
+    tempcloud_XYZI.points.resize(tempcloud_XYZI.width);
+
+    LSB = 0.015; //时钟频率
+
 }
 
 //查找是不是存在想要链接的USB设备
@@ -50516,6 +50523,7 @@ void ReceUSB_Msg::read_usb()
            mutex.lock();
            tofImage = microQimage;
            intensityImage = macroQimage;
+           pcl::copyPointCloud(tempcloud_XYZI,cloud);
            mutex.unlock();
         }
 
@@ -50550,10 +50558,16 @@ void ReceUSB_Msg::read_usb()
             imgCol = line_number * 2 + row_offset;
 
 //            qDebug()<<"index =="<< imgCol*256+imgRow<<endl;
+           cloudIndex = imgCol*256+imgRow;
+
             if(imgRow>=0 && imgRow<256 && imgCol>=0 && imgCol<64)
                 {
                     microQimage.setPixel(imgRow,imgCol,tofColor);         //TOF图像的赋值
                     macroQimage.setPixel(imgRow,imgCol,intenColor);       //强度图像的赋值
+
+                    tempcloud_XYZI.points[cloudIndex].x = tof * x_Weight[cloudIndex] * LSB;
+                    tempcloud_XYZI.points[cloudIndex].y = tof * y_Weight[cloudIndex] * LSB;
+                    tempcloud_XYZI.points[cloudIndex].z = tof * z_Weight[cloudIndex] * LSB;
                 }
             else
                 qDebug()<<"给像素赋值时出现异常 imgrow="<<imgRow<<"   imgCol = "<<imgCol<<endl;

@@ -47,7 +47,7 @@ public:
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         widget = new GLWidget(centralWidget);
         widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(640, 20, 500, 471));
+        widget->setGeometry(QRect(640, 50, 500, 481));
         widget->setMinimumSize(QSize(500, 400));
         pushButton = new QPushButton(centralWidget);
         pushButton->setObjectName(QStringLiteral("pushButton"));
