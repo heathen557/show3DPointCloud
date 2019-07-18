@@ -79,11 +79,12 @@ GLWidget::GLWidget(QWidget *parent)
         setFormat(fmt);
     }
 
+    m_core = true;
 
     connect(&readFileTimer,SIGNAL(timeout()),this,SLOT(readFileSlot()));
     readFileTimer.start(100);
 
-    m_scale = 0.1;
+    m_scale = 0.0;
     translate_x = 0;
     translate_y = 0;
 
@@ -97,7 +98,7 @@ void GLWidget::linkServer()
 
     if(!m_tcpSocket.waitForConnected(300))
     {
-        QMessageBox::information(this, "QT网络通信", "连接服务端失败！");
+//        QMessageBox::information(this, "QT网络通信", "连接服务端失败！");
         return;
     }else
     {
@@ -209,9 +210,9 @@ void GLWidget::ClientRecvData()
 
                                     //                                      qDebug()<<"x="<<value_x<<" y="<<value_x<<"  z="<<value_z<<endl;
 
-                                    m_data[j] = value_x;
-                                    m_data[j+1] = value_y;
-                                    m_data[j+2] = value_z;
+                                    m_data[j] = value_x/10.0;
+                                    m_data[j+1] = value_y/10.0;
+                                    m_data[j+2] = value_z/10.0;
 
                                     j += 6;
 
@@ -305,36 +306,36 @@ void GLWidget::cleanup()
     doneCurrent();
 }
 
-static const char *vertexShaderSourceCore = NULL;
-//static const char *vertexShaderSourceCore =
-//    "#version 150\n"
-//    "in vec4 vertex;\n"
-//    "in vec3 normal;\n"
-//    "out vec3 vert;\n"
-//    "out vec3 vertNormal;\n"
-//    "uniform mat4 projMatrix;\n"
-//    "uniform mat4 mvMatrix;\n"
-//    "uniform mat3 normalMatrix;\n"
-//    "void main() {\n"
-//    "   vert = vertex.xyz;\n"
-//    "   vertNormal = normalMatrix * normal;\n"
-//    "   gl_Position = projMatrix * mvMatrix * vertex;\n"
-//    "}\n";
+//static const char *vertexShaderSourceCore = NULL;
+static const char *vertexShaderSourceCore =
+    "#version 150\n"
+    "in vec4 vertex;\n"
+    "in vec3 normal;\n"
+    "out vec3 vert;\n"
+    "out vec3 vertNormal;\n"
+    "uniform mat4 projMatrix;\n"
+    "uniform mat4 mvMatrix;\n"
+    "uniform mat3 normalMatrix;\n"
+    "void main() {\n"
+    "   vert = vertex.xyz;\n"
+    "   vertNormal =  normal;\n"
+    "   gl_Position = projMatrix * mvMatrix * vertex;\n"
+    "}\n";
 
-static const char *fragmentShaderSourceCore = NULL;
-//static const char *fragmentShaderSourceCore =
-//    "#version 150\n"
-//    "in highp vec3 vert;\n"
-//    "in highp vec3 vertNormal;\n"
-//    "out highp vec4 fragColor;\n"
-//    "uniform highp vec3 lightPos;\n"
-//    "void main() {\n"
-//    "   highp vec3 L = normalize(lightPos - vert);\n"
-//    "   highp float NL = max(dot(normalize(vertNormal), L), 0.0);\n"
-//    "   highp vec3 color = vec3(0.39, 1.0, 0.0);\n"
-//    "   highp vec3 col = clamp(color * 0.2 + color * 0.8 * NL, 0.0, 1.0);\n"
-//    "   fragColor = vec4(col, 1.0);\n"
-//    "}\n";
+//static const char *fragmentShaderSourceCore = NULL;
+static const char *fragmentShaderSourceCore =
+    "#version 150\n"
+    "in highp vec3 vert;\n"
+    "in highp vec3 vertNormal;\n"
+    "out highp vec4 fragColor;\n"
+    "uniform highp vec3 lightPos;\n"
+    "void main() {\n"
+    "   highp vec3 L = normalize(lightPos - vert);\n"
+    "   highp float NL = max(dot(normalize(vertNormal), L), 0.0);\n"
+    "   highp vec3 color = vec3(0.39*NL, 1.0, 1.0*NL);\n"
+    "   highp vec3 col = clamp(color + color * 0.8 * NL, 0.7, 1.0);\n"
+    "   fragColor = vec4(vertNormal, 0.10);\n"
+    "}\n";
 
 
 static const char *vertexShaderSource =
@@ -353,6 +354,18 @@ static const char *vertexShaderSource =
 
 
 //static const char *fragmentShaderSource = NULL;
+//static const char *fragmentShaderSource =
+//        "varying highp vec3 vert;\n"
+//        "varying highp vec3 vertNormal;\n"
+//        "uniform highp vec3 lightPos;\n"
+//        "void main() {\n"
+//        "   highp vec3 L = normalize(lightPos - vert);\n"
+//        "   highp float NL = max(dot(normalize(vertNormal), L), 0.0);\n"
+//        "   highp vec3 color = vec3(1.0, 1.0, 1.0);\n"
+//        "   highp vec3 col = clamp(color * 0.8 + color * 0.8 * NL, 0.0, 1.0);\n"
+//        "   gl_FragColor = vec4(col, 1.0);\n"
+//        "}\n";
+
 static const char *fragmentShaderSource =
         "varying highp vec3 vert;\n"
         "varying highp vec3 vertNormal;\n"
@@ -360,9 +373,9 @@ static const char *fragmentShaderSource =
         "void main() {\n"
         "   highp vec3 L = normalize(lightPos - vert);\n"
         "   highp float NL = max(dot(normalize(vertNormal), L), 0.0);\n"
-        "   highp vec3 color = vec3(1.0, 1.0, 1.0);\n"
-        "   highp vec3 col = clamp(color * 0.8 + color * 0.8 * NL, 0.0, 1.0);\n"
-        "   gl_FragColor = vec4(col, 1.0);\n"
+        "   highp vec3 color = vec3(0.8, 1.0, 1.0);\n"
+        "   highp vec3 col = clamp(color * 0.8 + color * 0.8 * NL, 0.9, 1.0);\n"
+        "   gl_FragColor = vec4(0.0,1.0,0.0, 1.0);\n"
         "}\n";
 
 void GLWidget::initializeGL()
@@ -409,7 +422,7 @@ void GLWidget::initializeGL()
 
     // Our camera never changes in this example.
     m_camera.setToIdentity();
-    m_camera.translate(0, 0, -1);
+    m_camera.translate(0, 0, -10);
     //    m_camera.translate(0.0,0.0, -10);    //相当于平移相机的位置
 
     // Light position is fixed.
@@ -502,7 +515,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 {
 
     m_lastPos = event->pos();
-    qDebug()<<"m_lastPos ="<<m_lastPos<<endl;
+//    qDebug()<<"m_lastPos ="<<m_lastPos<<endl;
 
 
 }
@@ -559,8 +572,9 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 
 void GLWidget::readFileSlot()
 {
-    //    m_logo.readPCDFile1();
-
+//    m_logo.readPCDFile1();
 
     update();
+
+//    qDebug()<<"here update"<<endl;
 }

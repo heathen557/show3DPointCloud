@@ -13,10 +13,11 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QFormLayout>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
@@ -28,8 +29,11 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralWidget;
-    QFormLayout *formLayout;
     GLWidget *widget;
+    QPushButton *pushButton;
+    QPushButton *pushButton_2;
+    QLabel *showTOF_label;
+    QLabel *showIntensity_label;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -38,23 +42,29 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1039, 714);
+        MainWindow->resize(1166, 714);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        formLayout = new QFormLayout(centralWidget);
-        formLayout->setSpacing(6);
-        formLayout->setContentsMargins(11, 11, 11, 11);
-        formLayout->setObjectName(QStringLiteral("formLayout"));
         widget = new GLWidget(centralWidget);
         widget->setObjectName(QStringLiteral("widget"));
-        widget->setMinimumSize(QSize(980, 611));
-
-        formLayout->setWidget(0, QFormLayout::LabelRole, widget);
-
+        widget->setGeometry(QRect(640, 20, 500, 471));
+        widget->setMinimumSize(QSize(500, 400));
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(110, 570, 75, 23));
+        pushButton_2 = new QPushButton(centralWidget);
+        pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
+        pushButton_2->setGeometry(QRect(200, 570, 75, 23));
+        showTOF_label = new QLabel(centralWidget);
+        showTOF_label->setObjectName(QStringLiteral("showTOF_label"));
+        showTOF_label->setGeometry(QRect(60, 50, 531, 221));
+        showIntensity_label = new QLabel(centralWidget);
+        showIntensity_label->setObjectName(QStringLiteral("showIntensity_label"));
+        showIntensity_label->setGeometry(QRect(60, 300, 531, 221));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1039, 23));
+        menuBar->setGeometry(QRect(0, 0, 1166, 23));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -71,6 +81,10 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\344\270\211\347\273\264\347\202\271\344\272\221\346\230\276\347\244\272", Q_NULLPTR));
+        pushButton->setText(QApplication::translate("MainWindow", "PushButton", Q_NULLPTR));
+        pushButton_2->setText(QApplication::translate("MainWindow", "PushButton", Q_NULLPTR));
+        showTOF_label->setText(QApplication::translate("MainWindow", "TextLabel", Q_NULLPTR));
+        showIntensity_label->setText(QApplication::translate("MainWindow", "TextLabel", Q_NULLPTR));
     } // retranslateUi
 
 };

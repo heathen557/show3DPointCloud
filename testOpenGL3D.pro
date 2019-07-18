@@ -29,6 +29,7 @@ SOURCES += main.cpp\
         logo.cpp \
     globaldata.cpp \
     WriteLog.cpp \
+    receusb_msg.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -36,9 +37,17 @@ HEADERS  += mainwindow.h \
             logo.h \
     globaldata.h \
     WriteLog.h \
+    receusb_msg.h
 
 
 FORMS    += mainwindow.ui
+
+INCLUDEPATH += "D:/programInstall/libsub"
+#INCLUDEPATH += -lD:/programInstall/libsub
+
+LIBS += "D:/programInstall/libsub/libusb.lib"
+
+
 
 #INCLUDEPATH += C:/Tool/PCL/PCL1.8.0/include/pcl-1.8\
 INCLUDEPATH += D:/pcl/PCL1.8.1/include/pcl-1.8\
