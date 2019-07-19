@@ -50406,6 +50406,8 @@ bool ReceUSB_Msg::System_Register_Read(int Address, QString &Data)
     QString arr;
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
     Data = QString(data[0]);
+    Sleep(30);
+
     return res;
 }
 
@@ -50424,6 +50426,7 @@ bool ReceUSB_Msg::System_Register_Write(int Address, QString &Data)
     Cmd.wLength = 0x0001;
     data[0] = Data.toInt(NULL,16);    //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    Sleep(30);
     return res;
 }
 
@@ -50441,18 +50444,22 @@ bool ReceUSB_Msg::Device_Register_Read(int slavedId,int Address,QString &Data)
     Cmd.wLength = 0x0001;
     data[0]= slavedId;   //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    Sleep(30);
 
     Cmd.wIndex = 0x00f5;
     data[0] = 0x33;
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    Sleep(30);
 
     Cmd.wIndex = 0x00f2;
     data[0] = Address;      //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    Sleep(30);
 
     Cmd.wIndex = 0x00f5;
     data[0] = 0xf9;
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    Sleep(30);
 
     Cmd.bRequestType = 0xC0;
     Cmd.wIndex = 0x00f4;
@@ -50460,6 +50467,7 @@ bool ReceUSB_Msg::Device_Register_Read(int slavedId,int Address,QString &Data)
 
     Data = QString(data[0]);
 
+    Sleep(30);
     return res;
 }
 
@@ -50479,18 +50487,23 @@ bool ReceUSB_Msg::Device_Register_Write(int slavedId,int Address,QString &Data)
     data[0] = slavedId;      //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
+    Sleep(30);
+
     Cmd.wIndex = 0x00f5;
     data[0] = 0x37;
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
+    Sleep(30);
     Cmd.wIndex = 0x00f2;
     data[0] = Address;      //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
+    Sleep(30);
     Cmd.wIndex = 0x00f3;
     data[0] = Data.toInt(NULL,16);         //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
+    Sleep(30);
     return res;
 }
 

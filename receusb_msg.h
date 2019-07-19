@@ -7,7 +7,7 @@
 #include<QDebug>
 #include<QTimer>
 #include<QImage>
-
+#include<Windows.h>
 #include"lusb0_usb.h"
 
 

@@ -82,7 +82,7 @@ GLWidget::GLWidget(QWidget *parent)
     m_core = true;
 
     connect(&readFileTimer,SIGNAL(timeout()),this,SLOT(readFileSlot()));
-    readFileTimer.start(200);
+    readFileTimer.start(100);
 
     m_scale = 0.0;
     translate_x = 0;

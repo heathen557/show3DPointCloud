@@ -31,7 +31,7 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    showTimer.start(150);
+    showTimer.start(50);
 //    recvUsbThread->start();
 
     emit readSignal();
