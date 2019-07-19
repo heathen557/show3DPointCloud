@@ -9,6 +9,7 @@ extern QMutex mutex;
 extern QImage tofImage;
 extern QImage intensityImage;
 extern pcl::PointCloud<pcl::PointXYZI> cloud;
+extern bool isShowPointCloud;
 
 static float colormap[1024*3]={
          0,  0,129,
@@ -50525,6 +50526,7 @@ void ReceUSB_Msg::read_usb()
            intensityImage = macroQimage;
            pcl::copyPointCloud(tempcloud_XYZI,cloud);
            mutex.unlock();
+           isShowPointCloud = true;
         }
 
 //        int line_offset = spadNum % 4;

@@ -2,6 +2,7 @@
 QMutex mutex;
 QImage tofImage;
 QImage intensityImage;
+extern bool  isShowPointCloud;
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -30,7 +31,7 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    showTimer.start(10);
+    showTimer.start(150);
 //    recvUsbThread->start();
 
     emit readSignal();
@@ -38,6 +39,9 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::showImageSlot()
 {
+    if(!isShowPointCloud)
+        return;
+
     QImage resImage;
     QImage resIntenImage;
     if(!tofImage.isNull() && !intensityImage.isNull())

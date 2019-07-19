@@ -65,6 +65,59 @@
 #pragma comment(lib,"User32.lib")
 #pragma comment(lib, "gdi32.lib")
 #include<qwidget.h>
+#include <qmath.h>
+#include<QDebug>
+#include<math.h>
+#include<QFile>
+#include <pcl/filters/statistical_outlier_removal.h>
+
+
+#include<pcl/visualization/cloud_viewer.h>
+#include<iostream>//标准C++库中的输入输出类相关头文件。
+#include<pcl/io/io.h>
+#include<pcl/io/pcd_io.h>//pcd 读写类相关的头文件。
+#include<pcl/io/ply_io.h>
+#include<pcl/point_types.h> //PCL中支持的点类型头文件。
+#include <iostream>
+
+#include <boost/thread/thread.hpp>
+#include <pcl/common/common_headers.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/console/parse.h>
+#include <pcl/point_types.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/filters/bilateral.h>
+#include <pcl/filters/radius_outlier_removal.h>
+#include <pcl/filters/statistical_outlier_removal.h>
+#include<pcl/filters/fast_bilateral_omp.h>
+
+#include <pcl/kdtree/flann.h>
+#include <pcl/kdtree/kdtree.h>
+#include <pcl/search/flann_search.h>
+#include <pcl/search/kdtree.h>
+#include <pcl/range_image/range_image.h>
+#include <pcl/visualization/range_image_visualizer.h>
+
+#include <pcl/filters/passthrough.h>  //直通滤波相关
+
+//多线程
+ #include <boost/thread/thread.hpp>
+ #include <fstream>
+ #include <iostream>
+ #include <stdio.h>
+ #include <string.h>
+ #include <string>
+ //计时
+ #include <time.h>
+ //Bilateral Filter
+ #include <pcl/filters/bilateral.h>//required
+ #include <pcl/filters/fast_bilateral.h>
+ #include <pcl/filters/fast_bilateral_omp.h>
+#include<QTime>
+
 
 
 extern QVector<GLfloat> m_data;
@@ -87,6 +140,9 @@ public:
 
     int m_count;
     int index;
+    pcl::PointCloud<pcl::PointXYZI> needDealCloud;   //传过来用于滤波显示的处理，通过互斥锁传递过来
+
+    pcl::PointCloud<pcl::PointXYZI> DealedCloud;   //滤波处理以后的数据
 
 
 private slots:
@@ -94,6 +150,7 @@ private slots:
     void quad(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2, GLfloat x3, GLfloat y3, GLfloat x4, GLfloat y4);
     void extrude(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
     void add(const QVector3D &v, const QVector3D &n);
+
 
 
 

@@ -49,61 +49,63 @@
 ****************************************************************************/
 
 #include "logo.h"
-#include <qmath.h>
-#include<QDebug>
-#include<math.h>
-#include<QFile>
-#include <pcl/filters/statistical_outlier_removal.h>
+//#include <qmath.h>
+//#include<QDebug>
+//#include<math.h>
+//#include<QFile>
+//#include <pcl/filters/statistical_outlier_removal.h>
 
 
-#include<pcl/visualization/cloud_viewer.h>
-#include<iostream>//标准C++库中的输入输出类相关头文件。
-#include<pcl/io/io.h>
-#include<pcl/io/pcd_io.h>//pcd 读写类相关的头文件。
-#include<pcl/io/ply_io.h>
-#include<pcl/point_types.h> //PCL中支持的点类型头文件。
-#include <iostream>
+//#include<pcl/visualization/cloud_viewer.h>
+//#include<iostream>//标准C++库中的输入输出类相关头文件。
+//#include<pcl/io/io.h>
+//#include<pcl/io/pcd_io.h>//pcd 读写类相关的头文件。
+//#include<pcl/io/ply_io.h>
+//#include<pcl/point_types.h> //PCL中支持的点类型头文件。
+//#include <iostream>
 
-#include <boost/thread/thread.hpp>
-#include <pcl/common/common_headers.h>
-#include <pcl/features/normal_3d.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/visualization/pcl_visualizer.h>
-#include <pcl/console/parse.h>
-#include <pcl/point_types.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/kdtree/kdtree_flann.h>
-#include <pcl/filters/bilateral.h>
-#include <pcl/filters/radius_outlier_removal.h>
-#include <pcl/filters/statistical_outlier_removal.h>
-#include<pcl/filters/fast_bilateral_omp.h>
+//#include <boost/thread/thread.hpp>
+//#include <pcl/common/common_headers.h>
+//#include <pcl/features/normal_3d.h>
+//#include <pcl/io/pcd_io.h>
+//#include <pcl/visualization/pcl_visualizer.h>
+//#include <pcl/console/parse.h>
+//#include <pcl/point_types.h>
+//#include <pcl/io/pcd_io.h>
+//#include <pcl/kdtree/kdtree_flann.h>
+//#include <pcl/filters/bilateral.h>
+//#include <pcl/filters/radius_outlier_removal.h>
+//#include <pcl/filters/statistical_outlier_removal.h>
+//#include<pcl/filters/fast_bilateral_omp.h>
 
-#include <pcl/kdtree/flann.h>
-#include <pcl/kdtree/kdtree.h>
-#include <pcl/search/flann_search.h>
-#include <pcl/search/kdtree.h>
-#include <pcl/range_image/range_image.h>
-#include <pcl/visualization/range_image_visualizer.h>
+//#include <pcl/kdtree/flann.h>
+//#include <pcl/kdtree/kdtree.h>
+//#include <pcl/search/flann_search.h>
+//#include <pcl/search/kdtree.h>
+//#include <pcl/range_image/range_image.h>
+//#include <pcl/visualization/range_image_visualizer.h>
 
-#include <pcl/filters/passthrough.h>  //直通滤波相关
+//#include <pcl/filters/passthrough.h>  //直通滤波相关
 
-//多线程
- #include <boost/thread/thread.hpp>
- #include <fstream>
- #include <iostream>
- #include <stdio.h>
- #include <string.h>
- #include <string>
- //计时
- #include <time.h>
- //Bilateral Filter
- #include <pcl/filters/bilateral.h>//required
- #include <pcl/filters/fast_bilateral.h>
- #include <pcl/filters/fast_bilateral_omp.h>
-#include<QTime>
+////多线程
+// #include <boost/thread/thread.hpp>
+// #include <fstream>
+// #include <iostream>
+// #include <stdio.h>
+// #include <string.h>
+// #include <string>
+// //计时
+// #include <time.h>
+// //Bilateral Filter
+// #include <pcl/filters/bilateral.h>//required
+// #include <pcl/filters/fast_bilateral.h>
+// #include <pcl/filters/fast_bilateral_omp.h>
+//#include<QTime>
 
 
 pcl::PointCloud<pcl::PointXYZI> cloud;
+bool  isShowPointCloud;
+extern QMutex mutex;
 
 //字符串解析，读取pcd文件时候用
 static char *strsep(char **s, const char *ct)
@@ -128,6 +130,7 @@ Logo::Logo(QObject *parent):
 
     index = 1;
     m_count = 0;
+    isShowPointCloud = false;
 
 //    const GLfloat x1 = +0.0f;
 //    const GLfloat y1 = -0.0f;
@@ -305,13 +308,33 @@ void Logo::readPCDFile()
 //连续读取pcd文件的测试槽函数
 void Logo::readPCDFile1()
 {
-    qDebug()<<"the pointCloud num =  "<<cloud.points.size()<<endl;
+    if(!isShowPointCloud)
+        return;
+
+    mutex.lock();
+    pcl::copyPointCloud(cloud,needDealCloud);
+    mutex.unlock();
+
+    //  基于统计运算的滤波算法
+    QTime t1 = QTime::currentTime();
+//    qDebug()<<"BEGIN = "<< t1.toString("hh:mm:ss.zzz")<<endl;
+    pcl::StatisticalOutlierRemoval<pcl::PointXYZI> sor;
+    sor.setInputCloud(needDealCloud.makeShared());
+    sor.setMeanK(20);
+    sor.setStddevMulThresh(0.001);
+    sor.filter(DealedCloud);
+    t1 = QTime::currentTime();
+//    qDebug()<<"END = "<< t1.toString("hh:mm:ss.zzz")<<endl;
+
+
+
+//    qDebug()<<"the pointCloud num =  "<<DealedCloud.points.size()<<endl;
     int m = 0;
-    for(int n=0; n<cloud.points.size(); n++)
+    for(int n=0; n<DealedCloud.points.size(); n++)
     {
-        m_data[0+m] = cloud.points[n].x;
-        m_data[1+m] = cloud.points[n].y;
-        m_data[2+m] = cloud.points[n].z;
+        m_data[0+m] = DealedCloud.points[n].x;
+        m_data[1+m] = DealedCloud.points[n].y;
+        m_data[2+m] = DealedCloud.points[n].z;
 
         if(0 == n%5)
         {
