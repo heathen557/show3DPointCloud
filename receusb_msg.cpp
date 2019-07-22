@@ -9,7 +9,9 @@ extern QMutex mutex;
 extern QImage tofImage;
 extern QImage intensityImage;
 extern pcl::PointCloud<pcl::PointXYZI> cloud;
+extern pcl::PointCloud<pcl::PointXYZ> cloudColor_RGB;
 extern bool isShowPointCloud;
+extern bool isWriteSuccess;    //写入命令是否成功标识
 
 static float colormap[1024*3]={
          0,  0,129,
@@ -50214,10 +50216,17 @@ ReceUSB_Msg::ReceUSB_Msg(QObject *parent) : QObject(parent),
     cloud.height = 1;
     cloud.points.resize(cloud.width);
 
+    cloudColor_RGB.width = 16384;
+    cloudColor_RGB.height = 1;
+    cloudColor_RGB.resize(cloudColor_RGB.width);
 
     tempcloud_XYZI.width = 16384;
     tempcloud_XYZI.height = 1;
     tempcloud_XYZI.points.resize(tempcloud_XYZI.width);
+
+    tempcloud_RGB.width = 16384;
+    tempcloud_RGB.height = 1;
+    tempcloud_RGB.points.resize(tempcloud_RGB.width);
 
     LSB = 0.015; //时钟频率
 
@@ -50406,7 +50415,6 @@ bool ReceUSB_Msg::System_Register_Read(int Address, QString &Data)
     QString arr;
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
     Data = QString(data[0]);
-    Sleep(30);
 
     return res;
 }
@@ -50426,7 +50434,6 @@ bool ReceUSB_Msg::System_Register_Write(int Address, QString &Data)
     Cmd.wLength = 0x0001;
     data[0] = Data.toInt(NULL,16);    //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
-    Sleep(30);
     return res;
 }
 
@@ -50444,22 +50451,22 @@ bool ReceUSB_Msg::Device_Register_Read(int slavedId,int Address,QString &Data)
     Cmd.wLength = 0x0001;
     data[0]= slavedId;   //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
-    Sleep(30);
+
 
     Cmd.wIndex = 0x00f5;
     data[0] = 0x33;
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
-    Sleep(30);
+
 
     Cmd.wIndex = 0x00f2;
     data[0] = Address;      //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
-    Sleep(30);
+
 
     Cmd.wIndex = 0x00f5;
     data[0] = 0xf9;
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
-    Sleep(30);
+
 
     Cmd.bRequestType = 0xC0;
     Cmd.wIndex = 0x00f4;
@@ -50467,7 +50474,6 @@ bool ReceUSB_Msg::Device_Register_Read(int slavedId,int Address,QString &Data)
 
     Data = QString(data[0]);
 
-    Sleep(30);
     return res;
 }
 
@@ -50487,23 +50493,21 @@ bool ReceUSB_Msg::Device_Register_Write(int slavedId,int Address,QString &Data)
     data[0] = slavedId;      //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
-    Sleep(30);
 
     Cmd.wIndex = 0x00f5;
     data[0] = 0x37;
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
-    Sleep(30);
+
     Cmd.wIndex = 0x00f2;
     data[0] = Address;      //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
-    Sleep(30);
+
     Cmd.wIndex = 0x00f3;
     data[0] = Data.toInt(NULL,16);         //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
-    Sleep(30);
     return res;
 }
 
@@ -50527,17 +50531,19 @@ void ReceUSB_Msg::read_usb()
 
     if(260 == ret)
     {
+        isWriteSuccess = true;    //写入命令是否成功标识，成功以后才能点击“显示”按钮操作
         int imgRow,imgCol;
         int spadNum = MyBuffer[0] + (((ushort)MyBuffer[1]) << 8);
         int line_number = MyBuffer[2] + (((ushort)MyBuffer[3]) << 8);
 //        qDebug()<<"spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
 
-        if(spadNum<lastSpadNum )  //此时说明上一帧数据已经接收完毕，数据可以显示了
+        if(spadNum<lastSpadNum )  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
         {
            mutex.lock();
            tofImage = microQimage;
            intensityImage = macroQimage;
            pcl::copyPointCloud(tempcloud_XYZI,cloud);
+           pcl::copyPointCloud(tempcloud_RGB,cloudColor_RGB);
            mutex.unlock();
            isShowPointCloud = true;
         }
@@ -50573,7 +50579,7 @@ void ReceUSB_Msg::read_usb()
             imgCol = line_number * 2 + row_offset;
 
 //            qDebug()<<"index =="<< imgCol*256+imgRow<<endl;
-           cloudIndex = imgCol*256+imgRow;
+           cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
 
             if(imgRow>=0 && imgRow<256 && imgCol>=0 && imgCol<64)
                 {
@@ -50583,10 +50589,15 @@ void ReceUSB_Msg::read_usb()
                     tempcloud_XYZI.points[cloudIndex].x = tof * x_Weight[cloudIndex] * LSB;
                     tempcloud_XYZI.points[cloudIndex].y = tof * y_Weight[cloudIndex] * LSB;
                     tempcloud_XYZI.points[cloudIndex].z = tof * z_Weight[cloudIndex] * LSB;
+
+                    QColor mColor = QColor(tofColor);
+                    tempcloud_RGB.points[cloudIndex].x = mColor.red()/255.0;
+                    tempcloud_RGB.points[cloudIndex].y = mColor.green()/255.0;
+                    tempcloud_RGB.points[cloudIndex].z = mColor.blue()/255.0;
+
                 }
             else
                 qDebug()<<"给像素赋值时出现异常 imgrow="<<imgRow<<"   imgCol = "<<imgCol<<endl;
-
 
         }
         lastSpadNum = spadNum ;

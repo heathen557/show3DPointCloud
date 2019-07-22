@@ -2,6 +2,7 @@
 QMutex mutex;
 QImage tofImage;
 QImage intensityImage;
+bool isWriteSuccess;    //写入命令是否成功标识
 extern bool  isShowPointCloud;
 
 
@@ -11,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    isWriteSuccess = false;
 
     //把读取USB信息放到线程当中，并开启线程
     recvUsbMsg_obj = new ReceUSB_Msg();
@@ -26,15 +28,23 @@ MainWindow::MainWindow(QWidget *parent) :
 //测试按钮
 void MainWindow::on_pushButton_clicked()
 {
-
+    emit readSignal();
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    showTimer.start(50);
+
+    if(isWriteSuccess)
+    {
+        showTimer.start(50);
+    }else
+    {
+        QMessageBox::information(NULL,"warn","system don't write ");
+    }
+
 //    recvUsbThread->start();
 
-    emit readSignal();
+
 }
 
 void MainWindow::showImageSlot()

@@ -144,6 +144,8 @@ public:
 
     pcl::PointCloud<pcl::PointXYZI> DealedCloud;   //滤波处理以后的数据
 
+    pcl::PointCloud<pcl::PointXYZ> PointCloud_RGB;
+
 
 private slots:
 

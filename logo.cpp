@@ -104,6 +104,7 @@
 
 
 pcl::PointCloud<pcl::PointXYZI> cloud;
+pcl::PointCloud<pcl::PointXYZ> cloudColor_RGB;
 bool  isShowPointCloud;
 extern QMutex mutex;
 
@@ -314,6 +315,8 @@ void Logo::readPCDFile1()
     mutex.lock();
     pcl::copyPointCloud(cloud,needDealCloud);
 //    pcl::copyPointCloud(cloud,DealedCloud);
+
+    pcl::copyPointCloud(cloudColor_RGB,PointCloud_RGB);
     mutex.unlock();
 
 
@@ -338,18 +341,23 @@ void Logo::readPCDFile1()
         m_data[1+m] = DealedCloud.points[n].y;
         m_data[2+m] = DealedCloud.points[n].z;
 
-        if(0 == n%5)
-        {
-            m_data[3+m] =1.0;
-            m_data[4+m] = 0.0;
-        }
-         else
-        {
-            m_data[3+m] =0.0;
-            m_data[4+m] = 1.0;
-        }
+        m_data[3+m] = PointCloud_RGB.points[n].x;
+        m_data[4+m] = PointCloud_RGB.points[n].y;
+        m_data[5+m] = PointCloud_RGB.points[n].z;
 
-        m_data[5+m] = 0.0;
+
+//        if(0 == n%5)
+//        {
+//            m_data[3+m] =1.0;
+//            m_data[4+m] = 0.0;
+//        }
+//         else
+//        {
+//            m_data[3+m] =0.0;
+//            m_data[4+m] = 1.0;
+//        }
+
+//        m_data[5+m] = 0.0;
 
         m += 6;
     }

@@ -46,6 +46,7 @@ public:
     int lastSpadNum;
 
     pcl::PointCloud<pcl::PointXYZI> tempcloud_XYZI;
+    pcl::PointCloud<pcl::PointXYZ>  tempcloud_RGB;
     int cloudIndex;
 
     float  LSB ; //时钟频率
