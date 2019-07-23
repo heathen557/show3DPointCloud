@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+//    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
 
     isWriteSuccess = false;
 
@@ -79,10 +80,10 @@ void MainWindow::linkInfoSlot(int flagNum)
 {
     if(1 == flagNum)
     {
-        QMessageBox::information(NULL,"warn",QString::fromUtf8("NO Device"));
+        QMessageBox::information(NULL,"告警",QString::fromUtf8("未找到设备！"));
     }else if(2 == flagNum)
     {
-        QMessageBox::information(NULL,"warn",QString::fromUtf8("RECEIVE NO DATA"));
+        QMessageBox::information(NULL,"告警",QString::fromUtf8("未接收到数据，请检查设备链接或配置信息"));
     }
 }
 

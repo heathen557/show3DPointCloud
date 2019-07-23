@@ -313,13 +313,13 @@ void Logo::readPCDFile1()
         return;
 
     mutex.lock();
-    pcl::copyPointCloud(cloud,needDealCloud);
-//    pcl::copyPointCloud(cloud,DealedCloud);
+//    pcl::copyPointCloud(cloud,needDealCloud);
+    pcl::copyPointCloud(cloud,DealedCloud);
 
     pcl::copyPointCloud(cloudColor_RGB,PointCloud_RGB);
     mutex.unlock();
 
-
+/*
     //  基于统计运算的滤波算法
     QTime t1 = QTime::currentTime();
 //    qDebug()<<"BEGIN = "<< t1.toString("hh:mm:ss.zzz")<<endl;
@@ -331,7 +331,7 @@ void Logo::readPCDFile1()
     t1 = QTime::currentTime();
 //    qDebug()<<"END = "<< t1.toString("hh:mm:ss.zzz")<<endl;
 
-
+*/
 
 //    qDebug()<<"the pointCloud num =  "<<DealedCloud.points.size()<<endl;
     int m = 0;
@@ -344,6 +344,24 @@ void Logo::readPCDFile1()
         m_data[3+m] = PointCloud_RGB.points[n].x;
         m_data[4+m] = PointCloud_RGB.points[n].y;
         m_data[5+m] = PointCloud_RGB.points[n].z;
+
+//        if(m_data[1+m] <3)
+//        {
+//            m_data[3+m] = 1.0;
+//            m_data[4+m] = 0.0;
+//            m_data[5+m] = 0.0;
+
+//        }else if(m_data[1+m]>3 && m_data[1+m]<6)
+//        {
+//            m_data[3+m] = 0.0;
+//            m_data[4+m] = 1.0;
+//            m_data[5+m] = 0.0;
+//        }else if(m_data[1+m]>6)
+//        {
+//            m_data[3+m] = 0.0;
+//            m_data[4+m] = 0.0;
+//            m_data[5+m] = 1.0;
+//        }
 
 
 //        if(0 == n%5)
@@ -365,7 +383,35 @@ void Logo::readPCDFile1()
 
 
 
+    double x_min=100,y_min=100,z_min=100;
+    double x_max=0,y_max=0,z_max=0;
+
+    for(int i=0; i<m_data.size(); i+=6)
+    {
+
+        if(m_data[i]>x_max)
+            x_max = m_data[i];
+        if(m_data[i]<x_min)
+            x_min = m_data[i];
+
+        if(m_data[i+1]>y_max)
+            y_max = m_data[1+i];
+        if(m_data[1+i]<y_min)
+            y_min = m_data[i+1];
+
+        if(m_data[i+2]>z_max)
+            z_max = m_data[i];
+        if(m_data[i+2]<z_min)
+            z_min = m_data[i+2];
+    }
+
+    qDebug()<<"x_max="<<x_max<<"  x_min="<<x_min<<endl;
+    qDebug()<<"y_max="<<y_max<<"  y_min="<<y_min<<endl;
+    qDebug()<<"z_max="<<z_max<<"  z_min="<<z_min<<endl;
 }
+
+
+
 
 Logo::~Logo()
 {

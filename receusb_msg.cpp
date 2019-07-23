@@ -50394,6 +50394,9 @@ void ReceUSB_Msg::on_pushButton_clicked()
         qDebug()<<"[w]Device write str1="<<str1.mid(3*k,2)<<"   res="<<res<<endl;
     }
 
+
+/************************开始接受数据****************************************************/
+    readTimer->start(1);
 }
 
 
@@ -50521,7 +50524,7 @@ void ReceUSB_Msg::read_usb()
     char MyBuffer[4096];
 
     //批量读(同步)
-    ret = usb_bulk_read(devHandle, 129, MyBuffer, sizeof(MyBuffer), 300);       //此处延迟设置为300，经过测试设置为1的时候，ret<0,程序报错退出
+    ret = usb_bulk_read(devHandle, 129, MyBuffer, sizeof(MyBuffer), 3000);       //此处延迟设置为300，经过测试设置为1的时候，ret<0,程序报错退出
 
     if (ret < 0) {
         qDebug("**************************************************error reading:%s", usb_strerror());
@@ -50612,7 +50615,7 @@ void ReceUSB_Msg::run()
     connect(readTimer, SIGNAL(timeout()),this,SLOT(read_usb()));
 
     on_pushButton_clicked();
-    readTimer->start(1);
+
 }
 
 

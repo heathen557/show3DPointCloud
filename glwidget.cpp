@@ -334,7 +334,7 @@ static const char *fragmentShaderSourceCore =
     "   highp float NL = max(dot(normalize(vertNormal), L), 0.0);\n"
     "   highp vec3 color = vec3(0.39*NL, 1.0, 1.0*NL);\n"
     "   highp vec3 col = clamp(color + color * 0.8 * NL, 0.7, 1.0);\n"
-    "   fragColor = vec4(vertNormal, 0.10);\n"
+    "   fragColor = vec4(vertNormal, 0.50);\n"
     "}\n";
 
 
