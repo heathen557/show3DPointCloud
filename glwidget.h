@@ -74,7 +74,7 @@ public:
 
     QSize minimumSizeHint() const override;
     QSize sizeHint() const override;
-
+    QTimer readFileTimer;    //读取点云数据，开始显示
 public slots:
     void setXRotation(int angle);
     void setYRotation(int angle);
@@ -124,7 +124,7 @@ private:
     float m_scale;      //缩放比例
     float translate_x;  //平移x
     float translate_y;  //平移y
-    QTimer readFileTimer;
+
     QTcpSocket m_tcpSocket;
     QByteArray m_buffer;
 

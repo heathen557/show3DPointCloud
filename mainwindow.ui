@@ -192,10 +192,6 @@ background-color: rgb(0, 0, 0);</string>
                   <string notr="true">border:1px solid black;
 background-color: rgb(0, 0, 0);</string>
                  </property>
-                 <zorder>frame_2</zorder>
-                 <zorder>frame_2</zorder>
-                 <zorder>frame_2</zorder>
-                 <zorder>frame_2</zorder>
                 </widget>
                </item>
               </layout>
@@ -258,7 +254,11 @@ background-color: rgb(0, 0, 0);</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="VID_lineEdit"/>
+                    <widget class="QLineEdit" name="VID_lineEdit">
+                     <property name="text">
+                      <string>8888</string>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </item>
@@ -272,7 +272,11 @@ background-color: rgb(0, 0, 0);</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="PID_lineEdit"/>
+                    <widget class="QLineEdit" name="PID_lineEdit">
+                     <property name="text">
+                      <string>0160</string>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </item>
@@ -332,7 +336,11 @@ background-color: rgb(0, 0, 0);</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEdit"/>
+                    <widget class="QLineEdit" name="lineEdit">
+                     <property name="text">
+                      <string>13</string>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </item>
@@ -353,14 +361,14 @@ background-color: rgb(0, 0, 0);</string>
                  <item row="2" column="0">
                   <layout class="QHBoxLayout" name="horizontalLayout_6">
                    <item>
-                    <widget class="QPushButton" name="pushButton_3">
+                    <widget class="QPushButton" name="readSys_pushButton">
                      <property name="text">
                       <string>读取</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_4">
+                    <widget class="QPushButton" name="writeSys_pushButton">
                      <property name="text">
                       <string>写入</string>
                      </property>
@@ -396,7 +404,11 @@ background-color: rgb(0, 0, 0);</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEdit_3"/>
+                    <widget class="QLineEdit" name="lineEdit_3">
+                     <property name="text">
+                      <string>D8</string>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </item>
@@ -431,7 +443,7 @@ background-color: rgb(0, 0, 0);</string>
                  <item row="3" column="0">
                   <layout class="QHBoxLayout" name="horizontalLayout_11">
                    <item>
-                    <widget class="QPushButton" name="pushButton_5">
+                    <widget class="QPushButton" name="readDev_pushButton">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -444,7 +456,7 @@ background-color: rgb(0, 0, 0);</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_6">
+                    <widget class="QPushButton" name="writeDev_pushButton">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -476,14 +488,14 @@ background-color: rgb(0, 0, 0);</string>
                  <item row="0" column="0">
                   <layout class="QVBoxLayout" name="verticalLayout_2">
                    <item>
-                    <widget class="QPushButton" name="pushButton_7">
+                    <widget class="QPushButton" name="loadSetting_pushButton">
                      <property name="text">
                       <string>加载配置集</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_8">
+                    <widget class="QPushButton" name="saveSetting_pushButton">
                      <property name="text">
                       <string>保存配置集</string>
                      </property>
@@ -538,34 +550,15 @@ background-color: rgb(0, 0, 0);</string>
          <item>
           <widget class="QTabWidget" name="tabWidget">
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="tab">
             <attribute name="title">
              <string>连接信息</string>
             </attribute>
             <layout class="QGridLayout" name="gridLayout_13">
-             <item row="0" column="0">
-              <widget class="QTableWidget" name="tableWidget_2">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <column>
-                <property name="text">
-                 <string>操作</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>连接信息</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>时间信息</string>
-                </property>
-               </column>
-              </widget>
+             <item row="0" column="1">
+              <widget class="QTextEdit" name="textEdit"/>
              </item>
             </layout>
            </widget>
@@ -573,6 +566,11 @@ background-color: rgb(0, 0, 0);</string>
             <attribute name="title">
              <string>运行日志</string>
             </attribute>
+            <layout class="QGridLayout" name="gridLayout_17">
+             <item row="0" column="0">
+              <widget class="QTextEdit" name="textEdit_2"/>
+             </item>
+            </layout>
            </widget>
           </widget>
          </item>
@@ -596,23 +594,23 @@ background-color: rgb(0, 0, 0);</string>
               <item>
                <widget class="QLabel" name="label_11">
                 <property name="text">
-                 <string>             信息统计</string>
+                 <string>           TOF/PEAK信息统计</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QTableWidget" name="tableWidget_4">
+               <widget class="QTableWidget" name="tableWidget_2">
                 <property name="styleSheet">
                  <string notr="true"/>
                 </property>
                 <row>
                  <property name="text">
-                  <string>TOF</string>
+                  <string>tof</string>
                  </property>
                 </row>
                 <row>
                  <property name="text">
-                  <string>PEAK</string>
+                  <string>peak</string>
                  </property>
                 </row>
                 <column>
@@ -657,10 +655,25 @@ background-color: rgb(0, 0, 0);</string>
                </widget>
               </item>
               <item>
-               <widget class="QTableWidget" name="tableWidget">
+               <widget class="QTableWidget" name="tableWidget_4">
                 <property name="styleSheet">
                  <string notr="true"/>
                 </property>
+                <row>
+                 <property name="text">
+                  <string>x</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text">
+                  <string>y</string>
+                 </property>
+                </row>
+                <row>
+                 <property name="text">
+                  <string>z</string>
+                 </property>
+                </row>
                 <column>
                  <property name="text">
                   <string>minValue</string>

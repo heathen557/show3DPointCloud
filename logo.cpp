@@ -159,9 +159,9 @@ Logo::Logo(QObject *parent):
 
 //        m_data.append(0.0);
         GLfloat *p = m_data.data() + m_count;
-        *p++ = 0;
-        *p++ = 0;
-        *p++ = 0;
+        *p++ = 10000;
+        *p++ = 10000;;
+        *p++ = 10000;;
         *p++ = 1.0;
         *p++ = 1.0;
         *p++ = 1.0;
@@ -383,31 +383,31 @@ void Logo::readPCDFile1()
 
 
 
-    double x_min=100,y_min=100,z_min=100;
-    double x_max=0,y_max=0,z_max=0;
+//    double x_min=100,y_min=100,z_min=100;
+//    double x_max=0,y_max=0,z_max=0;
 
-    for(int i=0; i<m_data.size(); i+=6)
-    {
+//    for(int i=0; i<m_data.size(); i+=6)
+//    {
 
-        if(m_data[i]>x_max)
-            x_max = m_data[i];
-        if(m_data[i]<x_min)
-            x_min = m_data[i];
+//        if(m_data[i]>x_max)
+//            x_max = m_data[i];
+//        if(m_data[i]<x_min)
+//            x_min = m_data[i];
 
-        if(m_data[i+1]>y_max)
-            y_max = m_data[1+i];
-        if(m_data[1+i]<y_min)
-            y_min = m_data[i+1];
+//        if(m_data[i+1]>y_max)
+//            y_max = m_data[1+i];
+//        if(m_data[1+i]<y_min)
+//            y_min = m_data[i+1];
 
-        if(m_data[i+2]>z_max)
-            z_max = m_data[i];
-        if(m_data[i+2]<z_min)
-            z_min = m_data[i+2];
-    }
+//        if(m_data[i+2]>z_max)
+//            z_max = m_data[i];
+//        if(m_data[i+2]<z_min)
+//            z_min = m_data[i+2];
+//    }
 
-    qDebug()<<"x_max="<<x_max<<"  x_min="<<x_min<<endl;
-    qDebug()<<"y_max="<<y_max<<"  y_min="<<y_min<<endl;
-    qDebug()<<"z_max="<<z_max<<"  z_min="<<z_min<<endl;
+//    qDebug()<<"x_max="<<x_max<<"  x_min="<<x_min<<endl;
+//    qDebug()<<"y_max="<<y_max<<"  y_min="<<y_min<<endl;
+//    qDebug()<<"z_max="<<z_max<<"  z_min="<<z_min<<endl;
 }
 
 

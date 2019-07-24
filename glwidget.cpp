@@ -82,7 +82,7 @@ GLWidget::GLWidget(QWidget *parent)
     m_core = true;
 
     connect(&readFileTimer,SIGNAL(timeout()),this,SLOT(readFileSlot()));
-    readFileTimer.start(100);
+//    readFileTimer.start(100);
 
     m_scale = 0.0;
     translate_x = 0;
@@ -499,7 +499,7 @@ void GLWidget::resizeGL(int w, int h)
     m_proj.setToIdentity();
     //    m_proj.perspective(45.0f, GLfloat(w) / h, 0.01f, 100.0f);
 
-    m_proj.perspective(60.0f, GLfloat(w) / h, 0.1f, 1000.0f);
+    m_proj.perspective(45.0f, GLfloat(w) / h, 0.1f, 1000.0f);
 
     //gluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
 

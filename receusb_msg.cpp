@@ -50229,6 +50229,7 @@ ReceUSB_Msg::ReceUSB_Msg(QObject *parent) : QObject(parent),
     tempcloud_RGB.points.resize(tempcloud_RGB.width);
 
     LSB = 0.015; //时钟频率
+    isFirstLink = true;
 
 }
 
@@ -50311,94 +50312,16 @@ void ReceUSB_Msg::closeUSB()
 {
     if(devHandle)
     {
+        readTimer->stop();   //先关闭数据接收
         devOpenFlg = false;
 //        UsbListener::quit();
         int ret = usb_close(devHandle); // Exit Thread
         qDebug() << "Close USB Device [" << ret << "]";
+        devHandle = NULL;
+        isFirstLink = false;   //以后就不是第一次连接了
     }
 
 }
-
-//测试按钮
-void ReceUSB_Msg::on_pushButton_clicked()
-{
-    usb_init();                                  /* initialize the library */
-
-    int numBus = usb_find_busses();              /* find all busses */
-    qDebug()<<"thread NUMbUS = "<<numBus<<endl;
-
-    int numDevs = usb_find_devices();           /* find all connected devices */
-    qDebug()<<"numDevs = "<<numDevs<<endl;
-
-    if(numBus<=0 || numDevs<=0)
-    {
-        emit linkInfoSignal(1);
-        return;
-    }
-
-    dev = findUSBDev(0,0);                      //查找usb设备
-    openUSB(dev);                               //打开USB设备
-
-
-
-
-
-
-
-
-
-    QString array;
-    //系统注册 读取  0x13 = 19,array返回值
-//    bool res = System_Register_Read(19,array);
-
-    bool res = System_Register_Read(19,array);
-    qDebug()<<"[R]sys Read array="<<array<<"   res="<<res<<endl;
-    //系统注册 写入测试
-
-/**********************测试STR2******************************************/
-    // 1、 0x11= 17  0x41=65
-    QString str2 = "41 01 00";
-    res = System_Register_Write(17,str2.mid(0,2));
-    qDebug()<<"[w]sys write str2="<<str2.mid(0,2)<<"   res="<<res<<endl;
-
-    // 0x12 = 18
-    res = System_Register_Write(18,str2.mid(3,2));
-    qDebug()<<"[w]sys write str2="<<str2.mid(3,2)<<"   res="<<res<<endl;
-
-    //0xe2 = 226
-    res = System_Register_Write(226,str2.mid(6,2));
-    qDebug()<<"[w]sys write str2="<<str2.mid(6,2)<<"   res="<<res<<endl;
-
-    //0x13 = 19
-    res = System_Register_Read(19,array);
-    qDebug()<<"[R]sys Read array="<<array<<"   res="<<res<<endl;
-
-
-/************************测试STR3********************************************/
-    QString str3 = "00 00 26 0A 00 64 00 14 00 01 00 00";   //len = 12
-
-    //起始位置从32 开始
-    for(int i=0 ; i<12; i++)
-    {
-        res = System_Register_Write(32+i, str3.mid(i*3,2));
-        qDebug()<<"[w]sys write str3="<<str3.mid(i*3,2)<<"   res="<<res<<endl;
-    }
-
-
-/*************************测试STR1******************************************************/
-    QString str1 = "00 44 1F 44 45 44 EE 02 64 11 22 44 88 88 44 22 11 03 40 00 1F E0 81 4A 84 08 00 00 CC 01 00 00 00 00 00 00 00 0A 06 06 06 06 06 34 FF FF FF FF 04 1E";
-    //0xd8 = 216,
-    for(int k=0; k<50; k++)
-    {
-        res = Device_Register_Write(216,k,str1.mid(3*k,2));
-        qDebug()<<"[w]Device write str1="<<str1.mid(3*k,2)<<"   res="<<res<<endl;
-    }
-
-
-/************************开始接受数据****************************************************/
-    readTimer->start(1);
-}
-
 
 
 
@@ -50608,15 +50531,138 @@ void ReceUSB_Msg::read_usb()
     }
 }
 
-
+//接收主函数信号，开启连接
 void ReceUSB_Msg::run()
 {
     readTimer = new QTimer();
     connect(readTimer, SIGNAL(timeout()),this,SLOT(read_usb()));
-
-    on_pushButton_clicked();
+    openLinkDevSlot();
 
 }
+
+//打开设备连接
+void ReceUSB_Msg::openLinkDevSlot()
+{
+    usb_init();                                  /* initialize the library */
+
+
+    //下面代码屏蔽，重新打开时会查询不到设备
+    int numBus = usb_find_busses();              /* find all busses */
+    qDebug()<<"thread NUMbUS = "<<numBus<<endl;
+
+    int numDevs = usb_find_devices();           /* find all connected devices */
+    qDebug()<<"numDevs = "<<numDevs<<endl;
+
+    if(isFirstLink)
+    {
+        if(numBus <= 0 || numDevs<=0)
+        {
+            emit linkInfoSignal(1);                //没有发现设备
+            return;
+        }
+    }
+
+
+    dev = findUSBDev(0,0);                      //查找usb设备
+    if(true ==openUSB(dev))                               //打开USB设备
+    {
+        emit linkInfoSignal(0);                //打开设备成功
+    }else{
+        emit linkInfoSignal(3);                //打开设备失败
+    }
+
+}
+
+
+//读取系统寄存器槽函数
+void ReceUSB_Msg::readSysSlot()
+{
+    QString array;
+    //系统注册 读取  0x13 = 19,array返回值
+//    bool res = System_Register_Read(19,array);
+
+    bool res = System_Register_Read(19,array);
+    qDebug()<<"[R]sys Read array="<<array<<"   res="<<res<<endl;
+    //系统注册 写入测试
+    qDebug()<<" the data =  "<<array.toInt(NULL,16)<<endl;
+
+
+}
+
+//写入系统寄存器槽函数
+void ReceUSB_Msg::writeSysSlot()
+{
+
+}
+
+//读取设备寄存器槽函数
+void ReceUSB_Msg::readDevSlot()
+{
+
+}
+
+//写入设备寄存器槽函数
+void ReceUSB_Msg::writeDevSlot()
+{
+
+}
+
+//加载配置集槽函数
+void ReceUSB_Msg::loadSettingSlot()
+{
+    bool res = true;
+    QString array;
+    /**********************测试STR2******************************************/
+    // 1、 0x11= 17  0x41=65
+    QString str2 = "41 01 00";
+    res = System_Register_Write(17,str2.mid(0,2));
+    qDebug()<<"[w]sys write str2="<<str2.mid(0,2)<<"   res="<<res<<endl;
+
+    // 0x12 = 18
+    res = System_Register_Write(18,str2.mid(3,2));
+    qDebug()<<"[w]sys write str2="<<str2.mid(3,2)<<"   res="<<res<<endl;
+
+    //0xe2 = 226
+    res = System_Register_Write(226,str2.mid(6,2));
+    qDebug()<<"[w]sys write str2="<<str2.mid(6,2)<<"   res="<<res<<endl;
+
+    //0x13 = 19
+    res = System_Register_Read(19,array);
+    qDebug()<<"[R]sys Read array="<<array<<"   res="<<res<<endl;
+
+
+    /************************测试STR3********************************************/
+    QString str3 = "00 00 26 0A 00 64 00 14 00 01 00 00";   //len = 12
+
+    //起始位置从32 开始
+    for(int i=0 ; i<12; i++)
+    {
+        res = System_Register_Write(32+i, str3.mid(i*3,2));
+        qDebug()<<"[w]sys write str3="<<str3.mid(i*3,2)<<"   res="<<res<<endl;
+    }
+
+
+    /*************************测试STR1******************************************************/
+    QString str1 = "00 44 1F 44 45 44 EE 02 64 11 22 44 88 88 44 22 11 03 40 00 1F E0 81 4A 84 08 00 00 CC 01 00 00 00 00 00 00 00 0A 06 06 06 06 06 34 FF FF FF FF 04 1E";
+    //0xd8 = 216,
+    for(int k=0; k<50; k++)
+    {
+        res = Device_Register_Write(216,k,str1.mid(3*k,2));
+        qDebug()<<"[w]Device write str1="<<str1.mid(3*k,2)<<"   res="<<res<<endl;
+    }
+
+    /************************开始接受数据****************************************************/
+    readTimer->start(1);
+}
+
+//保存配置集槽函数
+void ReceUSB_Msg::saveSettingSlot()
+{
+
+}
+
+
+
 
 
 

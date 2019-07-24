@@ -22,7 +22,6 @@ public:
 
     bool openUSB(struct usb_device *dev);
 
-    void closeUSB();
 
     bool System_Register_Read(int Address, QString &Data);
 
@@ -50,16 +49,24 @@ public:
     int cloudIndex;
 
     float  LSB ; //时钟频率
+    bool isFirstLink;   //因为USB驱动存在问题，故设次函数
 
 
 signals:
-    void linkInfoSignal(int );      //向主线程发送链接信息（错误警告） 1没找到设备
+    void linkInfoSignal(int );      //向主线程发送链接信息（错误警告） 0：连接正常 1没找到设备  2:没有接收到数据  3打开设备失败
 
 public slots:
     void read_usb();                 //读取USB内容的槽函数
-    void on_pushButton_clicked();
+    void openLinkDevSlot();          //打开设备连接的槽函数
     void run();
+    void closeUSB();
 
+    void readSysSlot();
+    void writeSysSlot();
+    void readDevSlot();
+    void writeDevSlot();
+    void loadSettingSlot();
+    void saveSettingSlot();
 };
 
 #endif // RECEUSB_MSG_H
