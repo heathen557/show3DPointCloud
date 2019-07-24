@@ -50231,6 +50231,17 @@ ReceUSB_Msg::ReceUSB_Msg(QObject *parent) : QObject(parent),
     LSB = 0.015; //时钟频率
     isFirstLink = true;
 
+    tofMin = 10000;
+    tofMax = -10000;
+    peakMin = 10000;
+    peakMax = -10000;
+    xMin = 10000;
+    xMax = -10000;
+    yMin = 10000;
+    yMax = -10000;
+    zMin = 10000;
+    zMax = -10000;
+
 }
 
 //查找是不是存在想要链接的USB设备
@@ -50360,6 +50371,7 @@ bool ReceUSB_Msg::System_Register_Write(int Address, QString &Data)
     Cmd.wLength = 0x0001;
     data[0] = Data.toInt(NULL,16);    //need modify
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+
     return res;
 }
 
@@ -50447,7 +50459,7 @@ void ReceUSB_Msg::read_usb()
     char MyBuffer[4096];
 
     //批量读(同步)
-    ret = usb_bulk_read(devHandle, 129, MyBuffer, sizeof(MyBuffer), 3000);       //此处延迟设置为300，经过测试设置为1的时候，ret<0,程序报错退出
+    ret = usb_bulk_read(devHandle, 129, MyBuffer, sizeof(MyBuffer), 3000);       //此处延迟设置为3000，经过测试设置为1的时候，ret<0,程序报错退出
 
     if (ret < 0) {
         qDebug("**************************************************error reading:%s", usb_strerror());
@@ -50472,10 +50484,21 @@ void ReceUSB_Msg::read_usb()
            pcl::copyPointCloud(tempcloud_RGB,cloudColor_RGB);
            mutex.unlock();
            isShowPointCloud = true;
-        }
 
-//        int line_offset = spadNum % 4;
-//        int row_offset = spadNum /4;
+
+           emit staticValueSignal(tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax);
+           //重置变量
+           tofMin = 10000;
+           tofMax = -10000;
+           peakMin = 10000;
+           peakMax = -10000;
+           xMin = 10000;
+           xMax = -10000;
+           yMin = 10000;
+           yMax = -10000;
+           zMin = 10000;
+           zMax = -10000;
+        }
 
         int line_offset = spadNum / 2;
         int row_offset = (spadNum + 1) % 2;      //表示是在第一行 还是在第二行
@@ -50512,14 +50535,38 @@ void ReceUSB_Msg::read_usb()
                     microQimage.setPixel(imgRow,imgCol,tofColor);         //TOF图像的赋值
                     macroQimage.setPixel(imgRow,imgCol,intenColor);       //强度图像的赋值
 
-                    tempcloud_XYZI.points[cloudIndex].x = tof * x_Weight[cloudIndex] * LSB;
-                    tempcloud_XYZI.points[cloudIndex].y = tof * y_Weight[cloudIndex] * LSB;
-                    tempcloud_XYZI.points[cloudIndex].z = tof * z_Weight[cloudIndex] * LSB;
+                    //获取三维坐标
+                    temp_x = tof * x_Weight[cloudIndex] * LSB;
+                    temp_y = tof * y_Weight[cloudIndex] * LSB;
+                    temp_z = tof * z_Weight[cloudIndex] * LSB;
 
+                    tempcloud_XYZI.points[cloudIndex].x = temp_x;
+                    tempcloud_XYZI.points[cloudIndex].y = temp_y;
+                    tempcloud_XYZI.points[cloudIndex].z = temp_z;
+
+                    //点云颜色
                     QColor mColor = QColor(tofColor);
                     tempcloud_RGB.points[cloudIndex].x = mColor.red()/255.0;
                     tempcloud_RGB.points[cloudIndex].y = mColor.green()/255.0;
                     tempcloud_RGB.points[cloudIndex].z = mColor.blue()/255.0;
+
+
+                    //统计点云空间坐标最大值、最小值
+                    xMax = (temp_x>xMax) ? temp_x : xMax;
+                    xMin = (temp_x<xMin) ? temp_x : xMin;
+                    yMax = (temp_y>yMax) ? temp_y : yMax;
+                    yMin = (temp_y<yMin) ? temp_y : yMin;
+                    zMax = (temp_z>zMax) ? temp_z : zMax;
+                    zMin = (temp_z<zMin) ? temp_z : zMin;
+
+                    //统计二维图像
+                    tofMax = (tof>tofMax) ? tof : tofMax;
+                    tofMin = (tof<tofMin) ? tof : tofMin;
+                    peakMax = (intensity>peakMax) ? intensity : peakMax;
+                    peakMin = (intensity<peakMin) ? intensity : peakMin;
+
+
+
 
                 }
             else
@@ -50587,6 +50634,14 @@ void ReceUSB_Msg::readSysSlot()
     qDebug()<<" the data =  "<<array.toInt(NULL,16)<<endl;
 
 
+    if(res)
+    {
+       emit linkInfoSignal(4);
+    }else
+    {
+       emit linkInfoSignal(5);
+    }
+
 }
 
 //写入系统寄存器槽函数
@@ -50649,6 +50704,14 @@ void ReceUSB_Msg::loadSettingSlot()
     {
         res = Device_Register_Write(216,k,str1.mid(3*k,2));
         qDebug()<<"[w]Device write str1="<<str1.mid(3*k,2)<<"   res="<<res<<endl;
+    }
+
+    if(res)
+    {
+       emit linkInfoSignal(8);
+    }else
+    {
+       emit linkInfoSignal(9);
     }
 
     /************************开始接受数据****************************************************/

@@ -28,12 +28,12 @@ public:
     ReceUSB_Msg *recvUsbMsg_obj;
     QThread *recvUsbThread;
 
-    QTableWidgetItem tofMInItem_value;
+    QTableWidgetItem tofMinItem_value;
     QTableWidgetItem tofMaxItem_value;
-    QTableWidgetItem peakMInItem_value;
+    QTableWidgetItem peakMinItem_value;
     QTableWidgetItem peakMaxItem_value;
 
-    QTableWidgetItem xMInItem_value;
+    QTableWidgetItem xMinItem_value;
     QTableWidgetItem xMaxItem_value;
     QTableWidgetItem yMinItem_value;
     QTableWidgetItem yMaxItem_value;
@@ -61,6 +61,8 @@ private slots:
     void on_loadSetting_pushButton_clicked();
 
     void on_saveSetting_pushButton_clicked();
+
+    void recvStaticValueSlot(float tofMin,float tofMax,float peakMin,float peakMax,float xMin,float xMax,float yMin,float yMax,float zMin,float zMax);
 
 private:
     Ui::MainWindow *ui;
