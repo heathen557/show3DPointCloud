@@ -525,13 +525,9 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if(event->button() & Qt::MidButton)
     {
-        qDebug()<<"mid_x = "<<event->x()-m_lastPos.x()<<"  mid_y="<<event->y()-m_lastPos.y()<<endl;
-
-        translate_x = (event->x() - m_lastPos.x())/1000.0;
-        translate_y = -(event->y() - m_lastPos.y())/800.0;
-
-
-
+        translate_x = (event->x() - m_lastPos.x())/50.0;
+        translate_y = -(event->y() - m_lastPos.y())/30.0;
+        qDebug()<<"translate_x = "<<translate_x<<"  translate_y="<<translate_y<<endl;
     }
 }
 

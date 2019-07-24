@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
 
     isWriteSuccess = false;
+    framePerSecond = 0;   //统计帧率，初始化为0
 
     //把读取USB信息放到线程当中，并开启线程
     recvUsbMsg_obj = new ReceUSB_Msg();
@@ -36,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     connect(&showTimer,SIGNAL(timeout()),this,SLOT(showImageSlot()));
+    connect(&oneSecondTimer,SIGNAL(timeout()),this,SLOT(oneSecondSlot()));
 
     initGUI();
 }
@@ -192,20 +194,21 @@ void MainWindow::linkInfoSlot(int flagNum)
     ui->textEdit->append(str);
 }
 
+//没接收到一帧会进入一次，故可以统计 帧率
 void MainWindow::recvStaticValueSlot(float tofMin,float tofMax,float peakMin,float peakMax,float xMin,float xMax,float yMin,float yMax,float zMin,float zMax)
 {
+     framePerSecond++;
+     tofMin_ = tofMin;
+     tofMax_ = tofMax;
+     peakMin_ = peakMin;
+     peakMax_ = peakMax;
+     xMin_ = xMin;
+     xMax_ = xMax;
+     yMin_ = yMin;
+     yMax_ = yMax;
+     zMin_ = zMin;
+     zMax_ = zMax;
 
-    tofMinItem_value.setText(QString::number(tofMin));
-    tofMaxItem_value.setText(QString::number(tofMax));
-    peakMinItem_value.setText(QString::number(peakMin));
-    peakMaxItem_value.setText(QString::number(peakMax));
-
-    xMinItem_value.setText(QString::number(xMin));
-    xMaxItem_value.setText(QString::number(xMax));
-    yMinItem_value.setText(QString::number(yMin));
-    yMaxItem_value.setText(QString::number(yMax));
-    zMinItem_value.setText(QString::number(zMin));
-    zMaxItem_value.setText(QString::number(zMax));
 
 
 }
@@ -220,10 +223,12 @@ void MainWindow::on_pushButton_clicked()
 {
     if(ui->pushButton->text() == "连接设备")
     {
+
         emit readSignal();
 
     }else if(ui->pushButton->text() == "关闭连接")
     {
+//        oneSecondTimer.stop();
         emit closeLinkSignal();
         ui->pushButton->setText("连接设备");
     }
@@ -240,6 +245,7 @@ void MainWindow::on_pushButton_2_clicked()
         {
             showTimer.start(50);
             ui->widget->readFileTimer.start(100);
+            oneSecondTimer.start(1000);
 
 
 //            QString tempstr = "数据接收正常,并开始播放.";
@@ -301,4 +307,23 @@ void MainWindow::on_loadSetting_pushButton_clicked()
 void MainWindow::on_saveSetting_pushButton_clicked()
 {
     emit saveSettingSignal();
+}
+
+void MainWindow::oneSecondSlot()
+{
+//   qDebug()<<"帧率 = "<<framePerSecond<<endl;
+   framePerSecond = 0;
+
+
+   tofMinItem_value.setText(QString::number(tofMin_));
+   tofMaxItem_value.setText(QString::number(tofMax_));
+   peakMinItem_value.setText(QString::number(peakMin_));
+   peakMaxItem_value.setText(QString::number(peakMax_));
+
+   xMinItem_value.setText(QString::number(xMin_));
+   xMaxItem_value.setText(QString::number(xMax_));
+   yMinItem_value.setText(QString::number(yMin_));
+   yMaxItem_value.setText(QString::number(yMax_));
+   zMinItem_value.setText(QString::number(zMin_));
+   zMaxItem_value.setText(QString::number(zMax_));
 }

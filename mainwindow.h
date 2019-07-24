@@ -24,6 +24,7 @@ public:
     ~MainWindow();
 
     QTimer showTimer;
+    QTimer oneSecondTimer;
 
     ReceUSB_Msg *recvUsbMsg_obj;
     QThread *recvUsbThread;
@@ -39,6 +40,10 @@ public:
     QTableWidgetItem yMaxItem_value;
     QTableWidgetItem zMinItem_value;
     QTableWidgetItem zMaxItem_value;
+
+    int framePerSecond;
+    float tofMin_,tofMax_,peakMin_,peakMax_,xMin_,xMax_,yMin_,yMax_,zMin_,zMax_;
+
 
 
 
@@ -63,6 +68,8 @@ private slots:
     void on_saveSetting_pushButton_clicked();
 
     void recvStaticValueSlot(float tofMin,float tofMax,float peakMin,float peakMax,float xMin,float xMax,float yMin,float yMax,float zMin,float zMax);
+
+    void oneSecondSlot();   //每秒的槽函数
 
 private:
     Ui::MainWindow *ui;
