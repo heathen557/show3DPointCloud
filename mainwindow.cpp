@@ -129,7 +129,7 @@ void MainWindow::linkInfoSlot(int flagNum)
     switch (flagNum) {
     case 0:
         tempStr = "设备连接成功";
-        tempStr.append("              ");
+        tempStr.append("                   ");
         ui->pushButton->setText("关闭连接");
         break;
     case 1:

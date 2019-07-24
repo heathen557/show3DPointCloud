@@ -44,8 +44,9 @@ public:
     QImage macroQimage;
     int lastSpadNum;
 
-    pcl::PointCloud<pcl::PointXYZI> tempcloud_XYZI;
-    pcl::PointCloud<pcl::PointXYZ>  tempcloud_RGB;
+    pcl::PointCloud<pcl::PointXYZRGB> tempRgbCloud;
+//    pcl::PointCloud<pcl::PointXYZI> tempcloud_XYZI;
+//    pcl::PointCloud<pcl::PointXYZ>  tempcloud_RGB;
     int cloudIndex;
 
     float  LSB ; //时钟频率
@@ -54,6 +55,7 @@ public:
     float tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax;
     float temp_x,temp_y,temp_z;
 
+    int r,g,b,rgb;
 
 
 

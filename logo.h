@@ -140,11 +140,11 @@ public:
 
     int m_count;
     int index;
-    pcl::PointCloud<pcl::PointXYZI> needDealCloud;   //传过来用于滤波显示的处理，通过互斥锁传递过来
+    int nr,ng,nb,nrgb;
 
-    pcl::PointCloud<pcl::PointXYZI> DealedCloud;   //滤波处理以后的数据
 
-    pcl::PointCloud<pcl::PointXYZ> PointCloud_RGB;
+    pcl::PointCloud<pcl::PointXYZRGB> needDealCloud_rgb;
+    pcl::PointCloud<pcl::PointXYZRGB> DealedCloud_rgb;
 
 
 private slots:

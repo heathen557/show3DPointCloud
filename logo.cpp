@@ -103,8 +103,7 @@
 //#include<QTime>
 
 
-pcl::PointCloud<pcl::PointXYZI> cloud;
-pcl::PointCloud<pcl::PointXYZ> cloudColor_RGB;
+pcl::PointCloud<pcl::PointXYZRGB> pointCloudRgb;
 bool  isShowPointCloud;
 extern QMutex mutex;
 
@@ -133,26 +132,6 @@ Logo::Logo(QObject *parent):
     m_count = 0;
     isShowPointCloud = false;
 
-//    const GLfloat x1 = +0.0f;
-//    const GLfloat y1 = -0.0f;
-//    const GLfloat x2 = +0.0f;
-//    const GLfloat y2 = -0.0f;
-//    const GLfloat x3 = +0.0f;
-//    const GLfloat y3 = +0.0f;
-//    const GLfloat x4 = +0.0f;
-//    const GLfloat y4 = +0.0f;
-
-//    quad(x1, y1, x2, y2, y2, x2, y1, x1);
-//    quad(x3, y3, x4, y4, y4, x4, y3, x3);
-
-//    extrude(x1, y1, x2, y2);
-//    extrude(x2, y2, y2, x2);
-//    extrude(y2, x2, y1, x1);
-//    extrude(y1, x1, x1, y1);
-//    extrude(x3, y3, x4, y4);
-//    extrude(x4, y4, y4, x4);
-//    extrude(y4, x4, y3, x3);
-
     const int NumSectors = 10000;
 
     for (int i = 0; i < NumSectors; ++i) {
@@ -167,31 +146,6 @@ Logo::Logo(QObject *parent):
         *p++ = 1.0;
         m_count += 6;
 
-
-
-//        GLfloat angle = (i * 2 * M_PI) / NumSectors;
-//        GLfloat angleSin = qSin(angle);
-//        GLfloat angleCos = qCos(angle);
-
-
-//        const GLfloat x5 = 0.0f * angleSin;
-//        const GLfloat y5 = 0.0f * angleCos;
-//        const GLfloat x6 = 0.0f * angleSin;
-//        const GLfloat y6 = 0.0f * angleCos;
-
-//        angle = ((i + 1) * 2 * M_PI) / NumSectors;
-//        angleSin = qSin(angle);
-//        angleCos = qCos(angle);
-
-
-//        const GLfloat x7 = 0.0f * angleSin;
-//        const GLfloat y7 = 0.0f * angleCos;
-//        const GLfloat x8 = 0.0f * angleSin;
-//        const GLfloat y8 = 0.0f * angleCos;
-
-//        quad(x5, y5, x6, y6, x7, y7, x8, y8);
-//        extrude(x6, y6, x7, y7);
-//        extrude(x8, y8, x5, y5);
     }
 
 //    readPCDFile();
@@ -313,101 +267,46 @@ void Logo::readPCDFile1()
         return;
 
     mutex.lock();
-//    pcl::copyPointCloud(cloud,needDealCloud);
-    pcl::copyPointCloud(cloud,DealedCloud);
-
-    pcl::copyPointCloud(cloudColor_RGB,PointCloud_RGB);
+//    pcl::copyPointCloud(pointCloudRgb,needDealCloud_rgb);
+    pcl::copyPointCloud(pointCloudRgb,DealedCloud_rgb);
     mutex.unlock();
 
 /*
     //  基于统计运算的滤波算法
     QTime t1 = QTime::currentTime();
-//    qDebug()<<"BEGIN = "<< t1.toString("hh:mm:ss.zzz")<<endl;
-    pcl::StatisticalOutlierRemoval<pcl::PointXYZI> sor;
-    sor.setInputCloud(needDealCloud.makeShared());
+    //qDebug()<<"BEGIN = "<< t1.toString("hh:mm:ss.zzz")<<endl;
+    pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
+    sor.setInputCloud(needDealCloud_rgb.makeShared());
     sor.setMeanK(20);
     sor.setStddevMulThresh(0.001);
-    sor.filter(DealedCloud);
+    sor.filter(DealedCloud_rgb);
     t1 = QTime::currentTime();
-//    qDebug()<<"END = "<< t1.toString("hh:mm:ss.zzz")<<endl;
+    //qDebug()<<"END = "<< t1.toString("hh:mm:ss.zzz")<<endl;
 
 */
 
 //    qDebug()<<"the pointCloud num =  "<<DealedCloud.points.size()<<endl;
     int m = 0;
-    for(int n=0; n<DealedCloud.points.size(); n++)
+    for(int n=0; n<DealedCloud_rgb.points.size(); n++)
     {
-        m_data[0+m] = DealedCloud.points[n].x;
-        m_data[1+m] = DealedCloud.points[n].y;
-        m_data[2+m] = DealedCloud.points[n].z;
+        m_data[0+m] = DealedCloud_rgb.points[n].x;
+        m_data[1+m] = DealedCloud_rgb.points[n].y;
+        m_data[2+m] = DealedCloud_rgb.points[n].z;
 
-        m_data[3+m] = PointCloud_RGB.points[n].x;
-        m_data[4+m] = PointCloud_RGB.points[n].y;
-        m_data[5+m] = PointCloud_RGB.points[n].z;
+         nrgb = *reinterpret_cast<int*>(&DealedCloud_rgb.points[n].rgb);
+         nr = (nrgb >> 16) & 0x0000ff;
+         ng = (nrgb >> 8) & 0x0000ff;
+         nb = (nrgb) & 0x0000ff;
 
-//        if(m_data[1+m] <3)
-//        {
-//            m_data[3+m] = 1.0;
-//            m_data[4+m] = 0.0;
-//            m_data[5+m] = 0.0;
+        m_data[3+m] = nr/255.0;
+        m_data[4+m] = ng/225.0;
+        m_data[5+m] = nb/255.0;
 
-//        }else if(m_data[1+m]>3 && m_data[1+m]<6)
-//        {
-//            m_data[3+m] = 0.0;
-//            m_data[4+m] = 1.0;
-//            m_data[5+m] = 0.0;
-//        }else if(m_data[1+m]>6)
-//        {
-//            m_data[3+m] = 0.0;
-//            m_data[4+m] = 0.0;
-//            m_data[5+m] = 1.0;
-//        }
-
-
-//        if(0 == n%5)
-//        {
-//            m_data[3+m] =1.0;
-//            m_data[4+m] = 0.0;
-//        }
-//         else
-//        {
-//            m_data[3+m] =0.0;
-//            m_data[4+m] = 1.0;
-//        }
-
-//        m_data[5+m] = 0.0;
 
         m += 6;
     }
     m_data.resize(m);
 
-
-
-//    double x_min=100,y_min=100,z_min=100;
-//    double x_max=0,y_max=0,z_max=0;
-
-//    for(int i=0; i<m_data.size(); i+=6)
-//    {
-
-//        if(m_data[i]>x_max)
-//            x_max = m_data[i];
-//        if(m_data[i]<x_min)
-//            x_min = m_data[i];
-
-//        if(m_data[i+1]>y_max)
-//            y_max = m_data[1+i];
-//        if(m_data[1+i]<y_min)
-//            y_min = m_data[i+1];
-
-//        if(m_data[i+2]>z_max)
-//            z_max = m_data[i];
-//        if(m_data[i+2]<z_min)
-//            z_min = m_data[i+2];
-//    }
-
-//    qDebug()<<"x_max="<<x_max<<"  x_min="<<x_min<<endl;
-//    qDebug()<<"y_max="<<y_max<<"  y_min="<<y_min<<endl;
-//    qDebug()<<"z_max="<<z_max<<"  z_min="<<z_min<<endl;
 }
 
 

@@ -8,8 +8,8 @@
 extern QMutex mutex;
 extern QImage tofImage;
 extern QImage intensityImage;
-extern pcl::PointCloud<pcl::PointXYZI> cloud;
-extern pcl::PointCloud<pcl::PointXYZ> cloudColor_RGB;
+
+extern pcl::PointCloud<pcl::PointXYZRGB> pointCloudRgb;
 extern bool isShowPointCloud;
 extern bool isWriteSuccess;    //写入命令是否成功标识
 
@@ -50212,21 +50212,14 @@ float z_Weight[] = {
 ReceUSB_Msg::ReceUSB_Msg(QObject *parent) : QObject(parent),
     microQimage(256,64, QImage::Format_RGB32),macroQimage(256,64, QImage::Format_RGB32)
 {
-    cloud.width = 16384;
-    cloud.height = 1;
-    cloud.points.resize(cloud.width);
 
-    cloudColor_RGB.width = 16384;
-    cloudColor_RGB.height = 1;
-    cloudColor_RGB.resize(cloudColor_RGB.width);
+    pointCloudRgb.width = 16384;
+    pointCloudRgb.height = 1;
+    pointCloudRgb.resize(pointCloudRgb.width);
 
-    tempcloud_XYZI.width = 16384;
-    tempcloud_XYZI.height = 1;
-    tempcloud_XYZI.points.resize(tempcloud_XYZI.width);
-
-    tempcloud_RGB.width = 16384;
-    tempcloud_RGB.height = 1;
-    tempcloud_RGB.points.resize(tempcloud_RGB.width);
+    tempRgbCloud.width = 16384;
+    tempRgbCloud.height = 1 ;
+    tempRgbCloud.points.resize(tempRgbCloud.width);
 
     LSB = 0.015; //时钟频率
     isFirstLink = true;
@@ -50480,8 +50473,10 @@ void ReceUSB_Msg::read_usb()
            mutex.lock();
            tofImage = microQimage;
            intensityImage = macroQimage;
-           pcl::copyPointCloud(tempcloud_XYZI,cloud);
-           pcl::copyPointCloud(tempcloud_RGB,cloudColor_RGB);
+//           pcl::copyPointCloud(tempcloud_XYZI,cloud);
+//           pcl::copyPointCloud(tempcloud_RGB,cloudColor_RGB);
+
+           pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
            mutex.unlock();
            isShowPointCloud = true;
 
@@ -50516,7 +50511,6 @@ void ReceUSB_Msg::read_usb()
             else
                 tofColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
 
-
             if(intensity<1024 && intensity>=0)
                 intenColor = qRgb(colormap[intensity * 3], colormap[intensity * 3 + 1], colormap[intensity * 3 + 2]);
             else
@@ -50540,15 +50534,26 @@ void ReceUSB_Msg::read_usb()
                     temp_y = tof * y_Weight[cloudIndex] * LSB;
                     temp_z = tof * z_Weight[cloudIndex] * LSB;
 
-                    tempcloud_XYZI.points[cloudIndex].x = temp_x;
-                    tempcloud_XYZI.points[cloudIndex].y = temp_y;
-                    tempcloud_XYZI.points[cloudIndex].z = temp_z;
+//                    tempcloud_XYZI.points[cloudIndex].x = temp_x;
+//                    tempcloud_XYZI.points[cloudIndex].y = temp_y;
+//                    tempcloud_XYZI.points[cloudIndex].z = temp_z;
 
-                    //点云颜色
+//                    //点云颜色
                     QColor mColor = QColor(tofColor);
-                    tempcloud_RGB.points[cloudIndex].x = mColor.red()/255.0;
-                    tempcloud_RGB.points[cloudIndex].y = mColor.green()/255.0;
-                    tempcloud_RGB.points[cloudIndex].z = mColor.blue()/255.0;
+//                    tempcloud_RGB.points[cloudIndex].x = mColor.red()/255.0;
+//                    tempcloud_RGB.points[cloudIndex].y = mColor.green()/255.0;
+//                    tempcloud_RGB.points[cloudIndex].z = mColor.blue()/255.0;
+
+                    r = mColor.red();
+                    g = mColor.green();
+                    b = mColor.blue();
+                    rgb = ((int)r << 16 | (int)g << 8 | (int)b);
+
+                    tempRgbCloud.points[cloudIndex].x = temp_x;
+                    tempRgbCloud.points[cloudIndex].y = temp_y;
+                    tempRgbCloud.points[cloudIndex].z = temp_z;
+                    tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb); ;
+
 
 
                     //统计点云空间坐标最大值、最小值
@@ -50564,8 +50569,6 @@ void ReceUSB_Msg::read_usb()
                     tofMin = (tof<tofMin) ? tof : tofMin;
                     peakMax = (intensity>peakMax) ? intensity : peakMax;
                     peakMin = (intensity<peakMin) ? intensity : peakMin;
-
-
 
 
                 }
