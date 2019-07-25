@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include <QScrollBar>
+#include<QToolTip>
 QMutex mutex;
 QImage tofImage;
 QImage intensityImage;
@@ -38,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&showTimer,SIGNAL(timeout()),this,SLOT(showImageSlot()));
     connect(&oneSecondTimer,SIGNAL(timeout()),this,SLOT(oneSecondSlot()));
+    connect(ui->showTOF_label,SIGNAL(queryPixSignal(int,int)),this,SLOT(queryPixSlot(int,int)));
+    connect(ui->showIntensity_label,SIGNAL(queryPixSignal(int,int)),this,SLOT(queryPixSlot(int,int)));
 
     initGUI();
 }
@@ -96,13 +99,12 @@ void MainWindow::showImageSlot()
     if(!isShowPointCloud)
         return;
 
-    QImage resImage;
-    QImage resIntenImage;
+
     if(!tofImage.isNull() && !intensityImage.isNull())
     {
         mutex.lock();
-        resImage = tofImage.scaled(tofImage.width()*3, tofImage.height()*5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        resIntenImage = intensityImage.scaled(intensityImage.width()*3, intensityImage.height()*5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        resImage = tofImage.scaled(tofImage.width()*1.5, tofImage.height()*3.5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        resIntenImage = intensityImage.scaled(intensityImage.width()*1.5, intensityImage.height()*3.5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         mutex.unlock();
 
         QPixmap pixmap2(QPixmap::fromImage (resImage));
@@ -338,4 +340,16 @@ void MainWindow::oneSecondSlot()
    yMaxItem_value.setText(QString::number(yMax_));
    zMinItem_value.setText(QString::number(zMin_));
    zMaxItem_value.setText(QString::number(zMax_));
+}
+
+
+//鼠标停靠处显示TOF 和 peak信息
+void MainWindow::queryPixSlot(int x,int y)
+{
+     QColor color =  resIntenImage.pixelColor(x,y);
+    qDebug()<<"r="<<color.red()<<"  g="<<color.green()<<" b="<<color.blue()<<endl;
+
+    QString str = "r=255 , g=46, b=189";
+     QToolTip::showText(QCursor::pos(),str);
+     qDebug()<<"x="<<x<<"  y="<<y<<endl;
 }

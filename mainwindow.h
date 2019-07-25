@@ -44,7 +44,8 @@ public:
     int framePerSecond;
     float tofMin_,tofMax_,peakMin_,peakMax_,xMin_,xMax_,yMin_,yMax_,zMin_,zMax_;
 
-
+    QImage resImage;         //用来显示缩放后的tof图像
+    QImage resIntenImage;    //用来显示缩放后的intensity图像
 
 
 private slots:
@@ -70,6 +71,8 @@ private slots:
     void recvStaticValueSlot(float tofMin,float tofMax,float peakMin,float peakMax,float xMin,float xMax,float yMin,float yMax,float zMin,float zMax);
 
     void oneSecondSlot();   //每秒的槽函数
+
+    void queryPixSlot(int x, int y);     //接收label空间坐标的槽函数
 
 private:
     Ui::MainWindow *ui;

@@ -32,7 +32,8 @@
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
-#include <glwidget.h>
+#include "glwidget.h"
+#include "mylabel.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -49,10 +50,10 @@ public:
     QVBoxLayout *verticalLayout;
     QGroupBox *groupBox;
     QGridLayout *gridLayout_3;
-    QLabel *showTOF_label;
+    myLabel *showTOF_label;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_4;
-    QLabel *showIntensity_label;
+    myLabel *showIntensity_label;
     QFrame *frame_3;
     QGridLayout *gridLayout_5;
     QGroupBox *groupBox_3;
@@ -164,7 +165,7 @@ public:
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         frame = new QFrame(frame_4);
         frame->setObjectName(QStringLiteral("frame"));
-        frame->setMaximumSize(QSize(400, 523));
+        frame->setMaximumSize(QSize(420, 523));
         frame->setStyleSheet(QStringLiteral(""));
         frame->setFrameShape(QFrame::StyledPanel);
         frame->setFrameShadow(QFrame::Raised);
@@ -183,11 +184,12 @@ public:
         gridLayout_3->setSpacing(6);
         gridLayout_3->setContentsMargins(11, 11, 11, 11);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
-        showTOF_label = new QLabel(groupBox);
+        gridLayout_3->setContentsMargins(-1, 2, -1, -1);
+        showTOF_label = new myLabel(groupBox);
         showTOF_label->setObjectName(QStringLiteral("showTOF_label"));
-        showTOF_label->setMinimumSize(QSize(367, 219));
-        showTOF_label->setStyleSheet(QLatin1String("border:1px solid black;\n"
-"background-color: rgb(0, 0, 0);"));
+        showTOF_label->setMinimumSize(QSize(384, 224));
+        showTOF_label->setMaximumSize(QSize(384, 224));
+        showTOF_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
 
         gridLayout_3->addWidget(showTOF_label, 0, 0, 1, 1);
 
@@ -196,17 +198,18 @@ public:
 
         groupBox_2 = new QGroupBox(frame);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
+        groupBox_2->setMinimumSize(QSize(0, 260));
         groupBox_2->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
         gridLayout_4 = new QGridLayout(groupBox_2);
         gridLayout_4->setSpacing(6);
         gridLayout_4->setContentsMargins(11, 11, 11, 11);
         gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
-        showIntensity_label = new QLabel(groupBox_2);
+        gridLayout_4->setContentsMargins(-1, 2, -1, -1);
+        showIntensity_label = new myLabel(groupBox_2);
         showIntensity_label->setObjectName(QStringLiteral("showIntensity_label"));
-        showIntensity_label->setMinimumSize(QSize(367, 219));
-        showIntensity_label->setMaximumSize(QSize(358, 16777215));
-        showIntensity_label->setStyleSheet(QLatin1String("border:1px solid black;\n"
-"background-color: rgb(0, 0, 0);"));
+        showIntensity_label->setMinimumSize(QSize(384, 224));
+        showIntensity_label->setMaximumSize(QSize(384, 224));
+        showIntensity_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
 
         gridLayout_4->addWidget(showIntensity_label, 0, 0, 1, 1);
 
@@ -236,11 +239,11 @@ public:
         gridLayout_6->setSpacing(6);
         gridLayout_6->setContentsMargins(11, 11, 11, 11);
         gridLayout_6->setObjectName(QStringLiteral("gridLayout_6"));
-        gridLayout_6->setContentsMargins(9, 9, -1, -1);
+        gridLayout_6->setContentsMargins(9, 6, -1, -1);
         widget = new GLWidget(groupBox_3);
         widget->setObjectName(QStringLiteral("widget"));
-        widget->setMinimumSize(QSize(0, 0));
-        widget->setMaximumSize(QSize(16777215, 485));
+        widget->setMinimumSize(QSize(0, 490));
+        widget->setMaximumSize(QSize(16777215, 500));
         widget->setStyleSheet(QLatin1String("border:1px solid black;\n"
 "background-color: rgb(0, 0, 0);"));
 

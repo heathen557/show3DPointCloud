@@ -50,7 +50,7 @@ border:1px solid grey;}</string>
           <widget class="QFrame" name="frame">
            <property name="maximumSize">
             <size>
-             <width>400</width>
+             <width>420</width>
              <height>523</height>
             </size>
            </property>
@@ -81,17 +81,25 @@ border:1px solid grey;}</string>
                  <string>TOF图像：</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_3">
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
                  <item row="0" column="0">
-                  <widget class="QLabel" name="showTOF_label">
+                  <widget class="myLabel" name="showTOF_label">
                    <property name="minimumSize">
                     <size>
-                     <width>367</width>
-                     <height>219</height>
+                     <width>384</width>
+                     <height>224</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>384</width>
+                     <height>224</height>
                     </size>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">border:1px solid black;
-background-color: rgb(0, 0, 0);</string>
+                    <string notr="true">background-color: rgb(0, 0, 0);</string>
                    </property>
                    <property name="text">
                     <string/>
@@ -103,6 +111,12 @@ background-color: rgb(0, 0, 0);</string>
               </item>
               <item>
                <widget class="QGroupBox" name="groupBox_2">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>260</height>
+                 </size>
+                </property>
                 <property name="styleSheet">
                  <string notr="true">font:10pt &quot;黑体&quot;;</string>
                 </property>
@@ -110,23 +124,25 @@ background-color: rgb(0, 0, 0);</string>
                  <string>Peak图像：</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_4">
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
                  <item row="0" column="0">
-                  <widget class="QLabel" name="showIntensity_label">
+                  <widget class="myLabel" name="showIntensity_label">
                    <property name="minimumSize">
                     <size>
-                     <width>367</width>
-                     <height>219</height>
+                     <width>384</width>
+                     <height>224</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>358</width>
-                     <height>16777215</height>
+                     <width>384</width>
+                     <height>224</height>
                     </size>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">border:1px solid black;
-background-color: rgb(0, 0, 0);</string>
+                    <string notr="true">background-color: rgb(0, 0, 0);</string>
                    </property>
                    <property name="text">
                     <string/>
@@ -172,20 +188,20 @@ background-color: rgb(0, 0, 0);</string>
                 <number>9</number>
                </property>
                <property name="topMargin">
-                <number>9</number>
+                <number>6</number>
                </property>
                <item row="0" column="0">
                 <widget class="GLWidget" name="widget" native="true">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>0</height>
+                   <height>490</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
-                   <height>485</height>
+                   <height>500</height>
                   </size>
                  </property>
                  <property name="styleSheet">
@@ -745,9 +761,14 @@ background-color: rgb(0, 0, 0);</string>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>myLabel</class>
+   <extends>QLabel</extends>
+   <header>mylabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>GLWidget</class>
    <extends>QWidget</extends>
-   <header location="global">glwidget.h</header>
+   <header>glwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

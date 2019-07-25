@@ -29,7 +29,8 @@ SOURCES += main.cpp\
         logo.cpp \
     globaldata.cpp \
     WriteLog.cpp \
-    receusb_msg.cpp
+    receusb_msg.cpp \
+    mylabel.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
             logo.h \
     globaldata.h \
     WriteLog.h \
-    receusb_msg.h
+    receusb_msg.h \
+    mylabel.h
 
 
 FORMS    += mainwindow.ui
