@@ -209,6 +209,18 @@ void MainWindow::recvStaticValueSlot(float tofMin,float tofMax,float peakMin,flo
      zMin_ = zMin;
      zMax_ = zMax;
 
+//     tofMinItem_value.setText(QString::number(tofMin));
+//     tofMaxItem_value.setText(QString::number(tofMax));
+//     peakMinItem_value.setText(QString::number(peakMin));
+//     peakMaxItem_value.setText(QString::number(peakMax));
+
+//     xMinItem_value.setText(QString::number(xMin));
+//     xMaxItem_value.setText(QString::number(xMax));
+//     yMinItem_value.setText(QString::number(yMin));
+//     yMaxItem_value.setText(QString::number(yMax));
+//     zMinItem_value.setText(QString::number(zMin));
+//     zMaxItem_value.setText(QString::number(zMax));
+
 
 
 }

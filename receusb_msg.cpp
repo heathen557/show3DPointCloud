@@ -50452,7 +50452,9 @@ void ReceUSB_Msg::read_usb()
     char MyBuffer[4096];
 
     //批量读(同步)
-    ret = usb_bulk_read(devHandle, 129, MyBuffer, sizeof(MyBuffer), 3000);       //此处延迟设置为3000，经过测试设置为1的时候，ret<0,程序报错退出
+
+    ret = usb_interrupt_read(devHandle,129,MyBuffer,sizeof(MyBuffer),3000);
+//    ret = usb_bulk_read(devHandle, 129, MyBuffer, sizeof(MyBuffer), 3000);       //此处延迟设置为3000，经过测试设置为1的时候，ret<0,程序报错退出
 
     if (ret < 0) {
         qDebug("**************************************************error reading:%s", usb_strerror());
@@ -50467,7 +50469,7 @@ void ReceUSB_Msg::read_usb()
         int spadNum = MyBuffer[0] + (((ushort)MyBuffer[1]) << 8);
         int line_number = MyBuffer[2] + (((ushort)MyBuffer[3]) << 8);
 //        qDebug()<<"spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
-//        qDebug()<<"spadNum = "<<spadNum<<endl;
+        qDebug()<<"spadNum = "<<spadNum<<endl;
 
         if(spadNum<lastSpadNum && lastSpadNum==7)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
         {
