@@ -12,6 +12,7 @@ extern QImage intensityImage;
 extern pcl::PointCloud<pcl::PointXYZRGB> pointCloudRgb;
 extern bool isShowPointCloud;
 extern bool isWriteSuccess;    //写入命令是否成功标识
+extern bool isRecvFlag;
 
 static float colormap[1024*3]={
          0,  0,129,
@@ -50223,6 +50224,7 @@ ReceUSB_Msg::ReceUSB_Msg(QObject *parent) : QObject(parent),
 
     LSB = 0.015; //时钟频率
     isFirstLink = true;
+    isRecvFlag = false;
 
     tofMin = 10000;
     tofMax = -10000;
@@ -50450,131 +50452,135 @@ void ReceUSB_Msg::read_usb()
 {
     int ret;
     char MyBuffer[4096];
-
     //批量读(同步)
 
-    ret = usb_interrupt_read(devHandle,129,MyBuffer,sizeof(MyBuffer),3000);
-//    ret = usb_bulk_read(devHandle, 129, MyBuffer, sizeof(MyBuffer), 3000);       //此处延迟设置为3000，经过测试设置为1的时候，ret<0,程序报错退出
-
-    if (ret < 0) {
-        qDebug("**************************************************error reading:%s", usb_strerror());
-        emit linkInfoSignal(2);  //  2:没有接收到数据
-        readTimer->stop();
-    }
-
-    if(260 == ret)
+    while(isRecvFlag)
     {
-        isWriteSuccess = true;    //写入命令是否成功标识，成功以后才能点击“显示”按钮操作
-        int imgRow,imgCol;
-        int spadNum = MyBuffer[0] + (((ushort)MyBuffer[1]) << 8);
-        int line_number = MyBuffer[2] + (((ushort)MyBuffer[3]) << 8);
-//        qDebug()<<"spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
-//        qDebug()<<"spadNum = "<<spadNum<<endl;
+        ret = usb_interrupt_read(devHandle,129,MyBuffer,sizeof(MyBuffer),3000);
+    //    ret = usb_bulk_read(devHandle, 129, MyBuffer, sizeof(MyBuffer), 3000);       //此处延迟设置为3000，经过测试设置为1的时候，ret<0,程序报错退出
 
-        if(spadNum<lastSpadNum && lastSpadNum==7)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
-        {
-           mutex.lock();
-           tofImage = microQimage;
-           intensityImage = macroQimage;
-
-           pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
-           mutex.unlock();
-           isShowPointCloud = true;
-
-
-           emit staticValueSignal(tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax);
-           //重置变量
-           tofMin = 10000;
-           tofMax = -10000;
-           peakMin = 10000;
-           peakMax = -10000;
-           xMin = 10000;
-           xMax = -10000;
-           yMin = 10000;
-           yMax = -10000;
-           zMin = 10000;
-           zMax = -10000;
+        if (ret < 0) {
+            qDebug("**************************************************error reading:%s", usb_strerror());
+            emit linkInfoSignal(2);  //  2:没有接收到数据
+            readTimer->stop();
         }
 
-        int line_offset = spadNum / 2;
-        int row_offset = (spadNum + 1) % 2;      //表示是在第一行 还是在第二行
-
-        for(int i=0; i<64; i++)
+        if(260 == ret)
         {
+            isWriteSuccess = true;    //写入命令是否成功标识，成功以后才能点击“显示”按钮操作
+            int imgRow,imgCol;
+            int spadNum = MyBuffer[0] + (((ushort)MyBuffer[1]) << 8);
+            int line_number = MyBuffer[2] + (((ushort)MyBuffer[3]) << 8);
+            qDebug()<<"spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
+    //        qDebug()<<"spadNum = "<<spadNum<<endl;
 
-            int tof = (ushort)((MyBuffer[4 + i * 4]) + (((ushort)MyBuffer[4 + i * 4 + 1]) << 8));
-            int intensity = (ushort)((MyBuffer[4 + i * 4 + 2]) + (((ushort)MyBuffer[4 + i * 4 + 3]) << 8));
+            if(spadNum<lastSpadNum && lastSpadNum==7)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
+            {
+               mutex.lock();
+               tofImage = microQimage;
+               intensityImage = macroQimage;
 
-            //设置TOF图像、强度图像的颜色
-            QRgb tofColor,intenColor;
-            if(tof<1024 && tof>=0)
-                tofColor = qRgb(colormap[tof * 3], colormap[tof * 3 + 1], colormap[tof * 3 + 2]);
-            else
-                tofColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
-
-            if(intensity<1024 && intensity>=0)
-                intenColor = qRgb(colormap[intensity * 3], colormap[intensity * 3 + 1], colormap[intensity * 3 + 2]);
-            else
-                intenColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
-
-
-            //行列以及颜色传递给图像
-            imgRow = i * 4 + line_offset;
-            imgCol = line_number * 2 + row_offset;
-
-//            qDebug()<<"index =="<< imgCol*256+imgRow<<endl;
-           cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
-
-            if(imgRow>=0 && imgRow<256 && imgCol>=0 && imgCol<64)
-                {
-                    microQimage.setPixel(imgRow,imgCol,tofColor);         //TOF图像的赋值
-                    macroQimage.setPixel(imgRow,imgCol,intenColor);       //强度图像的赋值
-
-                    //获取三维坐标
-                    temp_x = tof * x_Weight[cloudIndex] * LSB;
-                    temp_y = tof * y_Weight[cloudIndex] * LSB;
-                    temp_z = tof * z_Weight[cloudIndex] * LSB;
-
-//                    //点云颜色
-                    QColor mColor = QColor(tofColor);
-                    r = mColor.red();
-                    g = mColor.green();
-                    b = mColor.blue();
-                    rgb = ((int)r << 16 | (int)g << 8 | (int)b);
-
-                    tempRgbCloud.points[cloudIndex].x = temp_x;
-                    tempRgbCloud.points[cloudIndex].y = temp_y;
-                    tempRgbCloud.points[cloudIndex].z = temp_z;
-                    tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb); ;
+               pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
+               mutex.unlock();
+               isShowPointCloud = true;
 
 
+               emit staticValueSignal(tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax);
+               //重置变量
+               tofMin = 10000;
+               tofMax = -10000;
+               peakMin = 10000;
+               peakMax = -10000;
+               xMin = 10000;
+               xMax = -10000;
+               yMin = 10000;
+               yMax = -10000;
+               zMin = 10000;
+               zMax = -10000;
+            }
 
-                    //统计点云空间坐标最大值、最小值
-                    xMax = (temp_x>xMax) ? temp_x : xMax;
-                    xMin = (temp_x<xMin) ? temp_x : xMin;
-                    yMax = (temp_y>yMax) ? temp_y : yMax;
-                    yMin = (temp_y<yMin) ? temp_y : yMin;
-                    zMax = (temp_z>zMax) ? temp_z : zMax;
-                    zMin = (temp_z<zMin) ? temp_z : zMin;
+            int line_offset = spadNum / 2;           //一个宏像素的第几列
+            int row_offset = (spadNum + 1) % 2;      //表示是在宏像素的第一行 还是在第二行
 
-                    //统计二维图像
-                    tofMax = (tof>tofMax) ? tof : tofMax;
-                    tofMin = (tof<tofMin) ? tof : tofMin;
-                    peakMax = (intensity>peakMax) ? intensity : peakMax;
-                    peakMin = (intensity<peakMin) ? intensity : peakMin;
+            for(int i=0; i<64; i++)
+            {
+
+                int tof = (ushort)((MyBuffer[4 + i * 4]) + (((ushort)MyBuffer[4 + i * 4 + 1]) << 8));
+                int intensity = (ushort)((MyBuffer[4 + i * 4 + 2]) + (((ushort)MyBuffer[4 + i * 4 + 3]) << 8));
+
+                //设置TOF图像、强度图像的颜色
+                QRgb tofColor,intenColor;
+                if(tof<1024 && tof>=0)
+                    tofColor = qRgb(colormap[tof * 3], colormap[tof * 3 + 1], colormap[tof * 3 + 2]);
+                else
+                    tofColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
+
+                if(intensity<1024 && intensity>=0)
+                    intenColor = qRgb(colormap[intensity * 3], colormap[intensity * 3 + 1], colormap[intensity * 3 + 2]);
+                else
+                    intenColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
 
 
-                }
-            else
-                qDebug()<<"给像素赋值时出现异常 imgrow="<<imgRow<<"   imgCol = "<<imgCol<<endl;
+                //行列以及颜色传递给图像
+                imgRow = i * 4 + line_offset;
+                imgCol = line_number * 2 + row_offset;
 
+    //            qDebug()<<"index =="<< imgCol*256+imgRow<<endl;
+               cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
+
+                if(imgRow>=0 && imgRow<256 && imgCol>=0 && imgCol<64)
+                    {
+                        microQimage.setPixel(imgRow,imgCol,tofColor);         //TOF图像的赋值
+                        macroQimage.setPixel(imgRow,imgCol,intenColor);       //强度图像的赋值
+
+                        //获取三维坐标
+                        temp_x = tof * x_Weight[cloudIndex] * LSB;
+                        temp_y = tof * y_Weight[cloudIndex] * LSB;
+                        temp_z = tof * z_Weight[cloudIndex] * LSB;
+
+    //                    //点云颜色
+                        QColor mColor = QColor(tofColor);
+                        r = mColor.red();
+                        g = mColor.green();
+                        b = mColor.blue();
+                        rgb = ((int)r << 16 | (int)g << 8 | (int)b);
+
+                        tempRgbCloud.points[cloudIndex].x = temp_x;
+                        tempRgbCloud.points[cloudIndex].y = temp_y;
+                        tempRgbCloud.points[cloudIndex].z = temp_z;
+                        tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb); ;
+
+
+
+                        //统计点云空间坐标最大值、最小值
+                        xMax = (temp_x>xMax) ? temp_x : xMax;
+                        xMin = (temp_x<xMin) ? temp_x : xMin;
+                        yMax = (temp_y>yMax) ? temp_y : yMax;
+                        yMin = (temp_y<yMin) ? temp_y : yMin;
+                        zMax = (temp_z>zMax) ? temp_z : zMax;
+                        zMin = (temp_z<zMin) ? temp_z : zMin;
+
+                        //统计二维图像
+                        tofMax = (tof>tofMax) ? tof : tofMax;
+                        tofMin = (tof<tofMin) ? tof : tofMin;
+                        peakMax = (intensity>peakMax) ? intensity : peakMax;
+                        peakMin = (intensity<peakMin) ? intensity : peakMin;
+
+
+                    }
+                else
+                    qDebug()<<"给像素赋值时出现异常 imgrow="<<imgRow<<"   imgCol = "<<imgCol<<endl;
+
+            }
+            lastSpadNum = spadNum ;
+
+        }else
+        {
+            qDebug()<<"less ret = "<<ret<<endl;
         }
-        lastSpadNum = spadNum ;
 
-    }else
-    {
-        qDebug()<<"less ret = "<<ret<<endl;
-    }
+    }//while
+
 }
 
 //接收主函数信号，开启连接
@@ -50714,7 +50720,9 @@ void ReceUSB_Msg::loadSettingSlot()
     }
 
     /************************开始接受数据****************************************************/
-    readTimer->start(1);
+//    readTimer->start(1);
+    isRecvFlag =true;
+    read_usb();
 }
 
 //保存配置集槽函数
