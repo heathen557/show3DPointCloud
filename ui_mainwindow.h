@@ -80,7 +80,7 @@ public:
     QLineEdit *lineEdit;
     QHBoxLayout *horizontalLayout_5;
     QLabel *label_4;
-    QLineEdit *lineEdit_2;
+    QLineEdit *sysData_lineEdit;
     QHBoxLayout *horizontalLayout_6;
     QPushButton *readSys_pushButton;
     QPushButton *writeSys_pushButton;
@@ -365,10 +365,10 @@ public:
 
         horizontalLayout_5->addWidget(label_4);
 
-        lineEdit_2 = new QLineEdit(groupBox_6);
-        lineEdit_2->setObjectName(QStringLiteral("lineEdit_2"));
+        sysData_lineEdit = new QLineEdit(groupBox_6);
+        sysData_lineEdit->setObjectName(QStringLiteral("sysData_lineEdit"));
 
-        horizontalLayout_5->addWidget(lineEdit_2);
+        horizontalLayout_5->addWidget(sysData_lineEdit);
 
 
         gridLayout_9->addLayout(horizontalLayout_5, 1, 0, 1, 1);

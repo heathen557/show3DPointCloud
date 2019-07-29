@@ -41,7 +41,7 @@ public:
     QTableWidgetItem zMinItem_value;
     QTableWidgetItem zMaxItem_value;
 
-    int framePerSecond;
+//    int framePerSecond;
     float tofMin_,tofMax_,peakMin_,peakMax_,xMin_,xMax_,yMin_,yMax_,zMin_,zMax_;
 
     QImage resImage;         //用来显示缩放后的tof图像
@@ -73,6 +73,10 @@ private slots:
     void oneSecondSlot();   //每秒的槽函数
 
     void queryPixSlot(int x, int y);     //接收label空间坐标的槽函数
+
+    void reReadSysSlot(QString str);  //读取系统指令 返回槽函数
+
+    void reReadDevSlot(QString str); //读取设备指令 返回槽函数
 
 private:
     Ui::MainWindow *ui;

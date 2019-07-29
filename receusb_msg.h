@@ -42,6 +42,7 @@ public:
     QTimer showTimer;
     QImage microQimage;
     QImage macroQimage;
+    QImage saveTofIntenImage;
     int lastSpadNum;
 
     pcl::PointCloud<pcl::PointXYZRGB> tempRgbCloud;
@@ -57,6 +58,9 @@ public:
 
     int r,g,b,rgb;
 
+    int tmp_tofInfo[16384];
+    int tmp_peakInfo[16384];
+
 
 
 signals:
@@ -68,6 +72,10 @@ signals:
                                     // 8：加载配置信息成功；9：加载配置信息失败
                                     // 10：保存配置信息成功； 11：保存配置信息失败
     void staticValueSignal(float,float,float,float,float,float,float,float,float,float);
+
+    void reReadSysSignal(QString);  //读取系统指令 返回信号
+
+    void reReadDevSignal(QString); //读取设备指令 返回信号
 
 public slots:
     void read_usb();                 //读取USB内容的槽函数

@@ -4,8 +4,14 @@
 QMutex mutex;
 QImage tofImage;
 QImage intensityImage;
+
+int tofInfo[16384];
+int peakInfo[16384];
+
 bool isWriteSuccess;    //写入命令是否成功标识
 bool isRecvFlag;
+int framePerSecond;
+
 extern bool  isShowPointCloud;
 
 
@@ -34,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(writeDevSignal()),recvUsbMsg_obj,SLOT(writeDevSlot()));
     connect(this,SIGNAL(loadSettingSignal()),recvUsbMsg_obj,SLOT(loadSettingSlot()));
     connect(this,SIGNAL(saveSettingSignal()),recvUsbMsg_obj,SLOT(saveSettingSlot()));
+    connect(recvUsbMsg_obj,SIGNAL(reReadSysSignal(QString)),this,SLOT(reReadSysSlot(QString)));
+
 
     connect(recvUsbMsg_obj,SIGNAL(staticValueSignal(float,float,float,float,float,float,float,float,float,float)),this,SLOT(recvStaticValueSlot(float,float,float,float,float,float,float,float,float,float)));
 
@@ -259,8 +267,8 @@ void MainWindow::on_pushButton_2_clicked()
     {
         if(isWriteSuccess)
         {
-            showTimer.start(50);
-            ui->widget->readFileTimer.start(100);
+            showTimer.start(90);
+            ui->widget->readFileTimer.start(90);
             oneSecondTimer.start(1000);
 
 
@@ -325,6 +333,22 @@ void MainWindow::on_saveSetting_pushButton_clicked()
     emit saveSettingSignal();
 }
 
+//读取系统指令 返回槽函数
+void MainWindow::reReadSysSlot(QString str)
+{
+    QByteArray ba = str.toLatin1();
+    const char *c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
+    int m = uint8_t(c_str[0]);
+    qDebug()<<" the data =  "<<m<<endl;
+    ui->sysData_lineEdit->setText(QString::number(m,16));
+}
+
+//读取设备指令 返回槽函数
+void MainWindow::reReadDevSlot(QString str)
+{
+
+}
+
 void MainWindow::oneSecondSlot()
 {
 //   qDebug()<<"帧率 = "<<framePerSecond<<endl;
@@ -348,10 +372,9 @@ void MainWindow::oneSecondSlot()
 //鼠标停靠处显示TOF 和 peak信息
 void MainWindow::queryPixSlot(int x,int y)
 {
-     QColor color =  resIntenImage.pixelColor(x,y);
-    qDebug()<<"r="<<color.red()<<"  g="<<color.green()<<" b="<<color.blue()<<endl;
+    int index = 256*y/3.5 +x/1.5 ;
+    QString str = "tof="+QString::number(tofInfo[index])+", peak="+QString::number(peakInfo[index]);
 
-    QString str = "r=255 , g=46, b=189";
-     QToolTip::showText(QCursor::pos(),str);
-     qDebug()<<"x="<<x<<"  y="<<y<<endl;
+    QToolTip::showText(QCursor::pos(),str);
+    qDebug()<<"x="<<x<<"  y="<<y<<" tof="<<tofInfo[index]<<" peak="<<peakInfo[index]<<endl;
 }

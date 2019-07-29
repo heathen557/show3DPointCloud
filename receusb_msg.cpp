@@ -13,6 +13,9 @@ extern pcl::PointCloud<pcl::PointXYZRGB> pointCloudRgb;
 extern bool isShowPointCloud;
 extern bool isWriteSuccess;    //写入命令是否成功标识
 extern bool isRecvFlag;
+extern int framePerSecond;
+extern int tofInfo[16384];
+extern int peakInfo[16384];
 
 static float colormap[1024*3]={
          0,  0,129,
@@ -50211,7 +50214,7 @@ float z_Weight[] = {
 
 
 ReceUSB_Msg::ReceUSB_Msg(QObject *parent) : QObject(parent),
-    microQimage(256,64, QImage::Format_RGB32),macroQimage(256,64, QImage::Format_RGB32)
+    microQimage(256,64, QImage::Format_RGB32),macroQimage(256,64, QImage::Format_RGB32),saveTofIntenImage(256,64, QImage::Format_RGB32)
 {
 
     pointCloudRgb.width = 16384;
@@ -50471,10 +50474,10 @@ void ReceUSB_Msg::read_usb()
             int imgRow,imgCol;
             int spadNum = MyBuffer[0] + (((ushort)MyBuffer[1]) << 8);
             int line_number = MyBuffer[2] + (((ushort)MyBuffer[3]) << 8);
-            qDebug()<<"spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
-    //        qDebug()<<"spadNum = "<<spadNum<<endl;
+//            qDebug()<<"spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
+//            qDebug()<<"spadNum = "<<spadNum<<endl;
 
-            if(spadNum<lastSpadNum && lastSpadNum==7)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
+            if(spadNum<lastSpadNum /*&& lastSpadNum==7 *//*&& framePerSecond<100*/)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
             {
                mutex.lock();
                tofImage = microQimage;
@@ -50483,6 +50486,10 @@ void ReceUSB_Msg::read_usb()
                pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
                mutex.unlock();
                isShowPointCloud = true;
+
+               memcpy(tofInfo, tmp_tofInfo, 16384 * sizeof(int));
+               memcpy(peakInfo, tmp_peakInfo, 16384 * sizeof(int));
+
 
 
                emit staticValueSignal(tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax);
@@ -50521,6 +50528,9 @@ void ReceUSB_Msg::read_usb()
                     intenColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
 
 
+
+//                 tofIntensitySave = qRgb(tof/257.0, intensity/257.0, 0);       //tof 和 intensity的最大值 都是65535,次操作意在归一化为0-255之间
+
                 //行列以及颜色传递给图像
                 imgRow = i * 4 + line_offset;
                 imgCol = line_number * 2 + row_offset;
@@ -50532,6 +50542,10 @@ void ReceUSB_Msg::read_usb()
                     {
                         microQimage.setPixel(imgRow,imgCol,tofColor);         //TOF图像的赋值
                         macroQimage.setPixel(imgRow,imgCol,intenColor);       //强度图像的赋值
+
+                        tmp_tofInfo[cloudIndex] = tof ;
+                        tmp_peakInfo[cloudIndex] = intensity ;
+
 
                         //获取三维坐标
                         temp_x = tof * x_Weight[cloudIndex] * LSB;
@@ -50636,8 +50650,8 @@ void ReceUSB_Msg::readSysSlot()
     bool res = System_Register_Read(19,array);
     qDebug()<<"[R]sys Read array="<<array<<"   res="<<res<<endl;
     //系统注册 写入测试
-    qDebug()<<" the data =  "<<array.toInt(NULL,16)<<endl;
 
+    emit reReadSysSignal(array);
 
     if(res)
     {
