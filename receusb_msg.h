@@ -71,6 +71,8 @@ signals:
                                     // 6：读取设备成功；7：读取设备失败
                                     // 8：加载配置信息成功；9：加载配置信息失败
                                     // 10：保存配置信息成功； 11：保存配置信息失败
+                                    // 12：写入系统成功      13：写入系统失败
+                                    // 14：写入设备成功      15：写入设备失败
     void staticValueSignal(float,float,float,float,float,float,float,float,float,float);
 
     void reReadSysSignal(QString);  //读取系统指令 返回信号
@@ -84,7 +86,7 @@ public slots:
     void closeUSB();
 
     void readSysSlot();
-    void writeSysSlot();
+    void writeSysSlot(int addr,QString data);
     void readDevSlot();
     void writeDevSlot();
     void loadSettingSlot();

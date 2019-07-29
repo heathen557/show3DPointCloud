@@ -1,6 +1,7 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include <QScrollBar>
 #include<QToolTip>
+#include<QFileDialog>
 QMutex mutex;
 QImage tofImage;
 QImage intensityImage;
@@ -19,11 +20,15 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    QString str= QStringLiteral("设备未连接");
+    qDebug()<<str<<endl;
+
     ui->setupUi(this);
 //    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
 
     isWriteSuccess = false;
     framePerSecond = 0;   //统计帧率，初始化为0
+    isLinkSuccess = false;
 
     //把读取USB信息放到线程当中，并开启线程
     recvUsbMsg_obj = new ReceUSB_Msg();
@@ -35,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(recvUsbMsg_obj,SIGNAL(linkInfoSignal(int)),this,SLOT(linkInfoSlot(int)));
 
     connect(this,SIGNAL(readSysSignal()),recvUsbMsg_obj,SLOT(readSysSlot()));
-    connect(this,SIGNAL(writeSysSignal()),recvUsbMsg_obj,SLOT(writeSysSlot()));
+    connect(this,SIGNAL(writeSysSignal(int,QString)),recvUsbMsg_obj,SLOT(writeSysSlot(int,QString)));
     connect(this,SIGNAL(readDevSignal()),recvUsbMsg_obj,SLOT(readDevSlot()));
     connect(this,SIGNAL(writeDevSignal()),recvUsbMsg_obj,SLOT(writeDevSlot()));
     connect(this,SIGNAL(loadSettingSignal()),recvUsbMsg_obj,SLOT(loadSettingSlot()));
@@ -127,12 +132,15 @@ void MainWindow::showImageSlot()
 
 
 //接收线程发过来的错误信息
+
 // 0：连接正常 1没找到设备
 // 2:没有接收到数据  3打开设备失败
 // 4：读取系统成功；5：读取系统失败；
 // 6：读取设备成功；7：读取设备失败
 // 8：加载配置信息成功；9：加载配置信息失败
 // 10：保存配置信息成功； 11：保存配置信息失败
+// 12：写入系统成功      13：写入系统失败
+// 14：写入设备成功      15：写入设备失败
 void MainWindow::linkInfoSlot(int flagNum)
 {
      QString strLog;
@@ -141,61 +149,72 @@ void MainWindow::linkInfoSlot(int flagNum)
 
     switch (flagNum) {
     case 0:
-        tempStr = "设备连接成功";
-        tempStr.append("                   ");
-        ui->pushButton->setText("关闭连接");
+        tempStr = QStringLiteral("设备连接成功");
+        tempStr.append("                           ");
+        ui->pushButton->setText(QStringLiteral("关闭连接"));
+        isLinkSuccess = true;
         break;
     case 1:
-        tempStr = QString::fromUtf8("未找到设备！");
-        tempStr.append("              ");
-        QMessageBox::information(NULL,"告警",QString::fromUtf8("未找到设备！"));
+        tempStr = QStringLiteral("未找到设备！");
+        tempStr.append("                   ");
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("未找到设备！"));
         break;
     case 2:
-        tempStr = "未接收到数据，请检查设备，";
-        tempStr.append("       ");
-        QMessageBox::information(NULL,"告警","未接收到数据，请检查设备，");
+        tempStr = QStringLiteral("未接收到数据，请检查设备，");
+        tempStr.append("                   ");
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("未接收到数据，请检查设备，"));
         break;
     case 3:
-        tempStr = "打开设备失败";
-        tempStr.append("              ");
-        QMessageBox::information(NULL,"告警",QString::fromUtf8("打开设备失败"));
+        tempStr = QStringLiteral("打开设备失败");
+        tempStr.append("                   ");
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("打开设备失败"));
         break;
     case 4:
-        tempStr = "读取系统寄存器成功的";
-        tempStr.append("          ");
+        tempStr = QStringLiteral("读取系统寄存器成功的");
+        tempStr.append("                   ");
         break;
     case 5:
-        tempStr = "读取系统寄存器失败,";
-        tempStr.append("              ");
-        QMessageBox::information(NULL,"告警",QString::fromUtf8("读取系统寄存器失败,"));
+        tempStr = QStringLiteral("读取系统寄存器失败,");
+        tempStr.append("                   ");
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("读取系统寄存器失败,"));
         break;
     case 6:
-        tempStr = "读取设备寄存器成功.";
-        tempStr.append("              ");
+        tempStr = QStringLiteral("读取设备寄存器成功.");
+        tempStr.append("                   ");
         break;
     case 7:
-        tempStr = "读取设备寄存器失败.";
-        tempStr.append("              ");
-        QMessageBox::information(NULL,"告警",QString::fromUtf8("读取设备寄存器失败."));
+        tempStr = QStringLiteral("读取设备寄存器失败.");
+        tempStr.append("                   ");
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("读取设备寄存器失败."));
         break;
     case 8:
-        tempStr = "加载配置信息成功.";
-        tempStr.append("              ");
+        tempStr = QStringLiteral("加载配置信息成功.");
+        tempStr.append("                      ");
         break;
     case 9:
-        tempStr = "加载配置信息失败.";
-        tempStr.append("              ");
-        QMessageBox::information(NULL,"告警",QString::fromUtf8("加载配置信息失败."));
+        tempStr = QStringLiteral("加载配置信息失败.");
+        tempStr.append("                   ");
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("加载配置信息失败."));
         break;
     case 10:
-        tempStr = "保存配置信息成功.";
-        tempStr.append("              ");
+        tempStr = QStringLiteral("保存配置信息成功.");
+        tempStr.append("                   ");
         break;
     case 11:
-        tempStr = "保存配置信息失败.";
-        tempStr.append("              ");
-        QMessageBox::information(NULL,"告警",QString::fromUtf8("保存配置信息失败."));
+        tempStr = QStringLiteral("保存配置信息失败.");
+        tempStr.append("                   ");
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("保存配置信息失败."));
         break;
+    case 12:
+        tempStr = QStringLiteral("写入系统寄存器成功的");
+        tempStr.append("                   ");
+        break;
+    case 13:
+        tempStr = QStringLiteral("写入系统寄存器失败的");
+        tempStr.append("                   ");
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("写入系统寄存器失败的"));
+        break;
+
 
     default:
         break;
@@ -244,17 +263,18 @@ MainWindow::~MainWindow()
 //打开设备
 void MainWindow::on_pushButton_clicked()
 {
-    if(ui->pushButton->text() == "连接设备")
+    if(ui->pushButton->text() ==QStringLiteral("连接设备"))
     {
 
         emit readSignal();
 
-    }else if(ui->pushButton->text() == "关闭连接")
+    }else if(ui->pushButton->text() == QStringLiteral("关闭连接"))
     {
 //        oneSecondTimer.stop();
         isRecvFlag = false;
         emit closeLinkSignal();
-        ui->pushButton->setText("连接设备");
+        ui->pushButton->setText(QStringLiteral("连接设备"));
+        isLinkSuccess = false;
     }
 
 }
@@ -263,7 +283,7 @@ void MainWindow::on_pushButton_clicked()
 //播放槽函数
 void MainWindow::on_pushButton_2_clicked()
 {
-    if(ui->pushButton_2->text() == "播放")
+    if(ui->pushButton_2->text() == QStringLiteral("播放"))
     {
         if(isWriteSuccess)
         {
@@ -273,7 +293,7 @@ void MainWindow::on_pushButton_2_clicked()
 
 
 //            QString tempstr = "数据接收正常,并开始播放.";
-            QString tempstr = QString::fromUtf8("数据接收正常,并开始播放~");
+            QString tempstr = QStringLiteral("数据接收正常,并开始播放~");
             QTime t1 = QTime::currentTime();
             QString str = tempstr + "               " +t1.toString("hh:mm:ss.zzz")+ "\n";
             ui->textEdit_2->append(str);
@@ -283,13 +303,13 @@ void MainWindow::on_pushButton_2_clicked()
         {
 //            QMessageBox::information(NULL,"告警","未接收到数据，请检查设备连接！");
         }
-        ui->pushButton_2->setText("暂停");
+        ui->pushButton_2->setText(QStringLiteral("暂停"));
 
     }else
     {
         showTimer.stop();
         ui->widget->readFileTimer.stop();
-        ui->pushButton_2->setText("播放");
+        ui->pushButton_2->setText(QStringLiteral("播放"));
     }
 
 
@@ -300,42 +320,82 @@ void MainWindow::on_pushButton_2_clicked()
 //读取系统寄存器
 void MainWindow::on_readSys_pushButton_clicked()
 {
+    if(!isLinkSuccess)
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+
     emit readSysSignal();
 }
 
 //写入系统寄存器
 void MainWindow::on_writeSys_pushButton_clicked()
 {
-    emit writeSysSignal();
+    if(!isLinkSuccess)
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+
+    int address = ui->lineEdit->text().toInt(NULL,16);
+    QString data = ui->sysData_lineEdit->text();
+    qDebug()<<"address = "<<address<<"  data="<<data<<endl;
+
+    emit writeSysSignal(address,data);
 }
 
 //读取设备寄存器
 void MainWindow::on_readDev_pushButton_clicked()
 {
+    if(!isLinkSuccess)
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+
     emit readDevSignal();
 }
 
 //写入设备寄存器
 void MainWindow::on_writeDev_pushButton_clicked()
 {
+    if(!isLinkSuccess)
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+
     emit writeDevSignal();
 }
 
 //加载配置集
 void MainWindow::on_loadSetting_pushButton_clicked()
 {
+    if(!isLinkSuccess)
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+
+//    QString qw = QStringLiteral("请选择配置集");
+//    qDebug()<<qw<<endl;
+//    QString file_path = QFileDialog::getExistingDirectory(this,"请选择配置集.","./");
+//    if(file_path.isEmpty())
+//    {
+//        return;
+//    }
+//    else
+//    {
+//        qDebug() << file_path << endl;
+//        ui->lineEdit->setText(file_path);
+//    }
+
+
+
     emit loadSettingSignal();
 }
 
 //保存配置集
 void MainWindow::on_saveSetting_pushButton_clicked()
 {
+    if(!isLinkSuccess)
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+
     emit saveSettingSignal();
 }
 
 //读取系统指令 返回槽函数
 void MainWindow::reReadSysSlot(QString str)
 {
+    if(!isLinkSuccess)
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+
     QByteArray ba = str.toLatin1();
     const char *c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
     int m = uint8_t(c_str[0]);
@@ -346,6 +406,8 @@ void MainWindow::reReadSysSlot(QString str)
 //读取设备指令 返回槽函数
 void MainWindow::reReadDevSlot(QString str)
 {
+    if(!isLinkSuccess)
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
 
 }
 
@@ -376,5 +438,5 @@ void MainWindow::queryPixSlot(int x,int y)
     QString str = "tof="+QString::number(tofInfo[index])+", peak="+QString::number(peakInfo[index]);
 
     QToolTip::showText(QCursor::pos(),str);
-    qDebug()<<"x="<<x<<"  y="<<y<<" tof="<<tofInfo[index]<<" peak="<<peakInfo[index]<<endl;
+//    qDebug()<<"x="<<x<<"  y="<<y<<" tof="<<tofInfo[index]<<" peak="<<peakInfo[index]<<endl;
 }

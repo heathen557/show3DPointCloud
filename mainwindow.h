@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -47,6 +47,8 @@ public:
     QImage resImage;         //用来显示缩放后的tof图像
     QImage resIntenImage;    //用来显示缩放后的intensity图像
 
+    bool isLinkSuccess;      //是否连接成功的标识，若是没有连接，则不能进行后续操作
+
 
 private slots:
     void on_pushButton_clicked();    //测试用的槽函数
@@ -86,7 +88,7 @@ signals:
     void closeLinkSignal();   //关闭连接
 
     void readSysSignal();
-    void writeSysSignal();
+    void writeSysSignal(int,QString);
     void readDevSignal();
     void writeDevSignal();
     void loadSettingSignal();

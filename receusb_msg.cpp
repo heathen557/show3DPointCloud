@@ -50664,9 +50664,17 @@ void ReceUSB_Msg::readSysSlot()
 }
 
 //写入系统寄存器槽函数
-void ReceUSB_Msg::writeSysSlot()
+// 12：写入系统成功      13：写入系统失败
+void ReceUSB_Msg::writeSysSlot(int addr,QString data)
 {
-
+    if(System_Register_Write(addr, data))
+    {
+        emit linkInfoSignal(12);
+    }
+    else
+    {
+        emit linkInfoSignal(13);
+    }
 }
 
 //读取设备寄存器槽函数
