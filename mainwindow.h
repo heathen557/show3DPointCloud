@@ -84,15 +84,15 @@ private:
     Ui::MainWindow *ui;
 
 signals:
-    void readSignal();
+    void readSignal(int ,int);
     void closeLinkSignal();   //关闭连接
 
     void readSysSignal();
     void writeSysSignal(int,QString);
-    void readDevSignal();
+    void readDevSignal(int,int);
     void writeDevSignal();
-    void loadSettingSignal();
-    void saveSettingSignal();
+    void loadSettingSignal(QString);
+    void saveSettingSignal(QString,int, bool );
 
 
 };

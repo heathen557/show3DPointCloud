@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug()<<str<<endl;
 
     ui->setupUi(this);
-//    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
+    //    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
 
     isWriteSuccess = false;
     framePerSecond = 0;   //统计帧率，初始化为0
@@ -35,18 +35,18 @@ MainWindow::MainWindow(QWidget *parent) :
     recvUsbThread = new QThread;
     recvUsbMsg_obj->moveToThread(recvUsbThread);
     recvUsbThread->start();
-    connect(this,SIGNAL(readSignal()),recvUsbMsg_obj, SLOT(run()));
+    connect(this,SIGNAL(readSignal(int,int)),recvUsbMsg_obj, SLOT(run(int,int)));
     connect(this,SIGNAL(closeLinkSignal()),recvUsbMsg_obj,SLOT(closeUSB()));
     connect(recvUsbMsg_obj,SIGNAL(linkInfoSignal(int)),this,SLOT(linkInfoSlot(int)));
 
     connect(this,SIGNAL(readSysSignal()),recvUsbMsg_obj,SLOT(readSysSlot()));
     connect(this,SIGNAL(writeSysSignal(int,QString)),recvUsbMsg_obj,SLOT(writeSysSlot(int,QString)));
-    connect(this,SIGNAL(readDevSignal()),recvUsbMsg_obj,SLOT(readDevSlot()));
+    connect(this,SIGNAL(readDevSignal(int,int)),recvUsbMsg_obj,SLOT(readDevSlot(int,int)));
     connect(this,SIGNAL(writeDevSignal()),recvUsbMsg_obj,SLOT(writeDevSlot()));
-    connect(this,SIGNAL(loadSettingSignal()),recvUsbMsg_obj,SLOT(loadSettingSlot()));
-    connect(this,SIGNAL(saveSettingSignal()),recvUsbMsg_obj,SLOT(saveSettingSlot()));
+    connect(this,SIGNAL(loadSettingSignal(QString)),recvUsbMsg_obj,SLOT(loadSettingSlot(QString)));
+    connect(this,SIGNAL(saveSettingSignal(QString,int,bool)),recvUsbMsg_obj,SLOT(saveSettingSlot(QString,int,bool)));
     connect(recvUsbMsg_obj,SIGNAL(reReadSysSignal(QString)),this,SLOT(reReadSysSlot(QString)));
-
+    connect(recvUsbMsg_obj,SIGNAL(reReadDevSignal(QString)),this,SLOT(reReadDevSlot(QString)));
 
     connect(recvUsbMsg_obj,SIGNAL(staticValueSignal(float,float,float,float,float,float,float,float,float,float)),this,SLOT(recvStaticValueSlot(float,float,float,float,float,float,float,float,float,float)));
 
@@ -143,9 +143,9 @@ void MainWindow::showImageSlot()
 // 14：写入设备成功      15：写入设备失败
 void MainWindow::linkInfoSlot(int flagNum)
 {
-     QString strLog;
-     QString tempStr;
-     QTime t1 = QTime::currentTime();
+    QString strLog;
+    QString tempStr;
+    QTime t1 = QTime::currentTime();
 
     switch (flagNum) {
     case 0:
@@ -160,6 +160,7 @@ void MainWindow::linkInfoSlot(int flagNum)
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("未找到设备！"));
         break;
     case 2:
+        isRecvFlag = false ;
         tempStr = QStringLiteral("未接收到数据，请检查设备，");
         tempStr.append("                   ");
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("未接收到数据，请检查设备，"));
@@ -227,29 +228,29 @@ void MainWindow::linkInfoSlot(int flagNum)
 //没接收到一帧会进入一次，故可以统计 帧率
 void MainWindow::recvStaticValueSlot(float tofMin,float tofMax,float peakMin,float peakMax,float xMin,float xMax,float yMin,float yMax,float zMin,float zMax)
 {
-     framePerSecond++;
-     tofMin_ = tofMin;
-     tofMax_ = tofMax;
-     peakMin_ = peakMin;
-     peakMax_ = peakMax;
-     xMin_ = xMin;
-     xMax_ = xMax;
-     yMin_ = yMin;
-     yMax_ = yMax;
-     zMin_ = zMin;
-     zMax_ = zMax;
+    framePerSecond++;
+    tofMin_ = tofMin;
+    tofMax_ = tofMax;
+    peakMin_ = peakMin;
+    peakMax_ = peakMax;
+    xMin_ = xMin;
+    xMax_ = xMax;
+    yMin_ = yMin;
+    yMax_ = yMax;
+    zMin_ = zMin;
+    zMax_ = zMax;
 
-//     tofMinItem_value.setText(QString::number(tofMin));
-//     tofMaxItem_value.setText(QString::number(tofMax));
-//     peakMinItem_value.setText(QString::number(peakMin));
-//     peakMaxItem_value.setText(QString::number(peakMax));
+    //     tofMinItem_value.setText(QString::number(tofMin));
+    //     tofMaxItem_value.setText(QString::number(tofMax));
+    //     peakMinItem_value.setText(QString::number(peakMin));
+    //     peakMaxItem_value.setText(QString::number(peakMax));
 
-//     xMinItem_value.setText(QString::number(xMin));
-//     xMaxItem_value.setText(QString::number(xMax));
-//     yMinItem_value.setText(QString::number(yMin));
-//     yMaxItem_value.setText(QString::number(yMax));
-//     zMinItem_value.setText(QString::number(zMin));
-//     zMaxItem_value.setText(QString::number(zMax));
+    //     xMinItem_value.setText(QString::number(xMin));
+    //     xMaxItem_value.setText(QString::number(xMax));
+    //     yMinItem_value.setText(QString::number(yMin));
+    //     yMaxItem_value.setText(QString::number(yMax));
+    //     zMinItem_value.setText(QString::number(zMin));
+    //     zMaxItem_value.setText(QString::number(zMax));
 
 
 
@@ -266,11 +267,13 @@ void MainWindow::on_pushButton_clicked()
     if(ui->pushButton->text() ==QStringLiteral("连接设备"))
     {
 
-        emit readSignal();
+        int vid = ui->VID_lineEdit->text().toInt(NULL,16);
+        int pid = ui->PID_lineEdit->text().toInt(NULL,16);
+        emit readSignal(vid,pid);
 
     }else if(ui->pushButton->text() == QStringLiteral("关闭连接"))
     {
-//        oneSecondTimer.stop();
+        //        oneSecondTimer.stop();
         isRecvFlag = false;
         emit closeLinkSignal();
         ui->pushButton->setText(QStringLiteral("连接设备"));
@@ -292,7 +295,7 @@ void MainWindow::on_pushButton_2_clicked()
             oneSecondTimer.start(1000);
 
 
-//            QString tempstr = "数据接收正常,并开始播放.";
+            //            QString tempstr = "数据接收正常,并开始播放.";
             QString tempstr = QStringLiteral("数据接收正常,并开始播放~");
             QTime t1 = QTime::currentTime();
             QString str = tempstr + "               " +t1.toString("hh:mm:ss.zzz")+ "\n";
@@ -301,7 +304,7 @@ void MainWindow::on_pushButton_2_clicked()
 
         }else
         {
-//            QMessageBox::information(NULL,"告警","未接收到数据，请检查设备连接！");
+            //            QMessageBox::information(NULL,"告警","未接收到数据，请检查设备连接！");
         }
         ui->pushButton_2->setText(QStringLiteral("暂停"));
 
@@ -321,7 +324,13 @@ void MainWindow::on_pushButton_2_clicked()
 void MainWindow::on_readSys_pushButton_clicked()
 {
     if(!isLinkSuccess)
+    {
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+        return;
+    }
+
+    int address = ui->lineEdit->text().toInt(NULL,16);
+    qDebug()<<"address = "<<address<<endl;
 
     emit readSysSignal();
 }
@@ -330,7 +339,10 @@ void MainWindow::on_readSys_pushButton_clicked()
 void MainWindow::on_writeSys_pushButton_clicked()
 {
     if(!isLinkSuccess)
+    {
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+        return;
+    }
 
     int address = ui->lineEdit->text().toInt(NULL,16);
     QString data = ui->sysData_lineEdit->text();
@@ -343,16 +355,26 @@ void MainWindow::on_writeSys_pushButton_clicked()
 void MainWindow::on_readDev_pushButton_clicked()
 {
     if(!isLinkSuccess)
+    {
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+        return;
+    }
 
-    emit readDevSignal();
+    int hardWareAddress = ui->lineEdit_3->text().toInt(NULL,16);
+    int registerAddress = ui->lineEdit_4->text().toInt(NULL,16);
+    qDebug()<<hardWareAddress<<"  "<<registerAddress<<endl;
+
+    emit readDevSignal(hardWareAddress,registerAddress);
 }
 
 //写入设备寄存器
 void MainWindow::on_writeDev_pushButton_clicked()
 {
     if(!isLinkSuccess)
+    {
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+        return;
+    }
 
     emit writeDevSignal();
 }
@@ -361,41 +383,103 @@ void MainWindow::on_writeDev_pushButton_clicked()
 void MainWindow::on_loadSetting_pushButton_clicked()
 {
     if(!isLinkSuccess)
+    {
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+        return;
+    }
 
-//    QString qw = QStringLiteral("请选择配置集");
-//    qDebug()<<qw<<endl;
-//    QString file_path = QFileDialog::getExistingDirectory(this,"请选择配置集.","./");
-//    if(file_path.isEmpty())
-//    {
-//        return;
-//    }
-//    else
-//    {
-//        qDebug() << file_path << endl;
-//        ui->lineEdit->setText(file_path);
-//    }
+    QString file_path;
+    //定义文件对话框类
+    QFileDialog *fileDialog = new QFileDialog(this);
+    //定义文件对话框标题
+    fileDialog->setWindowTitle(QStringLiteral("请选择配置文件"));
+    //设置默认文件路径
+    fileDialog->setDirectory(".");
+    //设置视图模式
+    fileDialog->setViewMode(QFileDialog::Detail);
+    //打印所有选择的文件的路径
+
+    QStringList mimeTypeFilters;
+    mimeTypeFilters <<QStringLiteral("芯片配置文件(*.para)|*.para") ;
+    fileDialog->setNameFilters(mimeTypeFilters);
 
 
 
-    emit loadSettingSignal();
+
+
+    QStringList fileNames;
+    if(fileDialog->exec())
+    {
+        fileNames = fileDialog->selectedFiles();
+    }else
+    {
+        return;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    file_path = fileNames[0];
+    qDebug()<<" file_path = "<<fileNames[0]<<endl;
+
+    QString checkStr = file_path.right(4);
+    if("para" != checkStr)
+    {
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("请选择正确的配置文件！"));
+        return ;
+    }
+
+    emit loadSettingSignal(file_path);
+
+
 }
 
 //保存配置集
 void MainWindow::on_saveSetting_pushButton_clicked()
 {
     if(!isLinkSuccess)
+    {
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+        return;
+    }
 
-    emit saveSettingSignal();
+    QString filePath;
+
+    QFileDialog *fileDialog = new QFileDialog(this);//创建一个QFileDialog对象，构造函数中的参数可以有所添加。
+    fileDialog->setWindowTitle(tr("Save As"));//设置文件保存对话框的标题
+    fileDialog->setAcceptMode(QFileDialog::AcceptSave);//设置文件对话框为保存模式
+    fileDialog->setFileMode(QFileDialog::AnyFile);//设置文件对话框弹出的时候显示任何文件，不论是文件夹还是文件
+    fileDialog->setViewMode(QFileDialog::Detail);//文件以详细的形式显示，显示文件名，大小，创建日期等信息；
+    fileDialog->setGeometry(10,30,300,200);//设置文件对话框的显示位置
+    fileDialog->setDirectory(".");//设置文件对话框打开时初始打开的位置
+    QStringList mimeTypeFilters;
+    mimeTypeFilters <<QStringLiteral("芯片配置文件(*.para)|*.para") ;
+    fileDialog->setNameFilters(mimeTypeFilters);
+
+
+    if(fileDialog->exec() == QDialog::Accepted)
+    {
+        filePath = fileDialog->selectedFiles()[0];//得到用户选择的文件名
+        qDebug()<<" filePath = "<<filePath<<endl;
+    }else
+    {
+        return ;
+    }
+
+    int deviceId = ui->lineEdit_3->text().toInt(NULL,16);
+
+
+    //如果接收线程正在运行，先关闭接收线程（while循环），否则线程接收不到信号
+    //线程处理完数据以后，再次打开while循环，即另isRecvFlag = true;
+    if(isRecvFlag)
+    {
+        isRecvFlag = false;
+        emit saveSettingSignal(filePath, deviceId, true);
+    }
+
 }
 
 //读取系统指令 返回槽函数
 void MainWindow::reReadSysSlot(QString str)
 {
-    if(!isLinkSuccess)
-        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
-
     QByteArray ba = str.toLatin1();
     const char *c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
     int m = uint8_t(c_str[0]);
@@ -406,28 +490,30 @@ void MainWindow::reReadSysSlot(QString str)
 //读取设备指令 返回槽函数
 void MainWindow::reReadDevSlot(QString str)
 {
-    if(!isLinkSuccess)
-        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
-
+    QByteArray ba = str.toLatin1();
+    const char *c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
+    int m = uint8_t(c_str[0]);
+    qDebug()<<" the data =  "<<m<<endl;
+    ui->lineEdit_5->setText(QString::number(m,16));
 }
 
 void MainWindow::oneSecondSlot()
 {
-//   qDebug()<<"帧率 = "<<framePerSecond<<endl;
-   framePerSecond = 0;
+    //   qDebug()<<"帧率 = "<<framePerSecond<<endl;
+    framePerSecond = 0;
 
 
-   tofMinItem_value.setText(QString::number(tofMin_));
-   tofMaxItem_value.setText(QString::number(tofMax_));
-   peakMinItem_value.setText(QString::number(peakMin_));
-   peakMaxItem_value.setText(QString::number(peakMax_));
+    tofMinItem_value.setText(QString::number(tofMin_));
+    tofMaxItem_value.setText(QString::number(tofMax_));
+    peakMinItem_value.setText(QString::number(peakMin_));
+    peakMaxItem_value.setText(QString::number(peakMax_));
 
-   xMinItem_value.setText(QString::number(xMin_));
-   xMaxItem_value.setText(QString::number(xMax_));
-   yMinItem_value.setText(QString::number(yMin_));
-   yMaxItem_value.setText(QString::number(yMax_));
-   zMinItem_value.setText(QString::number(zMin_));
-   zMaxItem_value.setText(QString::number(zMax_));
+    xMinItem_value.setText(QString::number(xMin_));
+    xMaxItem_value.setText(QString::number(xMax_));
+    yMinItem_value.setText(QString::number(yMin_));
+    yMaxItem_value.setText(QString::number(yMax_));
+    zMinItem_value.setText(QString::number(zMin_));
+    zMaxItem_value.setText(QString::number(zMax_));
 }
 
 
@@ -438,5 +524,5 @@ void MainWindow::queryPixSlot(int x,int y)
     QString str = "tof="+QString::number(tofInfo[index])+", peak="+QString::number(peakInfo[index]);
 
     QToolTip::showText(QCursor::pos(),str);
-//    qDebug()<<"x="<<x<<"  y="<<y<<" tof="<<tofInfo[index]<<" peak="<<peakInfo[index]<<endl;
+    //    qDebug()<<"x="<<x<<"  y="<<y<<" tof="<<tofInfo[index]<<" peak="<<peakInfo[index]<<endl;
 }

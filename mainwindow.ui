@@ -78,14 +78,14 @@ border:1px solid grey;}</string>
                  <string notr="true">font:10pt &quot;黑体&quot;;</string>
                 </property>
                 <property name="title">
-                 <string>TOF图像：</string>
+                 <string>Peak图像：</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_3">
                  <property name="topMargin">
                   <number>2</number>
                  </property>
                  <item row="0" column="0">
-                  <widget class="myLabel" name="showTOF_label">
+                  <widget class="myLabel" name="showIntensity_label">
                    <property name="minimumSize">
                     <size>
                      <width>384</width>
@@ -121,14 +121,14 @@ border:1px solid grey;}</string>
                  <string notr="true">font:10pt &quot;黑体&quot;;</string>
                 </property>
                 <property name="title">
-                 <string>Peak图像：</string>
+                 <string>Tof图像：</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_4">
                  <property name="topMargin">
                   <number>2</number>
                  </property>
                  <item row="0" column="0">
-                  <widget class="myLabel" name="showIntensity_label">
+                  <widget class="myLabel" name="showTOF_label">
                    <property name="minimumSize">
                     <size>
                      <width>384</width>

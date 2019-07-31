@@ -1,4 +1,4 @@
-#ifndef RECEUSB_MSG_H
+﻿#ifndef RECEUSB_MSG_H
 #define RECEUSB_MSG_H
 #include<pcl/io/pcd_io.h>//pcd 读写类相关的头文件。
 #include<pcl/io/ply_io.h>
@@ -9,6 +9,7 @@
 #include<QImage>
 #include<Windows.h>
 #include"lusb0_usb.h"
+#include<QFile>
 
 
 class ReceUSB_Msg : public QObject
@@ -61,6 +62,8 @@ public:
     int tmp_tofInfo[16384];
     int tmp_peakInfo[16384];
 
+    int idVendor_,idProduct_;
+
 
 
 signals:
@@ -82,15 +85,15 @@ signals:
 public slots:
     void read_usb();                 //读取USB内容的槽函数
     void openLinkDevSlot();          //打开设备连接的槽函数
-    void run();
+    void run(int vId, int pId);
     void closeUSB();
 
     void readSysSlot();
     void writeSysSlot(int addr,QString data);
-    void readDevSlot();
+    void readDevSlot(int id,int address);
     void writeDevSlot();
-    void loadSettingSlot();
-    void saveSettingSlot();
+    void loadSettingSlot(QString filePath);
+    void saveSettingSlot(QString filePath,int deviceId,bool  recvFlag);
 };
 
 #endif // RECEUSB_MSG_H
