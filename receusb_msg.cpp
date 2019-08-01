@@ -50407,10 +50407,10 @@ bool ReceUSB_Msg::Device_Register_Read(int slavedId,int Address,QString &Data)
     Cmd.wIndex = 0x00f4;
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
-    Data = QString(data[0]);
+    quint8 tmp = quint8(data[0]);
+    Data = QString::number(tmp);
 
-    //    int s = QString(data[0]).right(1).toInt(NULL,16);
-
+    //此处返回的是  十进制数字
     return res;
 }
 
@@ -50810,9 +50810,7 @@ void ReceUSB_Msg::saveSettingSlot(QString filePath,int deviceId,bool recvFlag)
     for(; i<50 ; i++)
     {
         res = Device_Register_Read(deviceId, i, dataStr);
-        ba = dataStr.toLatin1();
-        c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
-        m = int8_t(c_str[0]);
+        m = dataStr.toInt();
         QString tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
         textString.append(tmpData);
         qDebug()<<" the data =  "<<m<<"    sixteen's num ="<< tmpData<<endl;
@@ -50874,6 +50872,15 @@ void ReceUSB_Msg::saveSettingSlot(QString filePath,int deviceId,bool recvFlag)
 
 
     }
+
+    if(res)
+    {
+        linkInfoSignal(10);
+    }else
+    {
+        linkInfoSignal(11);
+    }
+
 }
 
 
