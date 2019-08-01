@@ -50428,11 +50428,7 @@ bool ReceUSB_Msg::Device_Register_Write(int slavedId,int Address,QString &Data)
     Cmd.wIndex = 0x00f1;
     Cmd.wLength = 0x0001;
     data[0] = slavedId;      //need modify
-
-
-
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,(char*)(&data[0]),1,transLen);
-
 
     Cmd.wIndex = 0x00f5;
     data[0] = 0x37;
@@ -50705,8 +50701,15 @@ void ReceUSB_Msg::readDevSlot(int id,int address)
 }
 
 //写入设备寄存器槽函数
-void ReceUSB_Msg::writeDevSlot()
+void ReceUSB_Msg::writeDevSlot(int slavId,int addr,QString data)
 {
+    if(true == Device_Register_Write(slavId,addr,data))
+    {
+        emit linkInfoSignal(14);
+    }else
+    {
+        emit linkInfoSignal(15);
+    }
 
 }
 

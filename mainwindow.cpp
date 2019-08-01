@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(readSysSignal()),recvUsbMsg_obj,SLOT(readSysSlot()));
     connect(this,SIGNAL(writeSysSignal(int,QString)),recvUsbMsg_obj,SLOT(writeSysSlot(int,QString)));
     connect(this,SIGNAL(readDevSignal(int,int)),recvUsbMsg_obj,SLOT(readDevSlot(int,int)));
-    connect(this,SIGNAL(writeDevSignal()),recvUsbMsg_obj,SLOT(writeDevSlot()));
+    connect(this,SIGNAL(writeDevSignal(int,int,QString)),recvUsbMsg_obj,SLOT(writeDevSlot(int,int,QString)));
     connect(this,SIGNAL(loadSettingSignal(QString)),recvUsbMsg_obj,SLOT(loadSettingSlot(QString)));
     connect(this,SIGNAL(saveSettingSignal(QString,int,bool)),recvUsbMsg_obj,SLOT(saveSettingSlot(QString,int,bool)));
     connect(recvUsbMsg_obj,SIGNAL(reReadSysSignal(QString)),this,SLOT(reReadSysSlot(QString)));
@@ -146,6 +146,8 @@ void MainWindow::linkInfoSlot(int flagNum)
     QString strLog;
     QString tempStr;
     QTime t1 = QTime::currentTime();
+    QString tempstr_1;
+    QString str;
 
     switch (flagNum) {
     case 0:
@@ -160,68 +162,83 @@ void MainWindow::linkInfoSlot(int flagNum)
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("未找到设备！"));
         break;
     case 2:
+        /*****打印到运行日志*****/
+        tempstr_1 = QStringLiteral("接收数据异常，请检查设备！");
+        t1 = QTime::currentTime();
+        str = tempstr_1 + "               " +t1.toString("hh:mm:ss");
+        ui->textEdit_2->append(str);
+
+
+
         isRecvFlag = false ;
-        tempStr = QStringLiteral("未接收到数据，请检查设备，");
+        tempStr = QStringLiteral("未接收到数据，请检查设备！");
         tempStr.append("                   ");
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("未接收到数据，请检查设备，"));
         break;
     case 3:
-        tempStr = QStringLiteral("打开设备失败");
+        tempStr = QStringLiteral("打开设备失败！");
         tempStr.append("                   ");
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("打开设备失败"));
         break;
     case 4:
-        tempStr = QStringLiteral("读取系统寄存器成功的");
+        tempStr = QStringLiteral("读取系统寄存器成功！");
         tempStr.append("                   ");
         break;
     case 5:
-        tempStr = QStringLiteral("读取系统寄存器失败,");
+        tempStr = QStringLiteral("读取系统寄存器失败！");
         tempStr.append("                   ");
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("读取系统寄存器失败,"));
         break;
     case 6:
-        tempStr = QStringLiteral("读取设备寄存器成功.");
+        tempStr = QStringLiteral("读取设备寄存器成功！");
         tempStr.append("                   ");
         break;
     case 7:
-        tempStr = QStringLiteral("读取设备寄存器失败.");
+        tempStr = QStringLiteral("读取设备寄存器失败！");
         tempStr.append("                   ");
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("读取设备寄存器失败."));
         break;
     case 8:
-        tempStr = QStringLiteral("加载配置信息成功.");
-        tempStr.append("                      ");
+        tempStr = QStringLiteral("加载配置信息成功！");
+        tempStr.append("                     ");
         break;
     case 9:
-        tempStr = QStringLiteral("加载配置信息失败.");
+        tempStr = QStringLiteral("加载配置信息失败！");
         tempStr.append("                   ");
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("加载配置信息失败."));
         break;
     case 10:
-        tempStr = QStringLiteral("保存配置信息成功.");
+        tempStr = QStringLiteral("保存配置信息成功！");
         tempStr.append("                   ");
         break;
     case 11:
-        tempStr = QStringLiteral("保存配置信息失败.");
+        tempStr = QStringLiteral("保存配置信息失败！");
         tempStr.append("                   ");
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("保存配置信息失败."));
         break;
     case 12:
-        tempStr = QStringLiteral("写入系统寄存器成功的");
+        tempStr = QStringLiteral("写入系统寄存器成功！");
         tempStr.append("                   ");
         break;
     case 13:
-        tempStr = QStringLiteral("写入系统寄存器失败的");
+        tempStr = QStringLiteral("写入系统寄存器失败！");
         tempStr.append("                   ");
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("写入系统寄存器失败的"));
         break;
-
+    case 14:
+        tempStr = QStringLiteral("写入设备寄存器成功！");
+        tempStr.append("                   ");
+        break;
+    case 15:
+        tempStr = QStringLiteral("写入设备寄存器失败！");
+        tempStr.append("                   ");
+        break;
 
     default:
         break;
     }
 
-    QString str = tempStr  +t1.toString("hh:mm:ss.zzz")+ "\n";
+    str = tempStr  +t1.toString("hh:mm:ss");
     ui->textEdit->append(str);
 }
 
@@ -278,6 +295,13 @@ void MainWindow::on_pushButton_clicked()
         emit closeLinkSignal();
         ui->pushButton->setText(QStringLiteral("连接设备"));
         isLinkSuccess = false;
+
+
+        /*****打印到运行日志*****/
+        QString tempstr = QStringLiteral("已经关闭USB的连接！");
+        QTime t1 = QTime::currentTime();
+        QString str = tempstr + "               " +t1.toString("hh:mm:ss");
+        ui->textEdit_2->append(str);
     }
 
 }
@@ -294,17 +318,15 @@ void MainWindow::on_pushButton_2_clicked()
             ui->widget->readFileTimer.start(90);
             oneSecondTimer.start(1000);
 
-
-            //            QString tempstr = "数据接收正常,并开始播放.";
-            QString tempstr = QStringLiteral("数据接收正常,并开始播放~");
+            QString tempstr = QStringLiteral("数据接收正常,开始播放~");
             QTime t1 = QTime::currentTime();
-            QString str = tempstr + "               " +t1.toString("hh:mm:ss.zzz")+ "\n";
+            QString str = tempstr + "               " +t1.toString("hh:mm:ss");
             ui->textEdit_2->append(str);
 
 
         }else
         {
-            //            QMessageBox::information(NULL,"告警","未接收到数据，请检查设备连接！");
+            //QMessageBox::information(NULL,"告警","未接收到数据，请检查设备连接！");
         }
         ui->pushButton_2->setText(QStringLiteral("暂停"));
 
@@ -313,6 +335,12 @@ void MainWindow::on_pushButton_2_clicked()
         showTimer.stop();
         ui->widget->readFileTimer.stop();
         ui->pushButton_2->setText(QStringLiteral("播放"));
+
+        /*****打印到运行日志*****/
+        QString tempstr = QStringLiteral("播放暂停！");
+        QTime t1 = QTime::currentTime();
+        QString str = tempstr + "               " +t1.toString("hh:mm:ss");
+        ui->textEdit_2->append(str);
     }
 
 
@@ -376,7 +404,13 @@ void MainWindow::on_writeDev_pushButton_clicked()
         return;
     }
 
-    emit writeDevSignal();
+    int hardWareAddress = ui->lineEdit_3->text().toInt(NULL,16);
+    int registerAddress = ui->lineEdit_4->text().toInt(NULL,16);
+    QString data = ui->lineEdit_5->text();
+    qDebug()<<hardWareAddress<<"  "<<registerAddress<<endl;
+
+
+    emit writeDevSignal(hardWareAddress,registerAddress,data);
 }
 
 //加载配置集
@@ -402,9 +436,6 @@ void MainWindow::on_loadSetting_pushButton_clicked()
     QStringList mimeTypeFilters;
     mimeTypeFilters <<QStringLiteral("芯片配置文件(*.para)|*.para") ;
     fileDialog->setNameFilters(mimeTypeFilters);
-
-
-
 
 
     QStringList fileNames;
@@ -521,7 +552,9 @@ void MainWindow::oneSecondSlot()
 void MainWindow::queryPixSlot(int x,int y)
 {
     int index = 256*y/3.5 +x/1.5 ;
-    QString str = "tof="+QString::number(tofInfo[index])+", peak="+QString::number(peakInfo[index]);
+//    QString str = "tof="+QString::number(tofInfo[index])+", peak="+QString::number(peakInfo[index]);
+
+    QString str ="x="+QString::number(x/1.5) + ",y="+QString::number(y/3.5) + "tof="+QString::number(tofInfo[index])+", peak="+QString::number(peakInfo[index]);
 
     QToolTip::showText(QCursor::pos(),str);
     //    qDebug()<<"x="<<x<<"  y="<<y<<" tof="<<tofInfo[index]<<" peak="<<peakInfo[index]<<endl;

@@ -90,7 +90,7 @@ signals:
     void readSysSignal();
     void writeSysSignal(int,QString);
     void readDevSignal(int,int);
-    void writeDevSignal();
+    void writeDevSignal(int,int,QString);
     void loadSettingSignal(QString);
     void saveSettingSignal(QString,int, bool );
 
