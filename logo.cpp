@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -172,9 +172,9 @@ Logo::Logo(QObject *parent):
             z_min = m_data[i+2];
     }
 
-    qDebug()<<"x_max="<<x_max<<"  x_min="<<x_min<<endl;
-    qDebug()<<"y_max="<<y_max<<"  y_min="<<y_min<<endl;
-    qDebug()<<"z_max="<<z_max<<"  z_min="<<z_min<<endl;
+//    qDebug()<<"x_max="<<x_max<<"  x_min="<<x_min<<endl;
+//    qDebug()<<"y_max="<<y_max<<"  y_min="<<y_min<<endl;
+//    qDebug()<<"z_max="<<z_max<<"  z_min="<<z_min<<endl;
 }
 
 void Logo::add(const QVector3D &v, const QVector3D &n)

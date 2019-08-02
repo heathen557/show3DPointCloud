@@ -30,7 +30,9 @@ SOURCES += main.cpp\
     globaldata.cpp \
     WriteLog.cpp \
     receusb_msg.cpp \
-    mylabel.cpp
+    mylabel.cpp \
+    filesave.cpp \
+    savepcdthread.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -39,10 +41,13 @@ HEADERS  += mainwindow.h \
     globaldata.h \
     WriteLog.h \
     receusb_msg.h \
-    mylabel.h
+    mylabel.h \
+    filesave.h \
+    savepcdthread.h
 
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    filesave.ui
 
 INCLUDEPATH += "D:/programInstall/libsub"
 #INCLUDEPATH += -lD:/programInstall/libsub

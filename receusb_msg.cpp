@@ -17,6 +17,14 @@ extern int framePerSecond;
 extern int tofInfo[16384];
 extern int peakInfo[16384];
 
+extern bool isSaveFlag;        //是否进行存储
+extern QString saveFilePath;   //保存的路径  E:/..../.../的形式
+extern int saveFileIndex;      //文件标号；1作为开始
+extern int formatFlag;          //0:二进制； 1：ASCII 2：TXT
+
+extern QMutex saveMutex;
+extern QString saveTofPeak_string;
+
 static float colormap[1024*3]={
     0,  0,129,
     0,  0,130,
@@ -50479,7 +50487,6 @@ void ReceUSB_Msg::read_usb()
             int spadNum = MyBuffer[0] + (((ushort)MyBuffer[1]) << 8);
             int line_number = MyBuffer[2] + (((ushort)MyBuffer[3]) << 8);
             //            qDebug()<<"spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
-            //            qDebug()<<"spadNum = "<<spadNum<<endl;
 
             if(spadNum<lastSpadNum /*&& lastSpadNum==7 *//*&& framePerSecond<100*/)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
             {
@@ -50487,14 +50494,30 @@ void ReceUSB_Msg::read_usb()
                 tofImage = microQimage;
                 intensityImage = macroQimage;
 
-                pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
+                if(saveMutex.tryLock())
+                {
+                    pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
+                    saveMutex.unlock();
+                }
                 mutex.unlock();
-                isShowPointCloud = true;
 
+                isShowPointCloud = true;
                 memcpy(tofInfo, tmp_tofInfo, 16384 * sizeof(int));
                 memcpy(peakInfo, tmp_peakInfo, 16384 * sizeof(int));
 
+                if(isSaveFlag)
+                {
+                   //判断格式
+                   if(formatFlag ==2)   //存储tof的txt文本数据
+                   {
+                      emit saveTXTSignal(tofPeakToSave_string);
+                       tofPeakToSave_string.clear();
+                   }else
+                   {
+                      emit savePCDSignal();
+                   }
 
+                }
 
                 emit staticValueSignal(tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax);
                 //重置变量
@@ -50549,6 +50572,17 @@ void ReceUSB_Msg::read_usb()
 
                     tmp_tofInfo[cloudIndex] = tof ;
                     tmp_peakInfo[cloudIndex] = intensity ;
+
+                    //   用来保存成文本的QString
+                    if(2 == formatFlag)
+                    {
+                        tofPeakToSave_string.append(QString::number(tof));
+                        tofPeakToSave_string.append(",");
+                        tofPeakToSave_string.append(QString::number(intensity));
+                        tofPeakToSave_string.append("\n");
+                    }
+
+
 
 
                     //获取三维坐标

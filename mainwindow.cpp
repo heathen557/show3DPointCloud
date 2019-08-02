@@ -13,6 +13,12 @@ bool isWriteSuccess;    //写入命令是否成功标识
 bool isRecvFlag;
 int framePerSecond;
 
+/*保存用到的标识*/
+bool isSaveFlag;        //是否进行存储
+QString saveFilePath;   //保存的路径  E:/..../.../的形式
+int saveFileIndex;      //文件标号；1作为开始
+int formatFlag;         //0:二进制； 1：ASCII 2：TXT
+
 extern bool  isShowPointCloud;
 
 
@@ -20,9 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    QString str= QStringLiteral("设备未连接");
-    qDebug()<<str<<endl;
-
     ui->setupUi(this);
     //    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
 
@@ -30,11 +33,24 @@ MainWindow::MainWindow(QWidget *parent) :
     framePerSecond = 0;   //统计帧率，初始化为0
     isLinkSuccess = false;
 
+    isSaveFlag = false;
+    saveFileIndex = 1;
+
+
     //把读取USB信息放到线程当中，并开启线程
     recvUsbMsg_obj = new ReceUSB_Msg();
     recvUsbThread = new QThread;
     recvUsbMsg_obj->moveToThread(recvUsbThread);
     recvUsbThread->start();
+
+    //开启保存pcd文件的线程
+    savePCD_obj = new savePCDThread;
+    saveThread = new QThread;
+    savePCD_obj->moveToThread(saveThread);
+    saveThread->start();
+
+
+
     connect(this,SIGNAL(readSignal(int,int)),recvUsbMsg_obj, SLOT(run(int,int)));
     connect(this,SIGNAL(closeLinkSignal()),recvUsbMsg_obj,SLOT(closeUSB()));
     connect(recvUsbMsg_obj,SIGNAL(linkInfoSignal(int)),this,SLOT(linkInfoSlot(int)));
@@ -47,7 +63,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(saveSettingSignal(QString,int,bool)),recvUsbMsg_obj,SLOT(saveSettingSlot(QString,int,bool)));
     connect(recvUsbMsg_obj,SIGNAL(reReadSysSignal(QString)),this,SLOT(reReadSysSlot(QString)));
     connect(recvUsbMsg_obj,SIGNAL(reReadDevSignal(QString)),this,SLOT(reReadDevSlot(QString)));
-
     connect(recvUsbMsg_obj,SIGNAL(staticValueSignal(float,float,float,float,float,float,float,float,float,float)),this,SLOT(recvStaticValueSlot(float,float,float,float,float,float,float,float,float,float)));
 
 
@@ -55,6 +70,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&oneSecondTimer,SIGNAL(timeout()),this,SLOT(oneSecondSlot()));
     connect(ui->showTOF_label,SIGNAL(queryPixSignal(int,int)),this,SLOT(queryPixSlot(int,int)));
     connect(ui->showIntensity_label,SIGNAL(queryPixSignal(int,int)),this,SLOT(queryPixSlot(int,int)));
+    connect(ui->action,SIGNAL(triggered()),this,SLOT(showSaveFileDialog())); //文件保存 窗口打开
+
+    connect(&fileSaveDia,SIGNAL(isSaveFlagSignal(bool,QString,int)),this,SLOT(isSaveFlagSlot(bool,QString,int)));
+    connect(recvUsbMsg_obj,SIGNAL(savePCDSignal()),savePCD_obj,SLOT(savePCDSlot()));
+    connect(recvUsbMsg_obj,SIGNAL(saveTXTSignal(QString)),savePCD_obj,SLOT(saveTXTSlot(QString)));
 
     initGUI();
 }
@@ -64,10 +84,10 @@ void MainWindow::initGUI()
 
     //**********************************************************
 
-    ui->tableWidget_2->setColumnWidth(0,115);
-    ui->tableWidget_2->setColumnWidth(1,115);
-    ui->tableWidget_2->setRowHeight(0,30);
-    ui->tableWidget_2->setRowHeight(1,30);
+    ui->tableWidget_2->setColumnWidth(0,117);
+    ui->tableWidget_2->setColumnWidth(1,117);
+    ui->tableWidget_2->setRowHeight(0,31);
+    ui->tableWidget_2->setRowHeight(1,32);
     ui->tableWidget_2->setSelectionBehavior(QAbstractItemView::SelectRows); //整行选中
     ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);   //禁止编辑
     ui->tableWidget_2->setItem(0,0,&tofMinItem_value);
@@ -76,11 +96,11 @@ void MainWindow::initGUI()
     ui->tableWidget_2->setItem(1,1,&peakMaxItem_value);
 
 
-    ui->tableWidget_4->setColumnWidth(0,115);
-    ui->tableWidget_4->setColumnWidth(1,115);
+    ui->tableWidget_4->setColumnWidth(0,129);
+    ui->tableWidget_4->setColumnWidth(1,129);
     ui->tableWidget_4->setRowHeight(0,17);
     ui->tableWidget_4->setRowHeight(1,23);
-    ui->tableWidget_4->setRowHeight(2,20);
+    ui->tableWidget_4->setRowHeight(2,23);
     ui->tableWidget_4->setSelectionBehavior(QAbstractItemView::SelectRows); //整行选中
     ui->tableWidget_4->setEditTriggers(QAbstractItemView::NoEditTriggers);   //禁止编辑
     ui->tableWidget_4->setItem(0,0,&xMinItem_value);
@@ -117,6 +137,8 @@ void MainWindow::showImageSlot()
     if(!tofImage.isNull() && !intensityImage.isNull())
     {
         mutex.lock();
+
+        mutex.try_lock();
         resImage = tofImage.scaled(tofImage.width()*1.5, tofImage.height()*3.5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         resIntenImage = intensityImage.scaled(intensityImage.width()*1.5, intensityImage.height()*3.5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         mutex.unlock();
@@ -165,15 +187,15 @@ void MainWindow::linkInfoSlot(int flagNum)
         /*****打印到运行日志*****/
         tempstr_1 = QStringLiteral("接收数据异常，请检查设备！");
         t1 = QTime::currentTime();
-        str = tempstr_1 + "               " +t1.toString("hh:mm:ss");
+        str = tempstr_1 + "           " +t1.toString("hh:mm:ss");
         ui->textEdit_2->append(str);
 
 
 
         isRecvFlag = false ;
         tempStr = QStringLiteral("未接收到数据，请检查设备！");
-        tempStr.append("                   ");
-        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("未接收到数据，请检查设备，"));
+        tempStr.append("             ");
+//        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("未接收到数据，请检查设备，"));
         break;
     case 3:
         tempStr = QStringLiteral("打开设备失败！");
@@ -339,7 +361,7 @@ void MainWindow::on_pushButton_2_clicked()
         /*****打印到运行日志*****/
         QString tempstr = QStringLiteral("播放暂停！");
         QTime t1 = QTime::currentTime();
-        QString str = tempstr + "               " +t1.toString("hh:mm:ss");
+        QString str = tempstr + "                           " +t1.toString("hh:mm:ss");
         ui->textEdit_2->append(str);
     }
 
@@ -358,8 +380,6 @@ void MainWindow::on_readSys_pushButton_clicked()
     }
 
     int address = ui->lineEdit->text().toInt(NULL,16);
-    qDebug()<<"address = "<<address<<endl;
-
     emit readSysSignal();
 }
 
@@ -374,8 +394,6 @@ void MainWindow::on_writeSys_pushButton_clicked()
 
     int address = ui->lineEdit->text().toInt(NULL,16);
     QString data = ui->sysData_lineEdit->text();
-    qDebug()<<"address = "<<address<<"  data="<<data<<endl;
-
     emit writeSysSignal(address,data);
 }
 
@@ -390,8 +408,6 @@ void MainWindow::on_readDev_pushButton_clicked()
 
     int hardWareAddress = ui->lineEdit_3->text().toInt(NULL,16);
     int registerAddress = ui->lineEdit_4->text().toInt(NULL,16);
-    qDebug()<<hardWareAddress<<"  "<<registerAddress<<endl;
-
     emit readDevSignal(hardWareAddress,registerAddress);
 }
 
@@ -407,8 +423,6 @@ void MainWindow::on_writeDev_pushButton_clicked()
     int hardWareAddress = ui->lineEdit_3->text().toInt(NULL,16);
     int registerAddress = ui->lineEdit_4->text().toInt(NULL,16);
     QString data = ui->lineEdit_5->text();
-    qDebug()<<hardWareAddress<<"  "<<registerAddress<<endl;
-
 
     emit writeDevSignal(hardWareAddress,registerAddress,data);
 }
@@ -552,10 +566,27 @@ void MainWindow::oneSecondSlot()
 void MainWindow::queryPixSlot(int x,int y)
 {
     int index = 256*y/3.5 +x/1.5 ;
-//    QString str = "tof="+QString::number(tofInfo[index])+", peak="+QString::number(peakInfo[index]);
+//    QString str = "tof="+QString::number(tofInfo[index])+",peak="+QString::number(peakInfo[index]);
 
-    QString str ="x="+QString::number(x/1.5) + ",y="+QString::number(y/3.5) + "tof="+QString::number(tofInfo[index])+", peak="+QString::number(peakInfo[index]);
+    QString str ="x="+QString::number(int(x/1.5)) + ",y="+QString::number(int(y/3.5)) + ",tof="+QString::number(tofInfo[index])+",peak="+QString::number(peakInfo[index]);
 
     QToolTip::showText(QCursor::pos(),str);
     //    qDebug()<<"x="<<x<<"  y="<<y<<" tof="<<tofInfo[index]<<" peak="<<peakInfo[index]<<endl;
 }
+
+
+//文件保存界面的槽函数
+void MainWindow::showSaveFileDialog()
+{
+    fileSaveDia.show();
+}
+
+//接收是否保存pcd文件的槽函数
+void MainWindow::isSaveFlagSlot(bool saveFlag, QString filePath,int formatSelect)
+{
+    saveFilePath = filePath;
+    saveFileIndex = 1;
+    formatFlag = formatSelect ;
+    isSaveFlag = saveFlag;
+}
+

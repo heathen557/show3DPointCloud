@@ -40,6 +40,7 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
+    QAction *action;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QFrame *frame_4;
@@ -50,10 +51,10 @@ public:
     QVBoxLayout *verticalLayout;
     QGroupBox *groupBox;
     QGridLayout *gridLayout_3;
-    myLabel *showIntensity_label;
+    myLabel *showTOF_label;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_4;
-    myLabel *showTOF_label;
+    myLabel *showIntensity_label;
     QFrame *frame_3;
     QGridLayout *gridLayout_5;
     QGroupBox *groupBox_3;
@@ -144,6 +145,8 @@ public:
         MainWindow->setWindowIcon(icon);
         MainWindow->setStyleSheet(QStringLiteral(""));
         MainWindow->setTabShape(QTabWidget::Rounded);
+        action = new QAction(MainWindow);
+        action->setObjectName(QStringLiteral("action"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -185,13 +188,13 @@ public:
         gridLayout_3->setContentsMargins(11, 11, 11, 11);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
         gridLayout_3->setContentsMargins(-1, 2, -1, -1);
-        showIntensity_label = new myLabel(groupBox);
-        showIntensity_label->setObjectName(QStringLiteral("showIntensity_label"));
-        showIntensity_label->setMinimumSize(QSize(384, 224));
-        showIntensity_label->setMaximumSize(QSize(384, 224));
-        showIntensity_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
+        showTOF_label = new myLabel(groupBox);
+        showTOF_label->setObjectName(QStringLiteral("showTOF_label"));
+        showTOF_label->setMinimumSize(QSize(384, 224));
+        showTOF_label->setMaximumSize(QSize(384, 224));
+        showTOF_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
 
-        gridLayout_3->addWidget(showIntensity_label, 0, 0, 1, 1);
+        gridLayout_3->addWidget(showTOF_label, 0, 0, 1, 1);
 
 
         verticalLayout->addWidget(groupBox);
@@ -205,13 +208,13 @@ public:
         gridLayout_4->setContentsMargins(11, 11, 11, 11);
         gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
         gridLayout_4->setContentsMargins(-1, 2, -1, -1);
-        showTOF_label = new myLabel(groupBox_2);
-        showTOF_label->setObjectName(QStringLiteral("showTOF_label"));
-        showTOF_label->setMinimumSize(QSize(384, 224));
-        showTOF_label->setMaximumSize(QSize(384, 224));
-        showTOF_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
+        showIntensity_label = new myLabel(groupBox_2);
+        showIntensity_label->setObjectName(QStringLiteral("showIntensity_label"));
+        showIntensity_label->setMinimumSize(QSize(384, 224));
+        showIntensity_label->setMaximumSize(QSize(384, 224));
+        showIntensity_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
 
-        gridLayout_4->addWidget(showTOF_label, 0, 0, 1, 1);
+        gridLayout_4->addWidget(showIntensity_label, 0, 0, 1, 1);
 
 
         verticalLayout->addWidget(groupBox_2);
@@ -673,6 +676,7 @@ public:
         menuBar->addAction(menu_2->menuAction());
         menuBar->addAction(menu_3->menuAction());
         menuBar->addAction(menu_4->menuAction());
+        menu->addAction(action);
 
         retranslateUi(MainWindow);
 
@@ -685,10 +689,11 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\350\212\257\350\247\206\347\225\214USB\350\256\276\345\244\207\346\265\213\350\257\225\347\250\213\345\272\217", Q_NULLPTR));
-        groupBox->setTitle(QApplication::translate("MainWindow", "Peak\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
-        showIntensity_label->setText(QString());
-        groupBox_2->setTitle(QApplication::translate("MainWindow", "Tof\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
+        action->setText(QApplication::translate("MainWindow", "\346\226\207\344\273\266\344\277\235\345\255\230", Q_NULLPTR));
+        groupBox->setTitle(QApplication::translate("MainWindow", "Tof\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
         showTOF_label->setText(QString());
+        groupBox_2->setTitle(QApplication::translate("MainWindow", "Peak\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
+        showIntensity_label->setText(QString());
         groupBox_3->setTitle(QApplication::translate("MainWindow", "\347\202\271\344\272\221\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
         groupBox_4->setTitle(QApplication::translate("MainWindow", "\350\256\276\345\244\207\351\223\276\346\216\245\357\274\232", Q_NULLPTR));
         label->setText(QApplication::translate("MainWindow", "VID:", Q_NULLPTR));

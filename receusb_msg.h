@@ -64,6 +64,8 @@ public:
 
     int idVendor_,idProduct_;
 
+    QString tofPeakToSave_string;
+
 
 
 signals:
@@ -81,6 +83,10 @@ signals:
     void reReadSysSignal(QString);  //读取系统指令 返回信号
 
     void reReadDevSignal(QString); //读取设备指令 返回信号
+
+    void savePCDSignal();
+
+    void saveTXTSignal(QString );
 
 public slots:
     void read_usb();                 //读取USB内容的槽函数

@@ -10,6 +10,8 @@
 #include<QMessageBox>
 #include"receusb_msg.h"
 #include<QTableWidgetItem>
+#include<filesave.h>
+#include<savepcdthread.h>
 
 namespace Ui {
 class MainWindow;
@@ -28,6 +30,9 @@ public:
 
     ReceUSB_Msg *recvUsbMsg_obj;
     QThread *recvUsbThread;
+
+    savePCDThread *savePCD_obj;
+    QThread *saveThread;
 
     QTableWidgetItem tofMinItem_value;
     QTableWidgetItem tofMaxItem_value;
@@ -48,6 +53,7 @@ public:
     QImage resIntenImage;    //用来显示缩放后的intensity图像
 
     bool isLinkSuccess;      //是否连接成功的标识，若是没有连接，则不能进行后续操作
+    fileSave fileSaveDia;
 
 
 private slots:
@@ -79,6 +85,11 @@ private slots:
     void reReadSysSlot(QString str);  //读取系统指令 返回槽函数
 
     void reReadDevSlot(QString str); //读取设备指令 返回槽函数
+
+
+    /****************/
+    void showSaveFileDialog();     //打开保存文件窗口的槽函数
+    void isSaveFlagSlot(bool saveFlag, QString filePath,int formatSelect);    //接收是否保存pcd文件的槽函数
 
 private:
     Ui::MainWindow *ui;
