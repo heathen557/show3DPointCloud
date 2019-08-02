@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     receusb_msg.cpp \
     mylabel.cpp \
     filesave.cpp \
-    savepcdthread.cpp
+    savepcdthread.cpp \
+    dealusb_msg.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -43,7 +44,8 @@ HEADERS  += mainwindow.h \
     receusb_msg.h \
     mylabel.h \
     filesave.h \
-    savepcdthread.h
+    savepcdthread.h \
+    dealusb_msg.h
 
 
 FORMS    += mainwindow.ui \

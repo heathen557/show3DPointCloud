@@ -36,6 +36,11 @@ MainWindow::MainWindow(QWidget *parent) :
     isSaveFlag = false;
     saveFileIndex = 1;
 
+    //USB数据粗粒线程
+     dealUsbMsg_obj = new DealUsb_msg();
+     dealUsbThread = new QThread;
+     dealUsbMsg_obj->moveToThread(dealUsbThread);
+     dealUsbThread->start();
 
     //把读取USB信息放到线程当中，并开启线程
     recvUsbMsg_obj = new ReceUSB_Msg();
@@ -49,6 +54,10 @@ MainWindow::MainWindow(QWidget *parent) :
     savePCD_obj->moveToThread(saveThread);
     saveThread->start();
 
+    qRegisterMetaType<pcl::PointCloud<pcl::PointXYZRGB>>("pcl::PointCloud<pcl::PointXYZRGB>");   //注册函数
+
+    //接收数据线程、处理数据线程
+    connect(recvUsbMsg_obj,SIGNAL(recvMsgSignal(QByteArray)),dealUsbMsg_obj,SLOT(recvMsgSlot(QByteArray)));
 
 
     connect(this,SIGNAL(readSignal(int,int)),recvUsbMsg_obj, SLOT(run(int,int)));
@@ -63,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(saveSettingSignal(QString,int,bool)),recvUsbMsg_obj,SLOT(saveSettingSlot(QString,int,bool)));
     connect(recvUsbMsg_obj,SIGNAL(reReadSysSignal(QString)),this,SLOT(reReadSysSlot(QString)));
     connect(recvUsbMsg_obj,SIGNAL(reReadDevSignal(QString)),this,SLOT(reReadDevSlot(QString)));
-    connect(recvUsbMsg_obj,SIGNAL(staticValueSignal(float,float,float,float,float,float,float,float,float,float)),this,SLOT(recvStaticValueSlot(float,float,float,float,float,float,float,float,float,float)));
+    connect(dealUsbMsg_obj,SIGNAL(staticValueSignal(float,float,float,float,float,float,float,float,float,float)),this,SLOT(recvStaticValueSlot(float,float,float,float,float,float,float,float,float,float)));
 
 
     connect(&showTimer,SIGNAL(timeout()),this,SLOT(showImageSlot()));
@@ -73,8 +82,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action,SIGNAL(triggered()),this,SLOT(showSaveFileDialog())); //文件保存 窗口打开
 
     connect(&fileSaveDia,SIGNAL(isSaveFlagSignal(bool,QString,int)),this,SLOT(isSaveFlagSlot(bool,QString,int)));
-    connect(recvUsbMsg_obj,SIGNAL(savePCDSignal()),savePCD_obj,SLOT(savePCDSlot()));
-    connect(recvUsbMsg_obj,SIGNAL(saveTXTSignal(QString)),savePCD_obj,SLOT(saveTXTSlot(QString)));
+    connect(dealUsbMsg_obj,SIGNAL(savePCDSignal(pcl::PointCloud<pcl::PointXYZRGB>,int)),savePCD_obj,SLOT(savePCDSlot(pcl::PointCloud<pcl::PointXYZRGB>,int)));
+    connect(dealUsbMsg_obj,SIGNAL(saveTXTSignal(QString)),savePCD_obj,SLOT(saveTXTSlot(QString)));
 
     initGUI();
 }
@@ -584,8 +593,10 @@ void MainWindow::showSaveFileDialog()
 //接收是否保存pcd文件的槽函数
 void MainWindow::isSaveFlagSlot(bool saveFlag, QString filePath,int formatSelect)
 {
-    saveFilePath = filePath;
-    saveFileIndex = 1;
+    if(saveFlag)
+        saveFileIndex = 1;
+
+    saveFilePath = filePath; 
     formatFlag = formatSelect ;
     isSaveFlag = saveFlag;
 }

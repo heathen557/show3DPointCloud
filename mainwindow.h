@@ -9,6 +9,7 @@
 #include<QMutex>
 #include<QMessageBox>
 #include"receusb_msg.h"
+#include"dealusb_msg.h"
 #include<QTableWidgetItem>
 #include<filesave.h>
 #include<savepcdthread.h>
@@ -30,6 +31,9 @@ public:
 
     ReceUSB_Msg *recvUsbMsg_obj;
     QThread *recvUsbThread;
+
+    DealUsb_msg *dealUsbMsg_obj;
+    QThread *dealUsbThread;
 
     savePCDThread *savePCD_obj;
     QThread *saveThread;

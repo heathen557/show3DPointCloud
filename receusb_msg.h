@@ -64,7 +64,7 @@ public:
 
     int idVendor_,idProduct_;
 
-    QString tofPeakToSave_string;
+
 
 
 
@@ -80,13 +80,14 @@ signals:
                                     // 14：写入设备成功      15：写入设备失败
     void staticValueSignal(float,float,float,float,float,float,float,float,float,float);
 
+    void recvMsgSignal(QByteArray); //发送给处理线程的信号
+
     void reReadSysSignal(QString);  //读取系统指令 返回信号
 
     void reReadDevSignal(QString); //读取设备指令 返回信号
 
-    void savePCDSignal();
 
-    void saveTXTSignal(QString );
+
 
 public slots:
     void read_usb();                 //读取USB内容的槽函数

@@ -14,7 +14,7 @@ public:
 signals:
 
 public slots:
-    void savePCDSlot();
+    void savePCDSlot(pcl::PointCloud<pcl::PointXYZRGB> cloud,int formatFlag); //0:二进制； 1：ASCII
 
     void writeTXT(QString text,int index);
 

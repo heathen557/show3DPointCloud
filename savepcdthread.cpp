@@ -5,10 +5,8 @@
 
 QMutex saveMutex;
 QString saveTofPeak_string;
-extern pcl::PointCloud<pcl::PointXYZRGB> pointCloudRgb;   //用来保存文档的数据
 extern QString saveFilePath;   //保存的路径  E:/..../.../的形式
 extern int saveFileIndex;      //文件标号；1作为开始
-extern int formatFlag;          //0:二进制； 1：ASCII 2：TXT
 
 savePCDThread::savePCDThread(QObject *parent) : QObject(parent)
 {
@@ -17,15 +15,16 @@ savePCDThread::savePCDThread(QObject *parent) : QObject(parent)
 
 
 //保存二进制效率会高的多，但不利于查看
-void savePCDThread::savePCDSlot()
+void savePCDThread::savePCDSlot(pcl::PointCloud<pcl::PointXYZRGB> cloud,int formatFlag)
 {
     QString filePathName = saveFilePath + QString::number(saveFileIndex)+".pcd";
     if(0 == formatFlag)
     {
-        pcl::io::savePCDFileBinary(filePathName.toLatin1().toStdString(),pointCloudRgb);
-    }else if(1 == formatFlag)
+        pcl::io::savePCDFileBinary(filePathName.toLatin1().toStdString(),cloud);
+    }
+    else if(1 == formatFlag)
     {
-        pcl::io::savePCDFileASCII(filePathName.toLatin1().toStdString(),pointCloudRgb);
+        pcl::io::savePCDFileASCII(filePathName.toLatin1().toStdString(),cloud);
     }
     saveFileIndex++;
 }
