@@ -60,6 +60,13 @@ public:
     QGroupBox *groupBox_3;
     QGridLayout *gridLayout_6;
     GLWidget *widget;
+    QHBoxLayout *horizontalLayout_15;
+    QLabel *label_6;
+    QHBoxLayout *horizontalLayout_14;
+    QPushButton *pushButton_3;
+    QPushButton *pushButton_4;
+    QPushButton *pushButton_5;
+    QLabel *label_10;
     QFrame *frame_2;
     QGridLayout *gridLayout_12;
     QVBoxLayout *verticalLayout_3;
@@ -237,20 +244,62 @@ public:
         gridLayout_5->setContentsMargins(0, 0, -1, -1);
         groupBox_3 = new QGroupBox(frame_3);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
+        groupBox_3->setMinimumSize(QSize(0, 520));
+        groupBox_3->setMaximumSize(QSize(16777215, 520));
         groupBox_3->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
         gridLayout_6 = new QGridLayout(groupBox_3);
         gridLayout_6->setSpacing(6);
         gridLayout_6->setContentsMargins(11, 11, 11, 11);
         gridLayout_6->setObjectName(QStringLiteral("gridLayout_6"));
-        gridLayout_6->setContentsMargins(9, 6, -1, -1);
+        gridLayout_6->setContentsMargins(-1, -1, -1, 0);
         widget = new GLWidget(groupBox_3);
         widget->setObjectName(QStringLiteral("widget"));
-        widget->setMinimumSize(QSize(0, 490));
+        widget->setMinimumSize(QSize(0, 472));
         widget->setMaximumSize(QSize(16777215, 500));
         widget->setStyleSheet(QLatin1String("border:1px solid black;\n"
 "background-color: rgb(0, 0, 0);"));
 
         gridLayout_6->addWidget(widget, 0, 0, 1, 1);
+
+        horizontalLayout_15 = new QHBoxLayout();
+        horizontalLayout_15->setSpacing(6);
+        horizontalLayout_15->setObjectName(QStringLiteral("horizontalLayout_15"));
+        label_6 = new QLabel(groupBox_3);
+        label_6->setObjectName(QStringLiteral("label_6"));
+
+        horizontalLayout_15->addWidget(label_6);
+
+        horizontalLayout_14 = new QHBoxLayout();
+        horizontalLayout_14->setSpacing(6);
+        horizontalLayout_14->setObjectName(QStringLiteral("horizontalLayout_14"));
+        pushButton_3 = new QPushButton(groupBox_3);
+        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        pushButton_3->setMaximumSize(QSize(60, 20));
+
+        horizontalLayout_14->addWidget(pushButton_3);
+
+        pushButton_4 = new QPushButton(groupBox_3);
+        pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
+        pushButton_4->setMaximumSize(QSize(60, 20));
+
+        horizontalLayout_14->addWidget(pushButton_4);
+
+        pushButton_5 = new QPushButton(groupBox_3);
+        pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
+        pushButton_5->setMaximumSize(QSize(60, 20));
+
+        horizontalLayout_14->addWidget(pushButton_5);
+
+
+        horizontalLayout_15->addLayout(horizontalLayout_14);
+
+        label_10 = new QLabel(groupBox_3);
+        label_10->setObjectName(QStringLiteral("label_10"));
+
+        horizontalLayout_15->addWidget(label_10);
+
+
+        gridLayout_6->addLayout(horizontalLayout_15, 1, 0, 1, 1);
 
 
         gridLayout_5->addWidget(groupBox_3, 0, 0, 1, 1);
@@ -695,6 +744,11 @@ public:
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Peak\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
         showIntensity_label->setText(QString());
         groupBox_3->setTitle(QApplication::translate("MainWindow", "\347\202\271\344\272\221\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
+        label_6->setText(QApplication::translate("MainWindow", "------------------------------", Q_NULLPTR));
+        pushButton_3->setText(QApplication::translate("MainWindow", "\346\255\243\350\247\206\345\233\276", Q_NULLPTR));
+        pushButton_4->setText(QApplication::translate("MainWindow", "\344\276\247\350\247\206\345\233\276", Q_NULLPTR));
+        pushButton_5->setText(QApplication::translate("MainWindow", "\344\273\260\350\247\206\345\233\276", Q_NULLPTR));
+        label_10->setText(QApplication::translate("MainWindow", "-----------------------------------", Q_NULLPTR));
         groupBox_4->setTitle(QApplication::translate("MainWindow", "\350\256\276\345\244\207\351\223\276\346\216\245\357\274\232", Q_NULLPTR));
         label->setText(QApplication::translate("MainWindow", "VID:", Q_NULLPTR));
         VID_lineEdit->setText(QApplication::translate("MainWindow", "8888", Q_NULLPTR));

@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -541,6 +541,9 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
     int dx = event->x() - m_lastPos.x();
     int dy = event->y() - m_lastPos.y();
 
+    qDebug()<<" x="<<m_xRot + 8 * dy<<",y="<<m_yRot + 8 * dx<<",z="<<m_zRot + 8 * dx<<endl;
+
+
     if (event->buttons() & Qt::LeftButton) {
         setXRotation(m_xRot + 8 * dy);
         setYRotation(m_yRot + 8 * dx);
@@ -574,3 +577,27 @@ void GLWidget::readFileSlot()
 
 //    qDebug()<<"here update"<<endl;
 }
+
+
+void GLWidget::frontView_slot()
+{
+    setXRotation(1456);
+    setYRotation(2888);
+    setZRotation(2880);
+
+}
+void GLWidget::endView_slot()
+{
+    setXRotation(1384);
+    setYRotation(2824);
+    setZRotation(1456);
+
+}
+void GLWidget::verticalView_slot()
+{
+    setXRotation(240);
+    setYRotation(2896);
+    setZRotation(0);
+}
+
+

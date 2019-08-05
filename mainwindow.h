@@ -95,6 +95,12 @@ private slots:
     void showSaveFileDialog();     //打开保存文件窗口的槽函数
     void isSaveFlagSlot(bool saveFlag, QString filePath,int formatSelect);    //接收是否保存pcd文件的槽函数
 
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_4_clicked();
+
+    void on_pushButton_5_clicked();
+
 private:
     Ui::MainWindow *ui;
 

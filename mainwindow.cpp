@@ -434,6 +434,7 @@ void MainWindow::on_writeDev_pushButton_clicked()
     QString data = ui->lineEdit_5->text();
 
     emit writeDevSignal(hardWareAddress,registerAddress,data);
+    ui->lineEdit_5->clear();
 }
 
 //加载配置集
@@ -541,12 +542,13 @@ void MainWindow::reReadSysSlot(QString str)
     ui->sysData_lineEdit->setText(QString::number(m,16));
 }
 
-//读取设备指令 返回槽函数
+//读取设备指令 返回槽函数,data是十进制的数字
 void MainWindow::reReadDevSlot(QString str)
 {
-    QByteArray ba = str.toLatin1();
-    const char *c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
-    int m = uint8_t(c_str[0]);
+//    QByteArray ba = str.toLatin1();
+//    const char *c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
+//    int m = uint8_t(c_str[0]);
+    int m = str.toInt();
     qDebug()<<" the data =  "<<m<<endl;
     ui->lineEdit_5->setText(QString::number(m,16));
 }
@@ -601,3 +603,20 @@ void MainWindow::isSaveFlagSlot(bool saveFlag, QString filePath,int formatSelect
     isSaveFlag = saveFlag;
 }
 
+//三维点云的正视图
+void MainWindow::on_pushButton_3_clicked()
+{
+    ui->widget->frontView_slot();
+}
+
+//三维点云的侧视图
+void MainWindow::on_pushButton_4_clicked()
+{
+    ui->widget->endView_slot();
+}
+
+//三维点云的仰视图
+void MainWindow::on_pushButton_5_clicked()
+{
+    ui->widget->verticalView_slot();
+}

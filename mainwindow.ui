@@ -177,6 +177,18 @@ border:1px solid grey;}</string>
             </property>
             <item row="0" column="0">
              <widget class="QGroupBox" name="groupBox_3">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>520</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>520</height>
+               </size>
+              </property>
               <property name="styleSheet">
                <string notr="true">font:10pt &quot;黑体&quot;;</string>
               </property>
@@ -184,18 +196,15 @@ border:1px solid grey;}</string>
                <string>点云图像：</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_6">
-               <property name="leftMargin">
-                <number>9</number>
-               </property>
-               <property name="topMargin">
-                <number>6</number>
+               <property name="bottomMargin">
+                <number>0</number>
                </property>
                <item row="0" column="0">
                 <widget class="GLWidget" name="widget" native="true">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>490</height>
+                   <height>472</height>
                   </size>
                  </property>
                  <property name="maximumSize">
@@ -209,6 +218,67 @@ border:1px solid grey;}</string>
 background-color: rgb(0, 0, 0);</string>
                  </property>
                 </widget>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_15">
+                 <item>
+                  <widget class="QLabel" name="label_6">
+                   <property name="text">
+                    <string>------------------------------</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_14">
+                   <item>
+                    <widget class="QPushButton" name="pushButton_3">
+                     <property name="maximumSize">
+                      <size>
+                       <width>60</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>正视图</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton_4">
+                     <property name="maximumSize">
+                      <size>
+                       <width>60</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>侧视图</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton_5">
+                     <property name="maximumSize">
+                      <size>
+                       <width>60</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>仰视图</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_10">
+                   <property name="text">
+                    <string>-----------------------------------</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
               </layout>
              </widget>

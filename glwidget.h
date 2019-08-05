@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -84,6 +84,11 @@ public slots:
 
     void linkServer();
     void ClientRecvData();  //接收点云数据的槽函数
+
+
+    void frontView_slot();
+    void endView_slot();
+    void verticalView_slot();
 
 signals:
     void xRotationChanged(int angle);
