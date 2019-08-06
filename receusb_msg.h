@@ -95,10 +95,10 @@ public slots:
     void run(int vId, int pId);
     void closeUSB();
 
-    void readSysSlot();
-    void writeSysSlot(int addr,QString data);
-    void readDevSlot(int id,int address);
-    void writeDevSlot(int slavId,int addr,QString data);
+    void readSysSlot(int address,bool recvFlag);
+    void writeSysSlot(int addr,QString data,bool recvFlag);
+    void readDevSlot(int id,int address,bool recvFlag);
+    void writeDevSlot(int slavId,int addr,QString data,bool recvFlag);
     void loadSettingSlot(QString filePath);
     void saveSettingSlot(QString filePath,int deviceId,bool  recvFlag);
 };

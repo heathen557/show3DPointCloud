@@ -140,7 +140,10 @@ bool ReceUSB_Msg::System_Register_Read(int Address, QString &Data)
     char data[1];
     QString arr;
     res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
-    Data = QString(data[0]);
+//    Data = QString(data[0]);
+
+    quint8 tmp = quint8(data[0]);
+    Data = QString::number(tmp);
 
     return res;
 }
@@ -330,13 +333,13 @@ void ReceUSB_Msg::openLinkDevSlot()
 
 
 //读取系统寄存器槽函数
-void ReceUSB_Msg::readSysSlot()
+void ReceUSB_Msg::readSysSlot(int address,bool recvFlag)
 {
     QString array;
     //系统注册 读取  0x13 = 19,array返回值
     //    bool res = System_Register_Read(19,array);
 
-    bool res = System_Register_Read(19,array);
+    bool res = System_Register_Read(address,array);
     qDebug()<<"[R]sys Read array="<<array<<"   res="<<res<<endl;
     //系统注册 写入测试
 
@@ -349,11 +352,14 @@ void ReceUSB_Msg::readSysSlot()
         emit linkInfoSignal(5);
     }
 
+    isRecvFlag = recvFlag;
+    read_usb();
+
 }
 
 //写入系统寄存器槽函数
 // 12：写入系统成功      13：写入系统失败
-void ReceUSB_Msg::writeSysSlot(int addr,QString data)
+void ReceUSB_Msg::writeSysSlot(int addr,QString data,bool recvFlag)
 {
     if(System_Register_Write(addr, data))
     {
@@ -363,10 +369,13 @@ void ReceUSB_Msg::writeSysSlot(int addr,QString data)
     {
         emit linkInfoSignal(13);
     }
+
+    isRecvFlag = recvFlag;
+    read_usb();
 }
 
 //读取设备寄存器槽函数
-void ReceUSB_Msg::readDevSlot(int id,int address)
+void ReceUSB_Msg::readDevSlot(int id,int address,bool recvFlag)
 {
     QString data;
 
@@ -379,11 +388,14 @@ void ReceUSB_Msg::readDevSlot(int id,int address)
         emit linkInfoSignal(7);
     }
 
+    isRecvFlag = recvFlag;
+    read_usb();
+
 
 }
 
 //写入设备寄存器槽函数
-void ReceUSB_Msg::writeDevSlot(int slavId,int addr,QString data)
+void ReceUSB_Msg::writeDevSlot(int slavId,int addr,QString data,bool recvFlag)
 {
     if(true == Device_Register_Write(slavId,addr,data))
     {
@@ -392,6 +404,9 @@ void ReceUSB_Msg::writeDevSlot(int slavId,int addr,QString data)
     {
         emit linkInfoSignal(15);
     }
+
+    isRecvFlag = recvFlag;
+    read_usb();
 
 }
 

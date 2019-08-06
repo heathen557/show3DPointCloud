@@ -59,15 +59,15 @@ MainWindow::MainWindow(QWidget *parent) :
     //接收数据线程、处理数据线程
     connect(recvUsbMsg_obj,SIGNAL(recvMsgSignal(QByteArray)),dealUsbMsg_obj,SLOT(recvMsgSlot(QByteArray)));
 
-
+    connect(this,SIGNAL(read_usb_signal()),recvUsbMsg_obj,SLOT(read_usb()));
     connect(this,SIGNAL(readSignal(int,int)),recvUsbMsg_obj, SLOT(run(int,int)));
     connect(this,SIGNAL(closeLinkSignal()),recvUsbMsg_obj,SLOT(closeUSB()));
     connect(recvUsbMsg_obj,SIGNAL(linkInfoSignal(int)),this,SLOT(linkInfoSlot(int)));
 
-    connect(this,SIGNAL(readSysSignal()),recvUsbMsg_obj,SLOT(readSysSlot()));
-    connect(this,SIGNAL(writeSysSignal(int,QString)),recvUsbMsg_obj,SLOT(writeSysSlot(int,QString)));
-    connect(this,SIGNAL(readDevSignal(int,int)),recvUsbMsg_obj,SLOT(readDevSlot(int,int)));
-    connect(this,SIGNAL(writeDevSignal(int,int,QString)),recvUsbMsg_obj,SLOT(writeDevSlot(int,int,QString)));
+    connect(this,SIGNAL(readSysSignal(int,bool)),recvUsbMsg_obj,SLOT(readSysSlot(int,bool)));
+    connect(this,SIGNAL(writeSysSignal(int,QString,bool)),recvUsbMsg_obj,SLOT(writeSysSlot(int,QString,bool)));
+    connect(this,SIGNAL(readDevSignal(int,int,bool)),recvUsbMsg_obj,SLOT(readDevSlot(int,int,bool)));
+    connect(this,SIGNAL(writeDevSignal(int,int,QString,bool)),recvUsbMsg_obj,SLOT(writeDevSlot(int,int,QString,bool)));
     connect(this,SIGNAL(loadSettingSignal(QString)),recvUsbMsg_obj,SLOT(loadSettingSlot(QString)));
     connect(this,SIGNAL(saveSettingSignal(QString,int,bool)),recvUsbMsg_obj,SLOT(saveSettingSlot(QString,int,bool)));
     connect(recvUsbMsg_obj,SIGNAL(reReadSysSignal(QString)),this,SLOT(reReadSysSlot(QString)));
@@ -319,6 +319,12 @@ void MainWindow::on_pushButton_clicked()
         int pid = ui->PID_lineEdit->text().toInt(NULL,16);
         emit readSignal(vid,pid);
 
+        if(isWriteSuccess)
+        {
+           isRecvFlag = true;
+           emit read_usb_signal();
+        }
+
     }else if(ui->pushButton->text() == QStringLiteral("关闭连接"))
     {
         //        oneSecondTimer.stop();
@@ -389,7 +395,21 @@ void MainWindow::on_readSys_pushButton_clicked()
     }
 
     int address = ui->lineEdit->text().toInt(NULL,16);
-    emit readSysSignal();
+
+//    qDebug()<<" the address = "<<address<<endl;
+//    emit readSysSignal();
+
+
+    if(isRecvFlag)
+    {
+        isRecvFlag = false;
+        emit readSysSignal(address,true);
+    }else
+    {
+        emit readSysSignal(address,false);
+    }
+
+
 }
 
 //写入系统寄存器
@@ -403,7 +423,18 @@ void MainWindow::on_writeSys_pushButton_clicked()
 
     int address = ui->lineEdit->text().toInt(NULL,16);
     QString data = ui->sysData_lineEdit->text();
-    emit writeSysSignal(address,data);
+
+//    emit writeSysSignal(address,data);
+    if(isRecvFlag)
+    {
+        isRecvFlag = false;
+        emit writeSysSignal(address,data,true);
+    }else
+    {
+        emit writeSysSignal(address,data,false);
+    }
+    ui->sysData_lineEdit->clear();
+
 }
 
 //读取设备寄存器
@@ -417,7 +448,18 @@ void MainWindow::on_readDev_pushButton_clicked()
 
     int hardWareAddress = ui->lineEdit_3->text().toInt(NULL,16);
     int registerAddress = ui->lineEdit_4->text().toInt(NULL,16);
-    emit readDevSignal(hardWareAddress,registerAddress);
+//    emit readDevSignal(hardWareAddress,registerAddress);
+
+    if(isRecvFlag)
+    {
+        isRecvFlag = false;
+        emit readDevSignal(hardWareAddress,registerAddress,true);
+    }else
+    {
+        emit readDevSignal(hardWareAddress,registerAddress,false);
+    }
+
+
 }
 
 //写入设备寄存器
@@ -433,8 +475,23 @@ void MainWindow::on_writeDev_pushButton_clicked()
     int registerAddress = ui->lineEdit_4->text().toInt(NULL,16);
     QString data = ui->lineEdit_5->text();
 
-    emit writeDevSignal(hardWareAddress,registerAddress,data);
+//    emit writeDevSignal(hardWareAddress,registerAddress,data);
+//    ui->lineEdit_5->clear();
+
+
+
+    //如果接收线程正在运行，先关闭接收线程（while循环），否则线程接收不到信号
+    //线程处理完数据以后，再次打开while循环，即另isRecvFlag = true;
+    if(isRecvFlag)
+    {
+        isRecvFlag = false;
+        emit writeDevSignal(hardWareAddress,registerAddress,data,true);
+    }else
+    {
+        emit writeDevSignal(hardWareAddress,registerAddress,data,false);
+    }
     ui->lineEdit_5->clear();
+
 }
 
 //加载配置集
@@ -535,17 +592,20 @@ void MainWindow::on_saveSetting_pushButton_clicked()
 
 }
 
-//读取系统指令 返回槽函数
+//读取系统指令 返回槽函数,str是十进制的数字
 void MainWindow::reReadSysSlot(QString str)
 {
-    QByteArray ba = str.toLatin1();
-    const char *c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
-    int m = uint8_t(c_str[0]);
+//    QByteArray ba = str.toLatin1();
+//    const char *c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
+//    int m = uint8_t(c_str[0]);
+//    qDebug()<<" the data =  "<<m<<endl;
+
+    int m = str.toInt();
     qDebug()<<" the data =  "<<m<<endl;
     ui->sysData_lineEdit->setText(QString::number(m,16));
 }
 
-//读取设备指令 返回槽函数,data是十进制的数字
+//读取设备指令 返回槽函数,str是十进制的数字
 void MainWindow::reReadDevSlot(QString str)
 {
 //    QByteArray ba = str.toLatin1();

@@ -112,17 +112,19 @@ signals:
 
     void closeLinkSignal();   //关闭连接
 
-    void readSysSignal();
+    void readSysSignal(int,bool);
 
-    void writeSysSignal(int,QString);
+    void writeSysSignal(int,QString,bool);
 
-    void readDevSignal(int,int);
+    void readDevSignal(int,int,bool);
 
-    void writeDevSignal(int,int,QString);
+    void writeDevSignal(int,int,QString,bool);
 
     void loadSettingSignal(QString);
 
     void saveSettingSignal(QString,int, bool );
+
+    void read_usb_signal();
 };
 
 #endif // MAINWINDOW_H
