@@ -62,11 +62,14 @@ public:
 
 private slots:
     void on_pushButton_clicked();    //测试用的槽函数
-    void showImageSlot();           //显示二维图像的槽函数
-    void on_pushButton_2_clicked();
-    void linkInfoSlot(int );      //接收线程发过来的链接信息（告警、错误）
-    void initGUI();
 
+    void showImageSlot();           //显示二维图像的槽函数
+
+    void on_pushButton_2_clicked();
+
+    void linkInfoSlot(int );      //接收线程发过来的链接信息（告警、错误）
+
+    void initGUI();
 
     void on_readSys_pushButton_clicked();
 
@@ -90,15 +93,15 @@ private slots:
 
     void reReadDevSlot(QString str); //读取设备指令 返回槽函数
 
-
     /****************/
     void showSaveFileDialog();     //打开保存文件窗口的槽函数
+
     void isSaveFlagSlot(bool saveFlag, QString filePath,int formatSelect);    //接收是否保存pcd文件的槽函数
-
+    //正视图
     void on_pushButton_3_clicked();
-
+    //侧视图
     void on_pushButton_4_clicked();
-
+    //仰视图
     void on_pushButton_5_clicked();
 
 private:
@@ -106,16 +109,20 @@ private:
 
 signals:
     void readSignal(int ,int);
+
     void closeLinkSignal();   //关闭连接
 
     void readSysSignal();
+
     void writeSysSignal(int,QString);
+
     void readDevSignal(int,int);
+
     void writeDevSignal(int,int,QString);
+
     void loadSettingSignal(QString);
+
     void saveSettingSignal(QString,int, bool );
-
-
 };
 
 #endif // MAINWINDOW_H

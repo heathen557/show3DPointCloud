@@ -528,6 +528,9 @@ void MainWindow::on_saveSetting_pushButton_clicked()
     {
         isRecvFlag = false;
         emit saveSettingSignal(filePath, deviceId, true);
+    }else
+    {
+        emit saveSettingSignal(filePath, deviceId, false);
     }
 
 }

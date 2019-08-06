@@ -312,6 +312,13 @@ void ReceUSB_Msg::openLinkDevSlot()
 
 
     dev = findUSBDev(0,0);                      //查找usb设备
+
+    if(NULL == dev)
+    {
+        isFirstLink = false;
+        return ;
+    }
+
     if(true ==openUSB(dev))                               //打开USB设备
     {
         emit linkInfoSignal(0);                //打开设备成功

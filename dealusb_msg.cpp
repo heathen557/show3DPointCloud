@@ -50214,7 +50214,6 @@ static float z_Weight[] = {
 DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     microQimage(256,64, QImage::Format_RGB32),macroQimage(256,64, QImage::Format_RGB32)
 {
-    qDebug()<<"处理数据的线程已经开启了"<<endl;
 
     pointCloudRgb.width = 16384;
     pointCloudRgb.height = 1;
