@@ -99,7 +99,7 @@ public slots:
     void writeSysSlot(int addr,QString data,bool recvFlag);
     void readDevSlot(int id,int address,bool recvFlag);
     void writeDevSlot(int slavId,int addr,QString data,bool recvFlag);
-    void loadSettingSlot(QString filePath);
+    void loadSettingSlot(QString filePath,bool recvFlag);
     void saveSettingSlot(QString filePath,int deviceId,bool  recvFlag);
 };
 

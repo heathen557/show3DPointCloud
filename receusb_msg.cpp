@@ -411,7 +411,7 @@ void ReceUSB_Msg::writeDevSlot(int slavId,int addr,QString data,bool recvFlag)
 }
 
 //加载配置集槽函数
-void ReceUSB_Msg::loadSettingSlot(QString filePath)
+void ReceUSB_Msg::loadSettingSlot(QString filePath,bool recvFlag)
 {
     QFile file(filePath);
     QString line[20];

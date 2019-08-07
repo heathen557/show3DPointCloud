@@ -120,7 +120,7 @@ signals:
 
     void writeDevSignal(int,int,QString,bool);
 
-    void loadSettingSignal(QString);
+    void loadSettingSignal(QString,bool);
 
     void saveSettingSignal(QString,int, bool );
 
