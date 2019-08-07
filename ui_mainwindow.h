@@ -574,16 +574,23 @@ public:
         groupBox_5 = new QGroupBox(centralWidget);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
         groupBox_5->setMaximumSize(QSize(16777215, 180));
-        groupBox_5->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
+        groupBox_5->setStyleSheet(QString::fromUtf8("\n"
+"\n"
+"#groupBox_5{\n"
+"font:10pt \"\351\273\221\344\275\223\";\n"
+"}"));
         gridLayout_16 = new QGridLayout(groupBox_5);
         gridLayout_16->setSpacing(6);
         gridLayout_16->setContentsMargins(11, 11, 11, 11);
         gridLayout_16->setObjectName(QStringLiteral("gridLayout_16"));
+        gridLayout_16->setContentsMargins(-1, -1, -1, 3);
         horizontalLayout_13 = new QHBoxLayout();
         horizontalLayout_13->setSpacing(6);
         horizontalLayout_13->setObjectName(QStringLiteral("horizontalLayout_13"));
         tabWidget = new QTabWidget(groupBox_5);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
+        tabWidget->setMaximumSize(QSize(16777215, 130));
+        tabWidget->setStyleSheet(QString::fromUtf8("font:9pt \"\351\273\221\344\275\223\";"));
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
         gridLayout_13 = new QGridLayout(tab);
@@ -625,6 +632,7 @@ public:
         verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
         label_11 = new QLabel(frame_6);
         label_11->setObjectName(QStringLiteral("label_11"));
+        label_11->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
 
         verticalLayout_5->addWidget(label_11);
 
@@ -642,7 +650,8 @@ public:
         QTableWidgetItem *__qtablewidgetitem3 = new QTableWidgetItem();
         tableWidget_2->setVerticalHeaderItem(1, __qtablewidgetitem3);
         tableWidget_2->setObjectName(QStringLiteral("tableWidget_2"));
-        tableWidget_2->setStyleSheet(QStringLiteral(""));
+        tableWidget_2->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";\n"
+"border:0px"));
 
         verticalLayout_5->addWidget(tableWidget_2);
 
@@ -666,6 +675,7 @@ public:
         verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
         label_9 = new QLabel(frame_5);
         label_9->setObjectName(QStringLiteral("label_9"));
+        label_9->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
 
         verticalLayout_4->addWidget(label_9);
 
@@ -685,7 +695,8 @@ public:
         QTableWidgetItem *__qtablewidgetitem8 = new QTableWidgetItem();
         tableWidget_4->setVerticalHeaderItem(2, __qtablewidgetitem8);
         tableWidget_4->setObjectName(QStringLiteral("tableWidget_4"));
-        tableWidget_4->setStyleSheet(QStringLiteral(""));
+        tableWidget_4->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";\n"
+"border:0px"));
 
         verticalLayout_4->addWidget(tableWidget_4);
 
@@ -737,7 +748,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\350\212\257\350\247\206\347\225\214USB\350\256\276\345\244\207\346\265\213\350\257\225\347\250\213\345\272\217", Q_NULLPTR));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\350\212\257\350\247\206\347\225\214\351\235\242\351\230\265\350\256\276\345\244\207\346\265\213\350\257\225\347\250\213\345\272\217", Q_NULLPTR));
         action->setText(QApplication::translate("MainWindow", "\346\226\207\344\273\266\344\277\235\345\255\230", Q_NULLPTR));
         groupBox->setTitle(QApplication::translate("MainWindow", "Tof\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
         showTOF_label->setText(QString());

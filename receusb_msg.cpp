@@ -524,24 +524,27 @@ void ReceUSB_Msg::saveSettingSlot(QString filePath,int deviceId,bool recvFlag)
 
     /***************文本中写入str2*****************************************************/
     res = System_Register_Read(17, dataStr);
-    ba = dataStr.toLatin1();
-    c_str = ba.data();
-    m = uint8_t(c_str[0]);
+//    ba = dataStr.toLatin1();
+//    c_str = ba.data();
+//    m = uint8_t(c_str[0]);
+    m = dataStr.toInt();
     QString tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
     textString = tmpData;
 
     res = System_Register_Read(18, dataStr);
-    ba = dataStr.toLatin1();
-    c_str = ba.data();
-    m = uint8_t(c_str[0]);
+//    ba = dataStr.toLatin1();
+//    c_str = ba.data();
+//    m = uint8_t(c_str[0]);
+    m = dataStr.toInt();
     tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
     textString.append(tmpData);
 
 
     res = System_Register_Read(226, dataStr);
-    ba = dataStr.toLatin1();
-    c_str = ba.data();
-    m = uint8_t(c_str[0]);
+//    ba = dataStr.toLatin1();
+//    c_str = ba.data();
+//    m = uint8_t(c_str[0]);
+    m = dataStr.toInt();
     tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
     textString.append(tmpData);
 
@@ -553,9 +556,10 @@ void ReceUSB_Msg::saveSettingSlot(QString filePath,int deviceId,bool recvFlag)
     for (i = 0; i < 12; i++)
     {
         res = System_Register_Read((32+i), dataStr);
-        ba = dataStr.toLatin1();
-        c_str = ba.data();
-        m = uint8_t(c_str[0]);
+//        ba = dataStr.toLatin1();
+//        c_str = ba.data();
+//        m = uint8_t(c_str[0]);
+        m = dataStr.toInt();
         tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
         textString.append(tmpData);
     }

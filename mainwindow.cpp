@@ -95,8 +95,8 @@ void MainWindow::initGUI()
 
     ui->tableWidget_2->setColumnWidth(0,117);
     ui->tableWidget_2->setColumnWidth(1,117);
-    ui->tableWidget_2->setRowHeight(0,31);
-    ui->tableWidget_2->setRowHeight(1,32);
+    ui->tableWidget_2->setRowHeight(0,35);
+    ui->tableWidget_2->setRowHeight(1,35);
     ui->tableWidget_2->setSelectionBehavior(QAbstractItemView::SelectRows); //整行选中
     ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);   //禁止编辑
     ui->tableWidget_2->setItem(0,0,&tofMinItem_value);
@@ -105,11 +105,11 @@ void MainWindow::initGUI()
     ui->tableWidget_2->setItem(1,1,&peakMaxItem_value);
 
 
-    ui->tableWidget_4->setColumnWidth(0,129);
-    ui->tableWidget_4->setColumnWidth(1,129);
-    ui->tableWidget_4->setRowHeight(0,17);
-    ui->tableWidget_4->setRowHeight(1,23);
-    ui->tableWidget_4->setRowHeight(2,23);
+    ui->tableWidget_4->setColumnWidth(0,130);
+    ui->tableWidget_4->setColumnWidth(1,130);
+    ui->tableWidget_4->setRowHeight(0,20);
+    ui->tableWidget_4->setRowHeight(1,25);
+    ui->tableWidget_4->setRowHeight(2,25);
     ui->tableWidget_4->setSelectionBehavior(QAbstractItemView::SelectRows); //整行选中
     ui->tableWidget_4->setEditTriggers(QAbstractItemView::NoEditTriggers);   //禁止编辑
     ui->tableWidget_4->setItem(0,0,&xMinItem_value);
