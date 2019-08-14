@@ -272,6 +272,13 @@ background-color: rgb(0, 0, 0);</string>
                   </layout>
                  </item>
                  <item>
+                  <widget class="QPushButton" name="change_pushButton">
+                   <property name="text">
+                    <string>切换tof/peak</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <widget class="QLabel" name="label_10">
                    <property name="text">
                     <string>-----------------------------------</string>

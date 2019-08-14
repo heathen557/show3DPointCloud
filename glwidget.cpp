@@ -559,12 +559,12 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 {
     if(event->delta()>0){//如果滚轮往上滚
         //        qDebug()<<"已经检测到向上滚轮"<<endl;
-        m_scale += 0.03;
+        m_scale += 0.03*10;
         update();
 
     }else{//同样的 如果向下滚轮
         //        qDebug()<<"已经检测到向下滚轮..."<<endl;
-        m_scale -= 0.03;
+        m_scale -= 0.03*10;
         update();
     }
 }

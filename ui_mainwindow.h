@@ -66,6 +66,7 @@ public:
     QPushButton *pushButton_3;
     QPushButton *pushButton_4;
     QPushButton *pushButton_5;
+    QPushButton *change_pushButton;
     QLabel *label_10;
     QFrame *frame_2;
     QGridLayout *gridLayout_12;
@@ -292,6 +293,11 @@ public:
 
 
         horizontalLayout_15->addLayout(horizontalLayout_14);
+
+        change_pushButton = new QPushButton(groupBox_3);
+        change_pushButton->setObjectName(QStringLiteral("change_pushButton"));
+
+        horizontalLayout_15->addWidget(change_pushButton);
 
         label_10 = new QLabel(groupBox_3);
         label_10->setObjectName(QStringLiteral("label_10"));
@@ -759,6 +765,7 @@ public:
         pushButton_3->setText(QApplication::translate("MainWindow", "\346\255\243\350\247\206\345\233\276", Q_NULLPTR));
         pushButton_4->setText(QApplication::translate("MainWindow", "\344\276\247\350\247\206\345\233\276", Q_NULLPTR));
         pushButton_5->setText(QApplication::translate("MainWindow", "\344\273\260\350\247\206\345\233\276", Q_NULLPTR));
+        change_pushButton->setText(QApplication::translate("MainWindow", "\345\210\207\346\215\242tof/peak", Q_NULLPTR));
         label_10->setText(QApplication::translate("MainWindow", "-----------------------------------", Q_NULLPTR));
         groupBox_4->setTitle(QApplication::translate("MainWindow", "\350\256\276\345\244\207\351\223\276\346\216\245\357\274\232", Q_NULLPTR));
         label->setText(QApplication::translate("MainWindow", "VID:", Q_NULLPTR));

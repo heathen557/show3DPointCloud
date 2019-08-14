@@ -280,10 +280,10 @@ void Logo::readPCDFile1()
     sor.setMeanK(20);
     sor.setStddevMulThresh(0.001);
     sor.filter(DealedCloud_rgb);
-    t1 = QTime::currentTime();
+//    t1 = QTime::currentTime();
     //qDebug()<<"END = "<< t1.toString("hh:mm:ss.zzz")<<endl;
-
 */
+
 
 //    qDebug()<<"the pointCloud num =  "<<DealedCloud.points.size()<<endl;
     int m = 0;
@@ -298,18 +298,17 @@ void Logo::readPCDFile1()
          ng = (nrgb >> 8) & 0x0000ff;
          nb = (nrgb) & 0x0000ff;
 
-        m_data[3+m] = nr/255.0;
-        m_data[4+m] = ng/225.0;
-        m_data[5+m] = nb/255.0;
+        m_data[3+m] = 255.0;
+        m_data[4+m] = 225.0;
+        m_data[5+m] = 255.0;
 
 
         m += 6;
     }
     m_data.resize(m);
+    qDebug()<<"m_data.size"<<m_data.size()<<"   m="<<m<<endl;
 
 }
-
-
 
 
 Logo::~Logo()

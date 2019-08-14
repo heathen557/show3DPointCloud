@@ -21,6 +21,7 @@ int formatFlag;         //0:二进制； 1：ASCII 2：TXT
 
 extern bool  isShowPointCloud;
 
+bool isTOF;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -35,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     isSaveFlag = false;
     saveFileIndex = 1;
+
+    isTOF = true;
 
     //USB数据粗粒线程
      dealUsbMsg_obj = new DealUsb_msg();
@@ -352,13 +355,15 @@ void MainWindow::on_pushButton_2_clicked()
         if(isWriteSuccess)
         {
             showTimer.start(90);
-            ui->widget->readFileTimer.start(90);
+            ui->widget->readFileTimer.start(20);
             oneSecondTimer.start(1000);
 
             QString tempstr = QStringLiteral("数据接收正常,开始播放~");
             QTime t1 = QTime::currentTime();
             QString str = tempstr + "               " +t1.toString("hh:mm:ss");
             ui->textEdit_2->append(str);
+
+            emit read_usb_signal();
 
 
         }else
@@ -691,4 +696,12 @@ void MainWindow::on_pushButton_4_clicked()
 void MainWindow::on_pushButton_5_clicked()
 {
     ui->widget->verticalView_slot();
+}
+
+void MainWindow::on_change_pushButton_clicked()
+{
+    if(isTOF == true)
+        isTOF = false;
+    else
+        isTOF = true;
 }

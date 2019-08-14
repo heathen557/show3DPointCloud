@@ -19,6 +19,8 @@ extern QString saveFilePath;   //保存的路径  E:/..../.../的形式
 extern int saveFileIndex;      //文件标号；1作为开始
 extern int formatFlag;         //0:二进制； 1：ASCII 2：TXT
 
+extern bool isTOF;
+
 
 
 static float colormap[1024*3]={
@@ -50263,6 +50265,11 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                 emit savePCDSignal(tempRgbCloud,1);
             }else if(formatFlag == 2)
             {
+                for(int i=0; i<16384; i++)
+                {
+                     tofPeakToSave_string.append(tofPeakNum[i]);
+                     tofPeakNum[i].clear();
+                }
                 emit saveTXTSignal(tofPeakToSave_string);
                 tofPeakToSave_string.clear();
             }
@@ -50295,6 +50302,10 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         int tof = (ushort)((MyBuffer[4 + i * 4]) + (((ushort)MyBuffer[4 + i * 4 + 1]) << 8));
         int intensity = (ushort)((MyBuffer[4 + i * 4 + 2]) + (((ushort)MyBuffer[4 + i * 4 + 3]) << 8));
 
+        if(tof>1024)
+            tof = 0;
+
+
         //设置TOF图像、强度图像的颜色
         QRgb tofColor,intenColor;
         if(tof<1024 && tof>=0)
@@ -50325,18 +50336,31 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
             if(formatFlag ==2  && isSaveFlag == true)
             {
-                tofPeakToSave_string.append(QString::number(tof)).append(", ").append(QString::number(intensity)).append("\n");
+//                tofPeakToSave_string.append(QString::number(tof)).append(", ").append(QString::number(intensity)).append("\n");
+//                tofPeakToSave_string[cloudIndex] =
+                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
+
             }else
             {
-                tofPeakToSave_string.clear();
+//                tofPeakToSave_string.clear();
+                tofPeakNum[cloudIndex].clear();
+
             }
 
 
-
             //获取三维坐标
-            temp_x = tof * x_Weight[cloudIndex] * LSB;
-            temp_y = tof * y_Weight[cloudIndex] * LSB;
-            temp_z = tof * z_Weight[cloudIndex] * LSB;
+            if(isTOF)
+            {
+                temp_x = tof * x_Weight[cloudIndex] * LSB;
+                temp_y = tof * y_Weight[cloudIndex] * LSB;
+                temp_z = tof * z_Weight[cloudIndex] * LSB;
+            }else
+            {
+                temp_x = intensity * x_Weight[cloudIndex] * LSB;
+                temp_y = intensity * y_Weight[cloudIndex] * LSB;
+                temp_z = intensity * z_Weight[cloudIndex] * LSB;
+            }
+
 
             //                    //点云颜色
             QColor mColor = QColor(tofColor);

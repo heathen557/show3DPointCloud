@@ -104,6 +104,8 @@ private slots:
     //仰视图
     void on_pushButton_5_clicked();
 
+    void on_change_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 

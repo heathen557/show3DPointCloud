@@ -472,11 +472,15 @@ void ReceUSB_Msg::loadSettingSlot(QString filePath,bool recvFlag)
 
 
     //0xd8 = 216,
-    for(int k=0; k<50; k++)
+    for(int k=1; k<50; k++)
     {
         res = Device_Register_Write(216,k,str1.mid(3*k,2));
         qDebug()<<"[w]Device write str1="<<str1.mid(3*k,2)<<"   res="<<res<<str1.mid(3*k,2).toInt(NULL,16) <<endl;
     }
+
+    QString str = "00";
+    res = Device_Register_Write(216,0,str);
+    qDebug()<<"[w]Device write str1="<<"00"<<"   res="<<res<<endl;
 
     if(res)
     {

@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../show2DPointCloudNew_7_30_logThread/icon_1.png</normaloff>../show2DPointCloudNew_7_30_logThread/icon_1.png</iconset>
+    <normaloff>icon_1.png</normaloff>icon_1.png</iconset>
   </property>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">

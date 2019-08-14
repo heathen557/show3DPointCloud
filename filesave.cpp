@@ -60,7 +60,7 @@ void fileSave::on_pushButton_clicked()
 //取消槽函数
 void fileSave::on_pushButton_2_clicked()
 {
-
+    this->hide();
 }
 
 
