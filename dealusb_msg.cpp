@@ -50302,7 +50302,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         int tof = (ushort)((MyBuffer[4 + i * 4]) + (((ushort)MyBuffer[4 + i * 4 + 1]) << 8));
         int intensity = (ushort)((MyBuffer[4 + i * 4 + 2]) + (((ushort)MyBuffer[4 + i * 4 + 3]) << 8));
 
-        if(tof>1024)
+        if(tof>2048)
             tof = 0;
 
 
@@ -50352,12 +50352,14 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             if(isTOF)
             {
                 temp_x = tof * x_Weight[cloudIndex] * LSB;
-                temp_y = tof * y_Weight[cloudIndex] * LSB;
+//                temp_y = tof * y_Weight[cloudIndex] * LSB;
+                temp_y = tof * LSB;
                 temp_z = tof * z_Weight[cloudIndex] * LSB;
             }else
             {
                 temp_x = intensity * x_Weight[cloudIndex] * LSB;
-                temp_y = intensity * y_Weight[cloudIndex] * LSB;
+//                temp_y = intensity * y_Weight[cloudIndex] * LSB;
+                temp_y = intensity * LSB;
                 temp_z = intensity * z_Weight[cloudIndex] * LSB;
             }
 

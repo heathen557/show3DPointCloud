@@ -267,11 +267,11 @@ void Logo::readPCDFile1()
         return;
 
     mutex.lock();
-//    pcl::copyPointCloud(pointCloudRgb,needDealCloud_rgb);
-    pcl::copyPointCloud(pointCloudRgb,DealedCloud_rgb);
+    pcl::copyPointCloud(pointCloudRgb,needDealCloud_rgb);
+//    pcl::copyPointCloud(pointCloudRgb,DealedCloud_rgb);
     mutex.unlock();
 
-/*
+
     //  基于统计运算的滤波算法
     QTime t1 = QTime::currentTime();
     //qDebug()<<"BEGIN = "<< t1.toString("hh:mm:ss.zzz")<<endl;
@@ -282,7 +282,7 @@ void Logo::readPCDFile1()
     sor.filter(DealedCloud_rgb);
 //    t1 = QTime::currentTime();
     //qDebug()<<"END = "<< t1.toString("hh:mm:ss.zzz")<<endl;
-*/
+
 
 
 //    qDebug()<<"the pointCloud num =  "<<DealedCloud.points.size()<<endl;
