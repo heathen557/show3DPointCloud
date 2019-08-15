@@ -18,10 +18,9 @@ bool isSaveFlag;        //是否进行存储
 QString saveFilePath;   //保存的路径  E:/..../.../的形式
 int saveFileIndex;      //文件标号；1作为开始
 int formatFlag;         //0:二进制； 1：ASCII 2：TXT
-
 extern bool  isShowPointCloud;
-
 bool isTOF;
+int gainImage;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -38,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     saveFileIndex = 1;
 
     isTOF = true;
+    gainImage = 1;
 
     //USB数据粗粒线程
      dealUsbMsg_obj = new DealUsb_msg();
@@ -704,4 +704,17 @@ void MainWindow::on_change_pushButton_clicked()
         isTOF = false;
     else
         isTOF = true;
+}
+
+void MainWindow::on_radioButton_clicked()
+{
+    if(ui->radioButton->isChecked())
+        ui->widget->m_logo.isFilter = true;
+    else
+        ui->widget->m_logo.isFilter = false;
+}
+
+void MainWindow::on_gainImage_lineEdit_returnPressed()
+{
+    gainImage = ui->gainImage_lineEdit->text().toInt();
 }

@@ -106,6 +106,10 @@ private slots:
 
     void on_change_pushButton_clicked();
 
+    void on_radioButton_clicked();
+
+    void on_gainImage_lineEdit_returnPressed();
+
 private:
     Ui::MainWindow *ui;
 

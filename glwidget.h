@@ -75,6 +75,8 @@ public:
     QSize minimumSizeHint() const override;
     QSize sizeHint() const override;
     QTimer readFileTimer;    //读取点云数据，开始显示
+    Logo m_logo;
+
 public slots:
     void setXRotation(int angle);
     void setYRotation(int angle);
@@ -113,7 +115,7 @@ private:
     int m_yRot;
     int m_zRot;
     QPoint m_lastPos;
-    Logo m_logo;
+
     QOpenGLVertexArrayObject m_vao;
     QOpenGLBuffer m_logoVbo;
     QOpenGLShaderProgram *m_program;

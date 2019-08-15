@@ -20,6 +20,7 @@ public:
     QImage macroQimage;
 
     pcl::PointCloud<pcl::PointXYZRGB> tempRgbCloud;
+    pcl::PointXYZRGB  cloutPoint;
 
     int cloudIndex;
 

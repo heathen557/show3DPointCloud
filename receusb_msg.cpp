@@ -478,7 +478,7 @@ void ReceUSB_Msg::loadSettingSlot(QString filePath,bool recvFlag)
         qDebug()<<"[w]Device write str1="<<str1.mid(3*k,2)<<"   res="<<res<<str1.mid(3*k,2).toInt(NULL,16) <<endl;
     }
 
-    QString str = "00";
+    QString str = "00";                                       //2019-8-15
     res = Device_Register_Write(216,0,str);
     qDebug()<<"[w]Device write str1="<<"00"<<"   res="<<res<<endl;
 

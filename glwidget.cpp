@@ -523,12 +523,12 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 // 中键释放事件
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    if(event->button() & Qt::MidButton)
-    {
-        translate_x = (event->x() - m_lastPos.x())/50.0;
-        translate_y = -(event->y() - m_lastPos.y())/30.0;
-        qDebug()<<"translate_x = "<<translate_x<<"  translate_y="<<translate_y<<endl;
-    }
+//    if(event->button() & Qt::MidButton)
+//    {
+//        translate_x = (event->x() - m_lastPos.x())/50.0;
+//        translate_y = -(event->y() - m_lastPos.y())/30.0;
+//        qDebug()<<"translate_x = "<<translate_x<<"  translate_y="<<translate_y<<endl;
+//    }
 }
 
 
@@ -552,6 +552,20 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         setXRotation(m_xRot + 8 * dy);
         setZRotation(m_zRot + 8 * dx);
         m_lastPos = event->pos();
+    }else if(event->buttons() & Qt::MidButton)
+    {
+        float temp_x = (event->x() - m_lastPos.x())/50.0;
+        float temp_y = -(event->y() - m_lastPos.y())/30.0;
+
+//        translate_x = temp_x + translate_x;
+//        translate_y = temp_y + translate_y;
+
+        translate_x = temp_x ;
+        translate_y = temp_y ;
+
+//        qDebug()<<"translate_X ="<<translate_x<<"   translate_y = "<<translate_y<<endl;
+
+        update();
     }
 }
 

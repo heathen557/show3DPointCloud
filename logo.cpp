@@ -134,6 +134,8 @@ Logo::Logo(QObject *parent):
 
     const int NumSectors = 10000;
 
+    isFilter = false;
+
     for (int i = 0; i < NumSectors; ++i) {
 
 //        m_data.append(0.0);
@@ -268,10 +270,48 @@ void Logo::readPCDFile1()
 
     mutex.lock();
     pcl::copyPointCloud(pointCloudRgb,needDealCloud_rgb);
-//    pcl::copyPointCloud(pointCloudRgb,DealedCloud_rgb);
+    pcl::copyPointCloud(pointCloudRgb,DealedCloud_rgb);
     mutex.unlock();
 
+    if(isFilter)
+    {
+        /*******************开启滤波功能*********************************/
+        //先用直通滤波把所有零点重复的零点过滤掉
+       pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
+        pass.setInputCloud(needDealCloud_rgb.makeShared());                //设置待滤波的点云
+        pass.setFilterFieldName("y");                             //设置在Z轴方向上进行滤波
+        pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下12米去除)
+        pass.setFilterLimitsNegative(true);                       //保留
+        pass.filter(tempCloud_rgb);                                   //滤波并存储
 
+        if(tempCloud_rgb.size()<1)
+            return;
+
+        //  基于统计运算的滤波算法
+//        DealedCloud_rgb.clear();
+//        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
+//        sor.setInputCloud(needDealCloud_rgb.makeShared());
+//        sor.setMeanK(20);
+//        sor.setStddevMulThresh(0);
+//        //40  0.1 不见前面噪点
+//        sor.filter(DealedCloud_rgb);
+//        qDebug()<<"after filter the points'Number = "<<DealedCloud_rgb.size()<<endl;
+
+
+
+        //条件滤波   设置半径 以及 圆周内的点数
+        DealedCloud_rgb.resize(0);
+        pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem;
+        outrem.setInputCloud(tempCloud_rgb.makeShared());              //设置输入点云
+        outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
+        outrem.setMinNeighborsInRadius(30);       //设置查询点的邻近点集数小于2的删除
+        outrem.filter (DealedCloud_rgb);//执行条件滤波，存储结果到cloud_filtered
+
+
+        /***************************************************************/
+    }
+
+/*
     //  基于统计运算的滤波算法
     QTime t1 = QTime::currentTime();
     //qDebug()<<"BEGIN = "<< t1.toString("hh:mm:ss.zzz")<<endl;
@@ -282,7 +322,7 @@ void Logo::readPCDFile1()
     sor.filter(DealedCloud_rgb);
 //    t1 = QTime::currentTime();
     //qDebug()<<"END = "<< t1.toString("hh:mm:ss.zzz")<<endl;
-
+*/
 
 
 //    qDebug()<<"the pointCloud num =  "<<DealedCloud.points.size()<<endl;
@@ -306,7 +346,12 @@ void Logo::readPCDFile1()
         m += 6;
     }
     m_data.resize(m);
-    qDebug()<<"m_data.size"<<m_data.size()<<"   m="<<m<<endl;
+
+    for(;m<98304;m++)
+    {
+        m_data[m] = 0;
+    }
+//    qDebug()<<"m_data.size"<<m_data.size()<<"   m="<<m<<endl;
 
 }
 

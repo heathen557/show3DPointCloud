@@ -24,6 +24,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
@@ -62,11 +63,13 @@ public:
     GLWidget *widget;
     QHBoxLayout *horizontalLayout_15;
     QLabel *label_6;
+    QLineEdit *gainImage_lineEdit;
     QHBoxLayout *horizontalLayout_14;
     QPushButton *pushButton_3;
     QPushButton *pushButton_4;
     QPushButton *pushButton_5;
     QPushButton *change_pushButton;
+    QRadioButton *radioButton;
     QLabel *label_10;
     QFrame *frame_2;
     QGridLayout *gridLayout_12;
@@ -270,6 +273,11 @@ public:
 
         horizontalLayout_15->addWidget(label_6);
 
+        gainImage_lineEdit = new QLineEdit(groupBox_3);
+        gainImage_lineEdit->setObjectName(QStringLiteral("gainImage_lineEdit"));
+
+        horizontalLayout_15->addWidget(gainImage_lineEdit);
+
         horizontalLayout_14 = new QHBoxLayout();
         horizontalLayout_14->setSpacing(6);
         horizontalLayout_14->setObjectName(QStringLiteral("horizontalLayout_14"));
@@ -298,6 +306,11 @@ public:
         change_pushButton->setObjectName(QStringLiteral("change_pushButton"));
 
         horizontalLayout_15->addWidget(change_pushButton);
+
+        radioButton = new QRadioButton(groupBox_3);
+        radioButton->setObjectName(QStringLiteral("radioButton"));
+
+        horizontalLayout_15->addWidget(radioButton);
 
         label_10 = new QLabel(groupBox_3);
         label_10->setObjectName(QStringLiteral("label_10"));
@@ -761,12 +774,14 @@ public:
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Peak\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
         showIntensity_label->setText(QString());
         groupBox_3->setTitle(QApplication::translate("MainWindow", "\347\202\271\344\272\221\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
-        label_6->setText(QApplication::translate("MainWindow", "------------------------------", Q_NULLPTR));
+        label_6->setText(QApplication::translate("MainWindow", "-------------------", Q_NULLPTR));
+        gainImage_lineEdit->setText(QApplication::translate("MainWindow", "1", Q_NULLPTR));
         pushButton_3->setText(QApplication::translate("MainWindow", "\346\255\243\350\247\206\345\233\276", Q_NULLPTR));
         pushButton_4->setText(QApplication::translate("MainWindow", "\344\276\247\350\247\206\345\233\276", Q_NULLPTR));
         pushButton_5->setText(QApplication::translate("MainWindow", "\344\273\260\350\247\206\345\233\276", Q_NULLPTR));
         change_pushButton->setText(QApplication::translate("MainWindow", "\345\210\207\346\215\242tof/peak", Q_NULLPTR));
-        label_10->setText(QApplication::translate("MainWindow", "-----------------------------------", Q_NULLPTR));
+        radioButton->setText(QString());
+        label_10->setText(QApplication::translate("MainWindow", "--------------------", Q_NULLPTR));
         groupBox_4->setTitle(QApplication::translate("MainWindow", "\350\256\276\345\244\207\351\223\276\346\216\245\357\274\232", Q_NULLPTR));
         label->setText(QApplication::translate("MainWindow", "VID:", Q_NULLPTR));
         VID_lineEdit->setText(QApplication::translate("MainWindow", "8888", Q_NULLPTR));

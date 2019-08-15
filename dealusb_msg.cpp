@@ -20,6 +20,7 @@ extern int saveFileIndex;      //文件标号；1作为开始
 extern int formatFlag;         //0:二进制； 1：ASCII 2：TXT
 
 extern bool isTOF;
+extern int gainImage;
 
 
 
@@ -50217,13 +50218,13 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     microQimage(256,64, QImage::Format_RGB32),macroQimage(256,64, QImage::Format_RGB32)
 {
 
-    pointCloudRgb.width = 16384;
-    pointCloudRgb.height = 1;
-    pointCloudRgb.resize(pointCloudRgb.width);
+//    pointCloudRgb.width = 16384;
+//    pointCloudRgb.height = 1;
+//    pointCloudRgb.resize(pointCloudRgb.width);
 
-    tempRgbCloud.width = 16384;
-    tempRgbCloud.height = 1 ;
-    tempRgbCloud.points.resize(tempRgbCloud.width);
+//    tempRgbCloud.width = 16384;
+//    tempRgbCloud.height = 1 ;
+//    tempRgbCloud.points.resize(tempRgbCloud.width);
 
     LSB = 0.015; //时钟频率
     isFirstLink = true;
@@ -50291,6 +50292,8 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         yMax = -10000;
         zMin = 10000;
         zMax = -10000;
+
+        tempRgbCloud.clear();
     }
 
     int line_offset = spadNum / 2;
@@ -50302,19 +50305,24 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         int tof = (ushort)((MyBuffer[4 + i * 4]) + (((ushort)MyBuffer[4 + i * 4 + 1]) << 8));
         int intensity = (ushort)((MyBuffer[4 + i * 4 + 2]) + (((ushort)MyBuffer[4 + i * 4 + 3]) << 8));
 
-        if(tof>2048)
-            tof = 0;
+//        if(tof>1024)
+//            tof = 0;
+
+//        if(intensity>300)
+//            intensity = 0;
 
 
         //设置TOF图像、强度图像的颜色
         QRgb tofColor,intenColor;
-        if(tof<1024 && tof>=0)
-            tofColor = qRgb(colormap[tof * 3], colormap[tof * 3 + 1], colormap[tof * 3 + 2]);
+        int gainIndex_tof = tof*gainImage;
+        int gainIndex_intensity =intensity * gainImage;
+        if(gainIndex_tof<1024 && gainIndex_tof>=0)
+            tofColor = qRgb(colormap[gainIndex_tof * 3], colormap[gainIndex_tof * 3 + 1], colormap[gainIndex_tof * 3 + 2]);
         else
             tofColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
 
-        if(intensity<1024 && intensity>=0)
-            intenColor = qRgb(colormap[intensity * 3], colormap[intensity * 3 + 1], colormap[intensity * 3 + 2]);
+        if(gainIndex_intensity<1024 && gainIndex_intensity>=0)
+            intenColor = qRgb(colormap[gainIndex_intensity * 3], colormap[gainIndex_intensity * 3 + 1], colormap[gainIndex_intensity * 3 + 2]);
         else
             intenColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
 
@@ -50364,17 +50372,27 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             }
 
 
-            //                    //点云颜色
-            QColor mColor = QColor(tofColor);
-            r = mColor.red();
-            g = mColor.green();
-            b = mColor.blue();
-            rgb = ((int)r << 16 | (int)g << 8 | (int)b);
 
-            tempRgbCloud.points[cloudIndex].x = temp_x;
-            tempRgbCloud.points[cloudIndex].y = temp_y;
-            tempRgbCloud.points[cloudIndex].z = temp_z;
-            tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb);
+//            if(temp_y<4.5)    //第三层
+            {
+                cloutPoint.x = temp_x;
+                cloutPoint.y = temp_y;
+                cloutPoint.z = temp_z;
+
+                tempRgbCloud.push_back(cloutPoint);
+            }
+
+//            //点云颜色
+//            QColor mColor = QColor(tofColor);
+//            r = mColor.red();
+//            g = mColor.green();
+//            b = mColor.blue();
+//            rgb = ((int)r << 16 | (int)g << 8 | (int)b);
+
+//            tempRgbCloud.points[cloudIndex].x = temp_x;
+//            tempRgbCloud.points[cloudIndex].y = temp_y;
+//            tempRgbCloud.points[cloudIndex].z = temp_z;
+//            tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb);
 
             //统计点云空间坐标最大值、最小值
             xMax = (temp_x>xMax) ? temp_x : xMax;

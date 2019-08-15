@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -145,6 +145,9 @@ public:
 
     pcl::PointCloud<pcl::PointXYZRGB> needDealCloud_rgb;
     pcl::PointCloud<pcl::PointXYZRGB> DealedCloud_rgb;
+    pcl::PointCloud<pcl::PointXYZRGB> tempCloud_rgb;
+
+    bool isFilter;
 
 
 private slots:
