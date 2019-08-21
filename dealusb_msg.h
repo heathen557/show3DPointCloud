@@ -5,6 +5,10 @@
 #include<pcl/point_types.h> //PCL中支持的点类型头文件。
 #include <QObject>
 #include<QImage>
+#include<QtNetwork/QTcpSocket>
+#include<QJsonParseError>
+#include<QJsonObject>
+#include<QJsonArray>
 
 class DealUsb_msg : public QObject
 {
@@ -36,9 +40,13 @@ public:
     int tmp_peakInfo[16384];
 
     QString tofPeakToSave_string;   //存储文件所需的tof和peak;
-    QString tofPeakNum[16384];
+    QString tofPeakNum[16384];     //两者配合使用
 
 
+
+    /*******tcp 协议相关*****/
+    QTcpSocket m_tcpSocket;
+    QByteArray m_buffer;
 
 signals:
     void staticValueSignal(float,float,float,float,float,float,float,float,float,float);
@@ -49,6 +57,10 @@ signals:
 
 public slots:
     void recvMsgSlot(QByteArray array);
+
+    /*******tcp 协议相关*****/
+    void linkServer();
+    void ClientRecvData();  //接收点云数据的槽函数
 
 
 };
