@@ -344,6 +344,14 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
 //                                    int cloudIndex = i%64*256 + i/64;
                                     int cloudIndex = i;
 
+                                    //鼠标显示tof peak的变量赋值   2019-8-21
+                                    tmp_tofInfo[cloudIndex] = tof ;
+                                    tmp_peakInfo[cloudIndex] = intensity ;
+
+
+
+
+
                                     //设置TOF图像、强度图像的颜色
                                     QRgb tofColor,intenColor;
                                     int gainIndex_tof = tof*gainImage;
@@ -365,14 +373,14 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                                         microQimage.setPixel(imgCol,imgRow,tofColor);         //TOF图像的赋值 x,y
                                         macroQimage.setPixel(imgCol,imgRow,intenColor);       //强度图像的赋值 x.y
 
-                                        //文件保存
-//                                        if(formatFlag==2 && isSaveFlag == true)
-//                                        {
-//                                            tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
-//                                        }else
-//                                        {
-//                                            tofPeakNum[cloudIndex].clear();
-//                                        }
+                                        //文件保存   2019-8-21
+                                        if(formatFlag==2 && isSaveFlag == true)
+                                        {
+                                            tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
+                                        }else
+                                        {
+                                            tofPeakNum[cloudIndex].clear();
+                                        }
 
 
                                         //获取三维坐标
@@ -399,7 +407,6 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                                         g = mColor.green();
                                         b = mColor.blue();
                                         rgb = ((int)r << 16 | (int)g << 8 | (int)b);
-//                                        tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb);
                                         cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);;
                                         tempRgbCloud.push_back(cloutPoint);
 
@@ -442,43 +449,46 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                         mutex.unlock();
 
                         isShowPointCloud = true;
+
+                        /**********************2019-8-21  add********************************************/
                         //判断是否保存数据
-//                        if(isSaveFlag)
-//                        {
-//                            if(formatFlag == 0)   //保存二进制pcd
-//                            {
-//                                emit savePCDSignal(tempRgbCloud,0);
-//                            }else if(formatFlag == 1)
-//                            {
-//                                emit savePCDSignal(tempRgbCloud,1);
-//                            }else if(formatFlag == 2)
-//                            {
-//                                for(int i=0; i<16384; i++)
-//                                {
-//                                     tofPeakToSave_string.append(tofPeakNum[i]);
-//                                     tofPeakNum[i].clear();
-//                                }
-//                                emit saveTXTSignal(tofPeakToSave_string);
-//                                tofPeakToSave_string.clear();
-//                            }
-//                        }
+                        if(isSaveFlag)
+                        {
+                            if(formatFlag == 0)   //保存二进制pcd
+                            {
+                                emit savePCDSignal(tempRgbCloud,0);
+                            }else if(formatFlag == 1)
+                            {
+                                emit savePCDSignal(tempRgbCloud,1);
+                            }else if(formatFlag == 2)
+                            {
+                                for(int i=0; i<16384; i++)
+                                {
+                                     tofPeakToSave_string.append(tofPeakNum[i]);
+                                     tofPeakNum[i].clear();
+                                }
+                                emit saveTXTSignal(tofPeakToSave_string);
+                                tofPeakToSave_string.clear();
+                            }
+                        }
 
 
-//                        memcpy(tofInfo, tmp_tofInfo, 16384 * sizeof(int));
-//                        memcpy(peakInfo, tmp_peakInfo, 16384 * sizeof(int));
+                        memcpy(tofInfo, tmp_tofInfo, 16384 * sizeof(int));
+                        memcpy(peakInfo, tmp_peakInfo, 16384 * sizeof(int));
 
-//                        emit staticValueSignal(tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax);
-//                        //重置变量
-//                        tofMin = 10000;
-//                        tofMax = -10000;
-//                        peakMin = 10000;
-//                        peakMax = -10000;
-//                        xMin = 10000;
-//                        xMax = -10000;
-//                        yMin = 10000;
-//                        yMax = -10000;
-//                        zMin = 10000;
-//                        zMax = -10000;
+                        emit staticValueSignal(tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax);
+                        //重置变量
+                        tofMin = 10000;
+                        tofMax = -10000;
+                        peakMin = 10000;
+                        peakMax = -10000;
+                        xMin = 10000;
+                        xMax = -10000;
+                        yMin = 10000;
+                        yMax = -10000;
+                        zMin = 10000;
+                        zMax = -10000;
+                        /************************************************************/
 
                         tempRgbCloud.clear();
 
