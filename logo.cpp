@@ -290,7 +290,7 @@ void Logo::readPCDFile1()
         //  基于统计运算的滤波算法
 //        DealedCloud_rgb.clear();
 //        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
-//        sor.setInputCloud(needDealCloud_rgb.makeShared());
+//        sor.setInputCloud(tempCloud_rgb.makeShared());
 //        sor.setMeanK(20);
 //        sor.setStddevMulThresh(0);
 //        //40  0.1 不见前面噪点
@@ -338,9 +338,9 @@ void Logo::readPCDFile1()
          ng = (nrgb >> 8) & 0x0000ff;
          nb = (nrgb) & 0x0000ff;
 
-        m_data[3+m] = 255.0;
-        m_data[4+m] = 225.0;
-        m_data[5+m] = 255.0;
+        m_data[3+m] = nr/255.0;
+        m_data[4+m] = ng/225.0;
+        m_data[5+m] = nb/255.0;
 
 
         m += 6;
