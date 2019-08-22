@@ -42,6 +42,7 @@ class Ui_MainWindow
 {
 public:
     QAction *action;
+    QAction *action_2;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QFrame *frame_4;
@@ -158,6 +159,8 @@ public:
         MainWindow->setTabShape(QTabWidget::Rounded);
         action = new QAction(MainWindow);
         action->setObjectName(QStringLiteral("action"));
+        action_2 = new QAction(MainWindow);
+        action_2->setObjectName(QStringLiteral("action_2"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -756,6 +759,7 @@ public:
         menuBar->addAction(menu_3->menuAction());
         menuBar->addAction(menu_4->menuAction());
         menu->addAction(action);
+        menu_3->addAction(action_2);
 
         retranslateUi(MainWindow);
 
@@ -769,6 +773,7 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\350\212\257\350\247\206\347\225\214\351\235\242\351\230\265\350\256\276\345\244\207\346\265\213\350\257\225\347\250\213\345\272\217", Q_NULLPTR));
         action->setText(QApplication::translate("MainWindow", "\346\226\207\344\273\266\344\277\235\345\255\230", Q_NULLPTR));
+        action_2->setText(QApplication::translate("MainWindow", "\347\273\237\350\256\241\350\256\276\347\275\256", Q_NULLPTR));
         groupBox->setTitle(QApplication::translate("MainWindow", "Tof\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
         showTOF_label->setText(QString());
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Peak\345\233\276\345\203\217\357\274\232", Q_NULLPTR));

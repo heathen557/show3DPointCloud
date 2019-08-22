@@ -33,7 +33,9 @@ SOURCES += main.cpp\
     mylabel.cpp \
     filesave.cpp \
     savepcdthread.cpp \
-    dealusb_msg.cpp
+    dealusb_msg.cpp \
+    statisticsdialog.cpp \
+    calmeanstdthread.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -45,11 +47,14 @@ HEADERS  += mainwindow.h \
     mylabel.h \
     filesave.h \
     savepcdthread.h \
-    dealusb_msg.h
+    dealusb_msg.h \
+    statisticsdialog.h \
+    calmeanstdthread.h
 
 
 FORMS    += mainwindow.ui \
-    filesave.ui
+    filesave.ui \
+    statisticsdialog.ui
 
 INCLUDEPATH += "D:/programInstall/libsub"
 #INCLUDEPATH += -lD:/programInstall/libsub

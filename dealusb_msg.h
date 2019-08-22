@@ -9,6 +9,9 @@
 #include<QJsonParseError>
 #include<QJsonObject>
 #include<QJsonArray>
+#include<vector>
+
+using namespace std;
 
 class DealUsb_msg : public QObject
 {
@@ -47,6 +50,13 @@ public:
     /*******tcp 协议相关*****/
     QTcpSocket m_tcpSocket;
     QByteArray m_buffer;
+
+    /*******统计 均值、方差相关的变量******************/
+    bool statisticStartFlag;
+//    int statisticIndex;
+    int statisticFrameNumber;
+    vector<vector<int>> tempStatisticTofPoints;   //用于统计 均值和方差的 容器
+    vector<vector<int>> tempStatisticPeakPoints;   //用于统计 均值和方差的 容器
 
 signals:
     void staticValueSignal(float,float,float,float,float,float,float,float,float,float);

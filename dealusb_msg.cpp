@@ -19,9 +19,14 @@ extern QString saveFilePath;   //保存的路径  E:/..../.../的形式
 extern int saveFileIndex;      //文件标号；1作为开始
 extern int formatFlag;         //0:二进制； 1：ASCII 2：TXT
 
+/***tof/peak 切换标识****/
 extern bool isTOF;
-extern int gainImage;
+extern int gainImage;   //增益
 
+/*******统计信息相关的变量***********/
+extern QMutex statisticMutex;
+extern vector<vector<int>> allStatisticTofPoints;   //用于统计 均值和方差的 容器  TOF
+extern vector<vector<int>> allStatisticPeakPoints;   //用于统计 均值和方差的 容器  TOF
 
 
 
@@ -42,7 +47,21 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     LSB = 0.015; //时钟频率
     isFirstLink = true;
 
-    linkServer();
+//    linkServer();
+
+
+
+    //总共有16384个点，针对每一个点开启一个独立的容器进行存储相关内容    统计相关
+    statisticStartFlag = true;
+    statisticFrameNumber = 10;
+    vector<int> singlePoint;
+    for(int i=0; i<16384; i++)
+    {
+        tempStatisticTofPoints.push_back(singlePoint);
+        tempStatisticPeakPoints.push_back(singlePoint);
+        allStatisticTofPoints.push_back(singlePoint);
+        allStatisticPeakPoints.push_back(singlePoint);
+    }
 
 }
 
@@ -57,7 +76,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
     int imgRow,imgCol;
     int spadNum = MyBuffer[0] + (((ushort)MyBuffer[1]) << 8);
     int line_number = MyBuffer[2] + (((ushort)MyBuffer[3]) << 8);
-//    qDebug()<<"here   spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
+    qDebug()<<"here   spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
 
 
     if(spadNum==0 && lastSpadNum==7)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
@@ -92,6 +111,17 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         }
 
 
+        //统计信息相关的 ，将统计信息的容器赋值给全局变量
+        if(statisticStartFlag)
+        {
+            statisticMutex.lock();
+            allStatisticTofPoints = tempStatisticTofPoints;
+            allStatisticPeakPoints = tempStatisticPeakPoints;
+            statisticMutex.unlock();
+        }
+
+
+        //显示鼠标位置处的tof和peak值的变量赋值
         memcpy(tofInfo, tmp_tofInfo, 16384 * sizeof(int));
         memcpy(peakInfo, tmp_peakInfo, 16384 * sizeof(int));
 
@@ -109,22 +139,20 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         zMax = -10000;
 
         tempRgbCloud.clear();
-    }
+    }//以上为处理完整的一帧数据
 
-    int line_offset = spadNum / 2;
+
+
+
+
+    int line_offset = spadNum / 2;           //取值 0 1 2 3 ；
     int row_offset = (spadNum + 1) % 2;      //表示是在第一行 还是在第二行
 
     for(int i=0; i<64; i++)
     {
 
-        int tof = (ushort)((MyBuffer[4 + i * 4]) + (((ushort)MyBuffer[4 + i * 4 + 1]) << 8));
-        int intensity = (ushort)((MyBuffer[4 + i * 4 + 2]) + (((ushort)MyBuffer[4 + i * 4 + 3]) << 8));
-
-//        if(tof>1024)
-//            tof = 0;
-
-//        if(intensity>300)
-//            intensity = 0;
+        int tof = quint8(MyBuffer[4 + i * 4]) + ((quint8(MyBuffer[4 + i * 4 +1]))<<8);
+        int intensity = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
 
 
         //设置TOF图像、强度图像的颜色
@@ -154,66 +182,68 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             microQimage.setPixel(imgRow,imgCol,tofColor);         //TOF图像的赋值
             macroQimage.setPixel(imgRow,imgCol,intenColor);       //强度图像的赋值
 
+            /************鼠标点击处显示信息相关*************/
             tmp_tofInfo[cloudIndex] = tof ;
             tmp_peakInfo[cloudIndex] = intensity ;
 
+
+            /*********文件保存相关*****************/
             if(formatFlag ==2  && isSaveFlag == true)
             {
-//                tofPeakToSave_string.append(QString::number(tof)).append(", ").append(QString::number(intensity)).append("\n");
-//                tofPeakToSave_string[cloudIndex] =
                 tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
-
             }else
             {
-//                tofPeakToSave_string.clear();
                 tofPeakNum[cloudIndex].clear();
 
             }
 
 
+            /************点云数据相关************/
             //获取三维坐标
             if(isTOF)
             {
                 temp_x = tof * x_Weight[cloudIndex] * LSB;
-//                temp_y = tof * y_Weight[cloudIndex] * LSB;
+                //temp_y = tof * y_Weight[cloudIndex] * LSB;
                 temp_y = tof * LSB;
                 temp_z = tof * z_Weight[cloudIndex] * LSB;
             }else
             {
                 temp_x = intensity * x_Weight[cloudIndex] * LSB;
-//                temp_y = intensity * y_Weight[cloudIndex] * LSB;
+                //temp_y = intensity * y_Weight[cloudIndex] * LSB;
                 temp_y = intensity * LSB;
                 temp_z = intensity * z_Weight[cloudIndex] * LSB;
             }
+            //点云坐标 和 颜色
+            cloutPoint.x = temp_x;
+            cloutPoint.y = temp_y;
+            cloutPoint.z = temp_z;
+            QColor mColor = QColor(tofColor);
+            r = mColor.red();
+            g = mColor.green();
+            b = mColor.blue();
+            rgb = ((int)r << 16 | (int)g << 8 | (int)b);
+            cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);
+            tempRgbCloud.push_back(cloutPoint);
 
 
 
-//            if(temp_y<4.5)    //第三层
+            /***************统计均值 、方差相关***********************/
+            if(statisticStartFlag == true)
             {
-                cloutPoint.x = temp_x;
-                cloutPoint.y = temp_y;
-                cloutPoint.z = temp_z;
-                        //点云颜色
-                QColor mColor = QColor(tofColor);
-                r = mColor.red();
-                g = mColor.green();
-                b = mColor.blue();
-                rgb = ((int)r << 16 | (int)g << 8 | (int)b);
-
-//                tempRgbCloud.points[cloudIndex].x = temp_x;
-//                tempRgbCloud.points[cloudIndex].y = temp_y;
-//                tempRgbCloud.points[cloudIndex].z = temp_z;
-//                tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb);
-
-                cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);
-
-
-                tempRgbCloud.push_back(cloutPoint);
+                //判断每个点已经储存的个数，如果已经超过设定的范围，则进行循环储存；
+                int offset = tempStatisticPeakPoints[cloudIndex].size() - statisticFrameNumber;
+                if(offset >= 0)
+                {
+                    tempStatisticTofPoints[cloudIndex].erase(tempStatisticTofPoints[cloudIndex].begin(),tempStatisticTofPoints[cloudIndex].begin() + offset + 1);
+                    tempStatisticPeakPoints[cloudIndex].erase(tempStatisticPeakPoints[cloudIndex].begin(),tempStatisticPeakPoints[cloudIndex].begin() + offset + 1);
+                }
+                //向每个点的容器中添加一个新的点,完成循环存储
+                tempStatisticTofPoints[cloudIndex].push_back(tof);
+                tempStatisticPeakPoints[cloudIndex].push_back(intensity);
             }
 
 
-
-            //统计点云空间坐标最大值、最小值
+            /******统计点云空间坐标最大值、最小值**********/
             xMax = (temp_x>xMax) ? temp_x : xMax;
             xMin = (temp_x<xMin) ? temp_x : xMin;
             yMax = (temp_y>yMax) ? temp_y : yMax;
@@ -228,7 +258,9 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             peakMin = (intensity<peakMin) ? intensity : peakMin;
         }
         else
-            qDebug()<<"给像素赋值时出现异常 imgrow="<<imgRow<<"   imgCol = "<<imgCol<<endl;
+            qDebug()<<QStringLiteral("给像素赋值时出现异常 imgrow=")<<imgRow<<"   imgCol = "<<imgCol<<endl;
+
+
     }
     lastSpadNum = spadNum ;
 
@@ -385,7 +417,7 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                                         }
 
 
-                                        //获取三维坐标
+                                        /********点云相关*********获取三维坐标***************/
                                         if(isTOF)
                                         {
                                             temp_x = tof * x_Weight[cloudIndex] * LSB;
@@ -412,9 +444,23 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                                         cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);;
                                         tempRgbCloud.push_back(cloutPoint);
 
-//                                        tempRgbCloud.push_back(cloutPoint);
 
 //                                        qDebug()<<" cloud 's size ="<<tempRgbCloud.size()<<endl;
+
+                                        /***************统计均值 、方差相关***********************/
+                                        if(statisticStartFlag == true)
+                                        {
+                                            //判断每个点已经储存的个数，如果已经超过设定的范围，则进行循环储存；
+                                            int offset = tempStatisticPeakPoints[cloudIndex].size() - statisticFrameNumber;
+                                            if(offset >= 0)
+                                            {
+                                                tempStatisticTofPoints[cloudIndex].erase(tempStatisticTofPoints[cloudIndex].begin(),tempStatisticTofPoints[cloudIndex].begin() + offset + 1);
+                                                tempStatisticPeakPoints[cloudIndex].erase(tempStatisticPeakPoints[cloudIndex].begin(),tempStatisticPeakPoints[cloudIndex].begin() + offset + 1);
+                                            }
+                                            //向每个点的容器中添加一个新的点,完成循环存储
+                                            tempStatisticTofPoints[cloudIndex].push_back(tof);
+                                            tempStatisticPeakPoints[cloudIndex].push_back(intensity);
+                                        }
 
 
                                         //统计点云空间坐标最大值、最小值
@@ -473,6 +519,17 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                                 tofPeakToSave_string.clear();
                             }
                         }
+
+
+                        //统计信息相关的 ，将统计信息的容器赋值给全局变量
+                        if(statisticStartFlag)
+                        {
+                            statisticMutex.lock();
+                            allStatisticTofPoints = tempStatisticTofPoints;
+                            allStatisticPeakPoints = tempStatisticPeakPoints;
+                            statisticMutex.unlock();
+                        }
+
 
 
                         memcpy(tofInfo, tmp_tofInfo, 16384 * sizeof(int));

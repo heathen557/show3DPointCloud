@@ -57,6 +57,14 @@ MainWindow::MainWindow(QWidget *parent) :
     savePCD_obj->moveToThread(saveThread);
     saveThread->start();
 
+    //开启计算均值和标准差的线程
+    calMeanStd_obj = new calMeanStdThread();
+    calThread = new QThread();
+    calMeanStd_obj->moveToThread(calThread);
+    calThread->start();
+
+
+
     qRegisterMetaType<pcl::PointCloud<pcl::PointXYZRGB>>("pcl::PointCloud<pcl::PointXYZRGB>");   //注册函数
 
     //接收数据线程、处理数据线程
@@ -87,6 +95,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&fileSaveDia,SIGNAL(isSaveFlagSignal(bool,QString,int)),this,SLOT(isSaveFlagSlot(bool,QString,int)));
     connect(dealUsbMsg_obj,SIGNAL(savePCDSignal(pcl::PointCloud<pcl::PointXYZRGB>,int)),savePCD_obj,SLOT(savePCDSlot(pcl::PointCloud<pcl::PointXYZRGB>,int)));
     connect(dealUsbMsg_obj,SIGNAL(saveTXTSignal(QString)),savePCD_obj,SLOT(saveTXTSlot(QString)));
+
+
+    connect(ui->action_2,SIGNAL(triggered()),this,SLOT(showStatisticDia_slot()));
+    connect(calMeanStd_obj,SIGNAL(statistic_MeanStdSignal(QString,QString,QString,QString)),&statisticsDia_,SLOT(statistic_MeanStdSlot(QString,QString,QString,QString)));
 
     initGUI();
 }
@@ -718,3 +730,10 @@ void MainWindow::on_gainImage_lineEdit_returnPressed()
 {
     gainImage = ui->gainImage_lineEdit->text().toInt();
 }
+
+/***********显示统计均值、方差的槽函数******************************/
+void MainWindow::showStatisticDia_slot()
+{
+    statisticsDia_.show();
+}
+

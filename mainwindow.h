@@ -13,6 +13,8 @@
 #include<QTableWidgetItem>
 #include<filesave.h>
 #include<savepcdthread.h>
+#include<statisticsdialog.h>
+#include"calmeanstdthread.h"
 
 namespace Ui {
 class MainWindow;
@@ -38,6 +40,9 @@ public:
     savePCDThread *savePCD_obj;
     QThread *saveThread;
 
+    calMeanStdThread *calMeanStd_obj;
+    QThread *calThread;
+
     QTableWidgetItem tofMinItem_value;
     QTableWidgetItem tofMaxItem_value;
     QTableWidgetItem peakMinItem_value;
@@ -58,6 +63,9 @@ public:
 
     bool isLinkSuccess;      //是否连接成功的标识，若是没有连接，则不能进行后续操作
     fileSave fileSaveDia;
+
+
+    statisticsDialog  statisticsDia_;
 
 
 private slots:
@@ -109,6 +117,9 @@ private slots:
     void on_radioButton_clicked();
 
     void on_gainImage_lineEdit_returnPressed();
+
+    /*******************************************/
+    void showStatisticDia_slot();
 
 private:
     Ui::MainWindow *ui;

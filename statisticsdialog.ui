@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>statisticsDialog</class>
+ <widget class="QDialog" name="statisticsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1132</width>
+    <height>640</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>统计信息界面</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icon_1.png</normaloff>icon_1.png</iconset>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>1091</width>
+     <height>441</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>TOF均值和方差</string>
+    </attribute>
+    <widget class="QTextEdit" name="tofMean_textEdit">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>1051</width>
+       <height>151</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="tofStd_textEdit">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>1051</width>
+       <height>151</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>PEAK均值和方差</string>
+    </attribute>
+    <widget class="QTextEdit" name="peakStd_textEdit">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>1091</width>
+       <height>151</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="peakMean_textEdit">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>1091</width>
+       <height>151</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="start_pushButton">
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>570</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>开始统计</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="start_pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>570</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>关闭统计</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>570</y>
+     <width>201</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>统计帧数：</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="frame_lineEdit">
+      <property name="text">
+       <string>10</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
