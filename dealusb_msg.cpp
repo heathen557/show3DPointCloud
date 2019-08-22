@@ -42,6 +42,8 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     LSB = 0.015; //时钟频率
     isFirstLink = true;
 
+    linkServer();
+
 }
 
 void DealUsb_msg::recvMsgSlot(QByteArray array)
