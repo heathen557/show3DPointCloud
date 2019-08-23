@@ -14,8 +14,6 @@ extern bool isRecvFlag;
 extern int framePerSecond;
 
 
-
-
 ReceUSB_Msg::ReceUSB_Msg(QObject *parent) : QObject(parent),
     microQimage(256,64, QImage::Format_RGB32),macroQimage(256,64, QImage::Format_RGB32),saveTofIntenImage(256,64, QImage::Format_RGB32)
 {
