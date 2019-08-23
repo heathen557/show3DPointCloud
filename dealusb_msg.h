@@ -39,9 +39,6 @@ public:
 
     int r,g,b,rgb;
 
-    int tmp_tofInfo[16384];
-    int tmp_peakInfo[16384];
-
     QString tofPeakToSave_string;   //存储文件所需的tof和peak;
     QString tofPeakNum[16384];     //两者配合使用
 

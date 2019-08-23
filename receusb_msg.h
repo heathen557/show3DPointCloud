@@ -84,7 +84,7 @@ signals:
 
     void reReadSysSignal(QString);  //读取系统指令 返回信号
 
-    void reReadDevSignal(QString); //读取设备指令 返回信号
+    void reReadDevSignal(int,QString); //读取设备指令 返回信号
 
 
 

@@ -410,7 +410,7 @@ void ReceUSB_Msg::readDevSlot(int id,int address,bool recvFlag)
 
     if(true == Device_Register_Read(id, address, data))
     {
-        emit reReadDevSignal(data);
+        emit reReadDevSignal(address,data);
         emit linkInfoSignal(6);
     }else
     {

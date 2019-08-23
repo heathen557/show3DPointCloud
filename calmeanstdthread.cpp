@@ -31,7 +31,7 @@ void calMeanStdThread::updateSlot()
     for(int i =0; i<16384; i++)
     {
         frameSize = useStatisticTofPoints[i].size();
-        qDebug()<<QStringLiteral("显示时，查询到的每个点对应的个数为： ")<< frameSize<<endl;
+//        qDebug()<<QStringLiteral("显示时，查询到的每个点对应的个数为： ")<< frameSize<<endl;
 
 
         if(frameSize>0)                              //理论上应该与设置的帧数相等，此处是为了防止除数为零时引起程序异常；

@@ -429,6 +429,9 @@ void GLWidget::initializeGL()
     m_program->setUniformValue(m_lightPosLoc, QVector3D(10, 10, 10));
 
     m_program->release();
+
+
+    verticalView_slot();
 }
 
 void GLWidget::setupVertexAttribs()
@@ -609,8 +612,14 @@ void GLWidget::endView_slot()
 }
 void GLWidget::verticalView_slot()
 {
-    setXRotation(240);
-    setYRotation(2896);
+    //仰视图
+//    setXRotation(240);
+//    setYRotation(2896);
+//    setZRotation(0);
+
+    //俯视图
+    setXRotation(2736);
+    setYRotation(5712);
     setZRotation(0);
 }
 

@@ -10,8 +10,9 @@ extern pcl::PointCloud<pcl::PointXYZRGB> pointCloudRgb;
 extern bool isShowPointCloud;
 extern bool isWriteSuccess;    //写入命令是否成功标识
 
-extern int tofInfo[16384];
-extern int peakInfo[16384];
+extern QMutex mouseShowMutex;
+extern int mouseShowTOF[256][64];
+extern int mouseShowPEAK[256][64];
 
 /*保存用到的标识*/
 extern bool isSaveFlag;        //是否进行存储
@@ -74,9 +75,9 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
     isWriteSuccess = true;    //写入命令是否成功标识，成功以后才能点击“显示”按钮操作
     int imgRow,imgCol;
-    int spadNum = MyBuffer[0] + (((ushort)MyBuffer[1]) << 8);
-    int line_number = MyBuffer[2] + (((ushort)MyBuffer[3]) << 8);
-    qDebug()<<"here   spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
+    int spadNum = (quint8)(MyBuffer[0]) +  (((quint8)(MyBuffer[1]))<<8);
+    int line_number = (quint8)(MyBuffer[2]) +  (((quint8)(MyBuffer[3]))<<8);
+//    qDebug()<<"here111   spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
 
 
     if(spadNum==0 && lastSpadNum==7)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
@@ -120,10 +121,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             statisticMutex.unlock();
         }
 
-
-        //显示鼠标位置处的tof和peak值的变量赋值
-        memcpy(tofInfo, tmp_tofInfo, 16384 * sizeof(int));
-        memcpy(peakInfo, tmp_peakInfo, 16384 * sizeof(int));
 
         emit staticValueSignal(tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax);
         //重置变量
@@ -183,9 +180,10 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             macroQimage.setPixel(imgRow,imgCol,intenColor);       //强度图像的赋值
 
             /************鼠标点击处显示信息相关*************/
-            tmp_tofInfo[cloudIndex] = tof ;
-            tmp_peakInfo[cloudIndex] = intensity ;
-
+            mouseShowMutex.lock();
+            mouseShowTOF[imgRow][imgCol] = tof;
+            mouseShowPEAK[imgRow][imgCol] = intensity;
+            mouseShowMutex.unlock();
 
             /*********文件保存相关*****************/
             if(formatFlag ==2  && isSaveFlag == true)
@@ -206,23 +204,35 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                 //temp_y = tof * y_Weight[cloudIndex] * LSB;
                 temp_y = tof * LSB;
                 temp_z = tof * z_Weight[cloudIndex] * LSB;
+
+                QColor mColor = QColor(tofColor);
+                r = mColor.red();
+                g = mColor.green();
+                b = mColor.blue();
+                rgb = ((int)r << 16 | (int)g << 8 | (int)b);
+                cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);
+
+
+
             }else
             {
                 temp_x = intensity * x_Weight[cloudIndex] * LSB;
                 //temp_y = intensity * y_Weight[cloudIndex] * LSB;
                 temp_y = intensity * LSB;
                 temp_z = intensity * z_Weight[cloudIndex] * LSB;
+
+                QColor mColor = QColor(intenColor);
+                r = mColor.red();
+                g = mColor.green();
+                b = mColor.blue();
+                rgb = ((int)r << 16 | (int)g << 8 | (int)b);
+                cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);
             }
             //点云坐标 和 颜色
             cloutPoint.x = temp_x;
             cloutPoint.y = temp_y;
             cloutPoint.z = temp_z;
-            QColor mColor = QColor(tofColor);
-            r = mColor.red();
-            g = mColor.green();
-            b = mColor.blue();
-            rgb = ((int)r << 16 | (int)g << 8 | (int)b);
-            cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);
+
             tempRgbCloud.push_back(cloutPoint);
 
 
@@ -378,13 +388,6 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
 //                                    int cloudIndex = i%64*256 + i/64;
                                     int cloudIndex = i;
 
-                                    //鼠标显示tof peak的变量赋值   2019-8-21
-                                    tmp_tofInfo[cloudIndex] = tof ;
-                                    tmp_peakInfo[cloudIndex] = intensity ;
-
-
-
-
 
                                     //设置TOF图像、强度图像的颜色
                                     QRgb tofColor,intenColor;
@@ -406,6 +409,13 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                                     {
                                         microQimage.setPixel(imgCol,imgRow,tofColor);         //TOF图像的赋值 x,y
                                         macroQimage.setPixel(imgCol,imgRow,intenColor);       //强度图像的赋值 x.y
+
+                                        //鼠标显示tof peak的变量赋值   2019-8-21
+                                        mouseShowMutex.lock();
+                                        mouseShowTOF[imgCol][imgRow] = tof;
+                                        mouseShowPEAK[imgCol][imgRow] = intensity;
+                                        mouseShowMutex.unlock();
+
 
                                         //文件保存   2019-8-21
                                         if(formatFlag==2 && isSaveFlag == true)
@@ -530,10 +540,6 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                             statisticMutex.unlock();
                         }
 
-
-
-                        memcpy(tofInfo, tmp_tofInfo, 16384 * sizeof(int));
-                        memcpy(peakInfo, tmp_peakInfo, 16384 * sizeof(int));
 
                         emit staticValueSignal(tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax);
                         //重置变量
