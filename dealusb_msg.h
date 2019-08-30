@@ -27,7 +27,7 @@ public:
     QImage macroQimage;
 
     pcl::PointCloud<pcl::PointXYZRGB> tempRgbCloud;
-    pcl::PointXYZRGB  cloutPoint;
+//    pcl::PointXYZRGB  cloutPoint;    //不再使用push_back的方式了，因为要考虑有序的方式
 
     int cloudIndex;
 
@@ -43,6 +43,7 @@ public:
     QString tofPeakNum[16384];     //两者配合使用
 
 
+    int lastTOF[16384];         //存储上一帧的TOF值，然后此值和当前值做平均得出 现在的TOF值
 
     /*******tcp 协议相关*****/
     QTcpSocket m_tcpSocket;

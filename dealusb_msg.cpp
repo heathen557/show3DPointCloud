@@ -41,9 +41,9 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
 //    pointCloudRgb.height = 1;
 //    pointCloudRgb.resize(pointCloudRgb.width);
 
-//    tempRgbCloud.width = 16384;
-//    tempRgbCloud.height = 1 ;
-//    tempRgbCloud.points.resize(tempRgbCloud.width);
+    tempRgbCloud.width = 16384;
+    tempRgbCloud.height = 1 ;
+    tempRgbCloud.points.resize(tempRgbCloud.width);
 
     LSB = 0.015; //时钟频率
     isFirstLink = true;
@@ -86,7 +86,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         tofImage = microQimage;
         intensityImage = macroQimage;
 
-//        qDebug()<<QStringLiteral("接收到的数据点数为：")<<tempRgbCloud.points.size()<<endl;
+        qDebug()<<QStringLiteral("接收到的数据点数为：")<<tempRgbCloud.points.size()<<endl;
         pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
         mutex.unlock();
         isShowPointCloud = true;
@@ -136,7 +136,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         zMin = 10000;
         zMax = -10000;
 
-        tempRgbCloud.clear();
+//        tempRgbCloud.clear();
     }//以上为处理完整的一帧数据
 
 
@@ -153,6 +153,19 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         int intensity = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
 
 
+
+        //行列以及颜色传递给图像
+        imgRow = i * 4 + line_offset;
+        imgCol = line_number * 2 + row_offset;
+        cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
+
+
+        /********************对TOF 两针做平均*************************/
+//        int tmpTof = tof;
+//        tof = (lastTOF[cloudIndex] + tof)/2;
+//        lastTOF[cloudIndex] = tmpTof;
+        /************************************************/
+
         //设置TOF图像、强度图像的颜色
         QRgb tofColor,intenColor;
         int gainIndex_tof = tof*gainImage;
@@ -167,13 +180,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         else
             intenColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
 
-
-        //行列以及颜色传递给图像
-        imgRow = i * 4 + line_offset;
-        imgCol = line_number * 2 + row_offset;
-
-//        qDebug()<<"index =="<< imgCol*256+imgRow<<endl;
-        cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
 
         if(imgRow>=0 && imgRow<256 && imgCol>=0 && imgCol<64)
         {
@@ -211,7 +217,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                 g = mColor.green();
                 b = mColor.blue();
                 rgb = ((int)r << 16 | (int)g << 8 | (int)b);
-                cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);
+//                cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);
 
 
 
@@ -227,14 +233,19 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                 g = mColor.green();
                 b = mColor.blue();
                 rgb = ((int)r << 16 | (int)g << 8 | (int)b);
-                cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);
+//                cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);
             }
             //点云坐标 和 颜色
-            cloutPoint.x = temp_x;
-            cloutPoint.y = temp_y;
-            cloutPoint.z = temp_z;
+//            cloutPoint.x = temp_x;
+//            cloutPoint.y = temp_y;
+//            cloutPoint.z = temp_z;
+//            tempRgbCloud.push_back(cloutPoint);
+            tempRgbCloud.points[cloudIndex].x = temp_x;
+            tempRgbCloud.points[cloudIndex].y = temp_y;
+            tempRgbCloud.points[cloudIndex].z = temp_z;
+            tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb);
 
-            tempRgbCloud.push_back(cloutPoint);
+
 
 
 
@@ -435,25 +446,45 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                                             temp_y = tof * y_Weight[cloudIndex] * LSB;
 //                                            temp_y = tof * LSB;
                                             temp_z = tof * z_Weight[cloudIndex] * LSB;
+
+                                            QColor mColor = QColor(tofColor);
+                                            r = mColor.red();
+                                            g = mColor.green();
+                                            b = mColor.blue();
+                                            rgb = ((int)r << 16 | (int)g << 8 | (int)b);
+
                                         }else
                                         {
                                             temp_x = intensity * x_Weight[cloudIndex] * LSB;
                                             temp_y = intensity * y_Weight[cloudIndex] * LSB;
 //                                            temp_y = intensity * LSB;
                                             temp_z = intensity * z_Weight[cloudIndex] * LSB;
-                                        }
-                                        cloutPoint.x = temp_x;
-                                        cloutPoint.y = temp_y;
-                                        cloutPoint.z = temp_z;
 
-                                        //点云颜色
-                                        QColor mColor = QColor(tofColor);
-                                        r = mColor.red();
-                                        g = mColor.green();
-                                        b = mColor.blue();
-                                        rgb = ((int)r << 16 | (int)g << 8 | (int)b);
-                                        cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);;
-                                        tempRgbCloud.push_back(cloutPoint);
+
+                                            QColor mColor = QColor(intenColor);
+                                            r = mColor.red();
+                                            g = mColor.green();
+                                            b = mColor.blue();
+                                            rgb = ((int)r << 16 | (int)g << 8 | (int)b);
+                                        }
+//                                        cloutPoint.x = temp_x;
+//                                        cloutPoint.y = temp_y;
+//                                        cloutPoint.z = temp_z;
+
+//                                        //点云颜色
+//                                        QColor mColor = QColor(tofColor);
+//                                        r = mColor.red();
+//                                        g = mColor.green();
+//                                        b = mColor.blue();
+//                                        rgb = ((int)r << 16 | (int)g << 8 | (int)b);
+//                                        cloutPoint.rgb = *reinterpret_cast<float*>(&rgb);;
+//                                        tempRgbCloud.push_back(cloutPoint);
+
+                                        tempRgbCloud.points[cloudIndex].x = temp_x;
+                                        tempRgbCloud.points[cloudIndex].y = temp_y;
+                                        tempRgbCloud.points[cloudIndex].z = temp_z;
+                                        tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb);
+
 
 
 //                                        qDebug()<<" cloud 's size ="<<tempRgbCloud.size()<<endl;
@@ -556,7 +587,7 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                         zMax = -10000;
                         /************************************************************/
 
-                        tempRgbCloud.clear();
+//                        tempRgbCloud.clear();
 
 
 

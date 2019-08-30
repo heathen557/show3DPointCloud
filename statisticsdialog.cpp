@@ -99,7 +99,7 @@ void statisticsDialog::initTofMean_slot()
 //    modeItemRB->setChecked(true);
 //    themeList->setCurrentIndex(2);
 
-    tofMean_modifier->setAxisYRange(0,500,QStringLiteral("均值"));
+    tofMean_modifier->setAxisYRange(0,700,QStringLiteral("均值"));
 
 
 
@@ -269,7 +269,7 @@ void statisticsDialog::initPeakMean_slot()
 //    modeItemRB->setChecked(true);
 //    themeList->setCurrentIndex(2);
 
-    peakMean_modifier->setAxisYRange(0,500,QStringLiteral("均值"));
+    peakMean_modifier->setAxisYRange(0,700,QStringLiteral("均值"));
 }
 
 //初始化PEAK标准差界面

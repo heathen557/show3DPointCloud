@@ -177,7 +177,7 @@
         <item row="0" column="2">
          <widget class="QPushButton" name="start_pushButton_2">
           <property name="text">
-           <string>关闭统计</string>
+           <string> 暂停统计</string>
           </property>
          </widget>
         </item>
