@@ -30,6 +30,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+
+    void init3DShow();
+
     void initTreeWidget();          //设备寄存器读写的界面的初始化函数
 
     QTimer showTimer;

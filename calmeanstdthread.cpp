@@ -7,11 +7,28 @@ vector<vector<int>> allStatisticPeakPoints;   //用于统计 均值和方差的 
 
 calMeanStdThread::calMeanStdThread(QObject *parent) : QObject(parent)
 {
-    qDebug()<<QStringLiteral("计算均值和标准差的函数已经进来了")<<endl;
+//    qDebug()<<QStringLiteral("计算均值和标准差的函数已经进来了")<<endl;
 
-    connect(&updateTimer,SIGNAL(timeout()),this,SLOT(updateSlot()));
+//    connect(&updateTimer,SIGNAL(timeout()),this,SLOT(updateSlot()));
 
-    updateTimer.start(1000);   //1 sec刷新一次
+//    updateTimer.start(5000);   //1 sec刷新一次
+    updateTimer = NULL;
+}
+
+
+void calMeanStdThread::startStop_slot(int flag)
+{
+    if(NULL == updateTimer)
+    {
+        updateTimer = new QTimer();
+        connect(updateTimer,SIGNAL(timeout()),this,SLOT(updateSlot()));
+    }
+    if(1 == flag)
+    {
+        updateTimer->start(1000);
+    }else {
+        updateTimer->stop();
+    }
 }
 
 
@@ -53,16 +70,25 @@ void calMeanStdThread::updateSlot()
                 });
             peakStd = sqrt(peakAccum/(frameSize-1));
 
+//            if( 0 == (i%10))
+//            {
+//                tofMean_string.append("\n");
+//                tofStd_string.append("\n");
+//                peakMean_string.append("\n");
+//                peakStd_string.append("\n");
+//            }
 
-            tofMean_string.append(QString::number(tofMean)).append("  ");
-            tofStd_string.append(QString::number(tofStd)).append("  ");
-            peakMean_string.append(QString::number(peakMean)).append("  ");
-            peakStd_string.append(QString::number(peakStd)).append("  ");
+            tofMean_string.append(QString::number(tofMean));
+            tofStd_string.append(QString::number(tofStd));
+            peakMean_string.append(QString::number(peakMean));
+            peakStd_string.append(QString::number(peakStd));
         }
     }
 
 
     emit statistic_MeanStdSignal(tofMean_string,tofStd_string,peakMean_string,peakStd_string);
+
+    qDebug()<<QStringLiteral("统计信息信号已经发出")<<endl;
 //        ui->tofMean_textEdit->setText(tofMean_string);
 //        ui->tofStd_textEdit->setText(tofStd_string);
 //        ui->peakMean_textEdit->setText(peakMean_string);

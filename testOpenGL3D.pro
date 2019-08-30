@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network datavisualization
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     savepcdthread.cpp \
     dealusb_msg.cpp \
     statisticsdialog.cpp \
-    calmeanstdthread.cpp
+    calmeanstdthread.cpp \
+    surfacegraph.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -49,7 +50,8 @@ HEADERS  += mainwindow.h \
     savepcdthread.h \
     dealusb_msg.h \
     statisticsdialog.h \
-    calmeanstdthread.h
+    calmeanstdthread.h \
+    surfacegraph.h
 
 
 FORMS    += mainwindow.ui \

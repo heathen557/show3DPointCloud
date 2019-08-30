@@ -231,35 +231,35 @@ void Logo::extrude(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
 //获取三维坐标x,y,z
 void Logo::readPCDFile()
 {
-    double max = 0;
-     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
-     char strfilepath[256] = "position2.pcd";
-     if (-1 == pcl::io::loadPCDFile(strfilepath, *cloud)) {
-         qDebug()<<"读取PCD文件失败"<<endl;
-         return ;
-     }
-     int pointSize = cloud->points.size();
+//    double max = 0;
+//     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+//     char strfilepath[256] = "position2.pcd";
+//     if (-1 == pcl::io::loadPCDFile(strfilepath, *cloud)) {
+//         qDebug()<<"读取PCD文件失败"<<endl;
+//         return ;
+//     }
+//     int pointSize = cloud->points.size();
 
-     m_data.resize(pointSize * 6);
-     qDebug()<<QString::fromUtf8("dian点云数量")<<pointSize<<endl;
-     int j = 0;
-     for(int i=0; i<pointSize; i++)
-     {
-         float x = cloud->points[i].x/1.0;
-         float y = cloud->points[i].y/1.0;
-         float z = cloud->points[i].z/1.0;
+//     m_data.resize(pointSize * 6);
+//     qDebug()<<QString::fromUtf8("dian点云数量")<<pointSize<<endl;
+//     int j = 0;
+//     for(int i=0; i<pointSize; i++)
+//     {
+//         float x = cloud->points[i].x/1.0;
+//         float y = cloud->points[i].y/1.0;
+//         float z = cloud->points[i].z/1.0;
 
-         m_data[j] = x;
-         m_data[j+1] = y;
-         m_data[j+2] = z;
-         m_data[j+3] = 1.0;
-         m_data[j+4] = 0;
-         m_data[j+5] = 0;
+//         m_data[j] = x;
+//         m_data[j+1] = y;
+//         m_data[j+2] = z;
+//         m_data[j+3] = 1.0;
+//         m_data[j+4] = 0;
+//         m_data[j+5] = 0;
 
-         j =j+6;
-     }
+//         j =j+6;
+//     }
 
-     qDebug()<<QString::fromUtf8("m_data点云数量")<<m_data.size()<<endl;
+//     qDebug()<<QString::fromUtf8("m_data点云数量")<<m_data.size()<<endl;
 }
 
 //连续读取pcd文件的测试槽函数
@@ -325,10 +325,13 @@ void Logo::readPCDFile1()
 */
 
 
-//    qDebug()<<"the pointCloud num =  "<<DealedCloud.points.size()<<endl;
+//    qDebug()<<"the pointCloud num =  "<<DealedCloud_rgb.points.size()<<endl;
+    m_data.resize(98500);
     int m = 0;
     for(int n=0; n<DealedCloud_rgb.points.size(); n++)
     {
+
+//        qDebug()<<"m_data's size ="<<m_data.size()<<" m_data[" <<m<<"]="<< m_data[m]<<"  DealedCloud_rgb.points.size() ="<<DealedCloud_rgb.points.size()<<endl;
         m_data[0+m] = DealedCloud_rgb.points[n].x;
         m_data[1+m] = DealedCloud_rgb.points[n].y;
         m_data[2+m] = DealedCloud_rgb.points[n].z;
@@ -345,12 +348,14 @@ void Logo::readPCDFile1()
 
         m += 6;
     }
-    m_data.resize(m);
+//    m_data.resize(m);
 
     for(;m<98304;m++)
     {
         m_data[m] = 0;
     }
+
+    m_data.resize(98304);
 //    qDebug()<<"m_data.size"<<m_data.size()<<"   m="<<m<<endl;
 
 }

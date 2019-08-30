@@ -86,6 +86,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         tofImage = microQimage;
         intensityImage = macroQimage;
 
+//        qDebug()<<QStringLiteral("接收到的数据点数为：")<<tempRgbCloud.points.size()<<endl;
         pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
         mutex.unlock();
         isShowPointCloud = true;

@@ -120,7 +120,7 @@
 
 
 
-extern QVector<GLfloat> m_data;
+//extern QVector<GLfloat> m_data;
 
 class Logo: public QObject
 {
@@ -129,6 +129,8 @@ public:
 //    Logo();
     explicit Logo(QObject *parent = 0);
     ~Logo();
+
+    QVector<GLfloat> m_data;
 
     const GLfloat *constData() const { return m_data.constData(); }
     int count() const { return m_count; }

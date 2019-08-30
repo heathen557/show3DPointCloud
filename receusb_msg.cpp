@@ -296,7 +296,7 @@ void ReceUSB_Msg::read_usb()
 
 //            qDebug()<<QStringLiteral("原始数据为：")<<strHex<<endl;
 
-            emit recvMsgSignal(mArray);
+//            emit recvMsgSignal(mArray);
 
 
         }

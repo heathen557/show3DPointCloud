@@ -14,7 +14,7 @@ class calMeanStdThread : public QObject
 public:
     explicit calMeanStdThread(QObject *parent = 0);
 
-    QTimer updateTimer;
+    QTimer *updateTimer;
 
     float tofMean;
     float tofAccum;
@@ -29,18 +29,20 @@ public:
     vector<vector<int>> useStatisticTofPoints;
     vector<vector<int>> useStatisticPeakPoints;
 
-    QString tofMean_string;
-    QString tofStd_string;
+    QStringList tofMean_string;
+    QStringList tofStd_string;
 
-    QString peakMean_string;
-    QString peakStd_string;
+    QStringList peakMean_string;
+    QStringList peakStd_string;
 
 signals:
 
-    void statistic_MeanStdSignal(QString,QString,QString,QString);
+    void statistic_MeanStdSignal(QStringList,QStringList,QStringList,QStringList);
 
 public slots:
     void updateSlot();      //刷新均值和方差的槽函数
+
+    void startStop_slot(int flag);
 };
 
 #endif // CALMEANSTDTHREAD_H
