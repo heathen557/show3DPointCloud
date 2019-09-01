@@ -77,6 +77,7 @@ signals:
 
      void startStop_signal(int);
 
+
 private:
     Ui::statisticsDialog *ui;
 };

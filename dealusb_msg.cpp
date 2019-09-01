@@ -63,8 +63,14 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
         allStatisticTofPoints.push_back(singlePoint);
         allStatisticPeakPoints.push_back(singlePoint);
     }
-
 }
+
+//修改统计帧数的槽函数
+void DealUsb_msg::alterStatisticFrameNum_slot(int num)
+{
+    statisticFrameNumber = num ;
+}
+
 
 void DealUsb_msg::recvMsgSlot(QByteArray array)
 {
@@ -86,7 +92,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         tofImage = microQimage;
         intensityImage = macroQimage;
 
-        qDebug()<<QStringLiteral("接收到的数据点数为：")<<tempRgbCloud.points.size()<<endl;
+//        qDebug()<<QStringLiteral("接收到的数据点数为：")<<tempRgbCloud.points.size()<<endl;
         pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
         mutex.unlock();
         isShowPointCloud = true;
@@ -282,11 +288,13 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         else
             qDebug()<<QStringLiteral("给像素赋值时出现异常 imgrow=")<<imgRow<<"   imgCol = "<<imgCol<<endl;
 
-
     }
     lastSpadNum = spadNum ;
-
 }
+
+
+
+
 
 /*************TCP 协议相关************************************/
 void DealUsb_msg::linkServer()

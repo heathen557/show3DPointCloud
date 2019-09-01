@@ -71,6 +71,10 @@ public slots:
     void ClientRecvData();  //接收点云数据的槽函数
 
 
+    //修改统计帧数的槽函数
+    void alterStatisticFrameNum_slot(int num);
+
+
 };
 
 

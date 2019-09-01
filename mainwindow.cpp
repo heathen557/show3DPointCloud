@@ -121,6 +121,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&statisticsDia_,SIGNAL(startStop_signal(int)),calMeanStd_obj,SLOT(startStop_slot(int)));
 
+    connect(&statisticsDia_,SIGNAL(alterStatisticFrameNum_signal(int)),dealUsbMsg_obj,SLOT(alterStatisticFrameNum_slot(int)));
+
 
     initGUI();
     initTreeWidget();

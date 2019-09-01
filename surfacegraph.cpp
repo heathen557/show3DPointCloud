@@ -124,7 +124,7 @@ void SurfaceGraph::fillSqrtSinProxy()
 
 void SurfaceGraph::fillSqrtSinProxy_2(QStringList dataList)
 {
-    qDebug()<<"the fillSqrtSinProxy_2 has com ,dataList ="<<dataList.length()<<endl;
+//    qDebug()<<"the fillSqrtSinProxy_2 has com ,dataList ="<<dataList.length()<<endl;
     int len = dataList.length();
     if(len<16384)
         return;
