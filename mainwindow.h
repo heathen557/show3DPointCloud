@@ -154,9 +154,9 @@ private slots:
 
     void on_writeSys_pushButton_clicked();
 
-    void on_readDev_pushButton_clicked();
+//    void on_readDev_pushButton_clicked();
 
-    void on_writeDev_pushButton_clicked();
+//    void on_writeDev_pushButton_clicked();
 
     void on_loadSetting_pushButton_clicked();
 

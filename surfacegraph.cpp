@@ -69,7 +69,7 @@ SurfaceGraph::SurfaceGraph(Q3DSurface *surface)
 
     dataArray = new QSurfaceDataArray;
     dataArray->reserve(sampleCountZ);
-    newRow = new QSurfaceDataRow(sampleCountX);
+
 
     changeTheme(0);
 
@@ -134,22 +134,34 @@ void SurfaceGraph::fillSqrtSinProxy_2(QStringList dataList)
 //    QSurfaceDataArray *dataArray = new QSurfaceDataArray;
 //    dataArray->reserve(sampleCountZ);
 
-    dataArray->clear();
+//    dataArray->clear();
 
+//    for (int i = 0 ; i < sampleCountZ ; i++) {
+//        QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountX);
+
+//        int index = 0;
+//        for (int j = 0; j < sampleCountX; j++) {
+//            (*newRow)[index++].setPosition(QVector3D(j,dataList[j+i*256].toFloat(),i));
+//        }
+//        *dataArray << newRow;
+//    }
+//    m_sqrtSinProxy->resetArray(dataArray);
+
+
+
+    //修复原来存在内存泄漏的问题
+    dataArray->clear();
     for (int i = 0 ; i < sampleCountZ ; i++) {
-        QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountX);
+//        QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountX);
+        newRow[i].resize(sampleCountX);
 
         int index = 0;
         for (int j = 0; j < sampleCountX; j++) {
-//          qDebug()<<"j="<<j<<"   dataList[j].toFloat()="<< dataList[j].toFloat()<<endl;    //打印日志会变得界面卡顿
-            (*newRow)[index++].setPosition(QVector3D(j,dataList[j+i*256].toFloat(),i));
+//            (*newRow)[index++].setPosition(QVector3D(j,dataList[j+i*256].toFloat(),i));
+            newRow[i][index++].setPosition(QVector3D(j,dataList[j+i*256].toFloat(),i));
         }
-        *dataArray << newRow;
-
-
-//        delete newRow;    //释放内存，防止内存泄漏
+        dataArray->push_back(&newRow[i]);
     }
-
     m_sqrtSinProxy->resetArray(dataArray);
 }
 

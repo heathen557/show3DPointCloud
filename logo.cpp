@@ -280,7 +280,10 @@ void Logo::readPCDFile1()
        pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
         pass.setInputCloud(needDealCloud_rgb.makeShared());                //设置待滤波的点云
         pass.setFilterFieldName("y");                             //设置在Z轴方向上进行滤波
-        pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下12米去除)
+//        pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下0.10米去除)
+
+        pass.setFilterLimits(0, 0.00);                               //设置滤波范围(从最高点向下0.10米去除)
+
         pass.setFilterLimitsNegative(true);                       //保留
         pass.filter(tempCloud_rgb);                                   //滤波并存储
 
@@ -301,12 +304,15 @@ void Logo::readPCDFile1()
 
         //条件滤波   设置半径 以及 圆周内的点数
         DealedCloud_rgb.resize(0);
-        pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem;
+        pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
         outrem.setInputCloud(tempCloud_rgb.makeShared());              //设置输入点云
         outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
         outrem.setMinNeighborsInRadius(30);       //设置查询点的邻近点集数小于2的删除
         outrem.filter (DealedCloud_rgb);//执行条件滤波，存储结果到cloud_filtered
 
+        int len = outrem.getRemovedIndices()->size();
+
+        qDebug()<<"fileted size = "<<outrem.getRemovedIndices()->size();
 
         /***************************************************************/
     }

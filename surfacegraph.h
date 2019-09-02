@@ -104,7 +104,7 @@ private:
 
 
     QSurfaceDataArray *dataArray;
-    QSurfaceDataRow *newRow;
+    QSurfaceDataRow newRow[64];
 
 
 };

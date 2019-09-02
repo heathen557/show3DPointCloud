@@ -1054,8 +1054,8 @@ void MainWindow::on_writeSys_pushButton_clicked()
 }
 
 //读取设备寄存器
-void MainWindow::on_readDev_pushButton_clicked()
-{
+//void MainWindow::on_readDev_pushButton_clicked()
+//{
 //    if(!isLinkSuccess)
 //    {
 //        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
@@ -1074,13 +1074,11 @@ void MainWindow::on_readDev_pushButton_clicked()
 //    {
 //        emit readDevSignal(hardWareAddress,registerAddress,false);
 //    }
-
-
-}
+//}
 
 //写入设备寄存器
-void MainWindow::on_writeDev_pushButton_clicked()
-{
+//void MainWindow::on_writeDev_pushButton_clicked()
+//{
 //    if(!isLinkSuccess)
 //    {
 //        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
@@ -1108,7 +1106,7 @@ void MainWindow::on_writeDev_pushButton_clicked()
 //    }
 //    ui->lineEdit_5->clear();
 
-}
+//}
 
 //加载配置集
 void MainWindow::on_loadSetting_pushButton_clicked()
