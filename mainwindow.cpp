@@ -103,6 +103,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(recvUsbMsg_obj,SIGNAL(reReadSysSignal(QString)),this,SLOT(reReadSysSlot(QString)));
     connect(recvUsbMsg_obj,SIGNAL(reReadDevSignal(int,QString)),this,SLOT(reReadDevSlot(int,QString)));
     connect(dealUsbMsg_obj,SIGNAL(staticValueSignal(float,float,float,float,float,float,float,float,float,float)),this,SLOT(recvStaticValueSlot(float,float,float,float,float,float,float,float,float,float)));
+    connect(this,SIGNAL(isFilter_signal(bool)),dealUsbMsg_obj,SLOT(isFilter_slot(bool)));
 
 
     connect(&showTimer,SIGNAL(timeout()),this,SLOT(showImageSlot()));
@@ -1325,9 +1326,17 @@ void MainWindow::on_change_pushButton_clicked()
 void MainWindow::on_radioButton_clicked()
 {
     if(ui->radioButton->isChecked())
-        ui->widget->m_logo.isFilter = true;
+    {
+//        ui->widget->m_logo.isFilter = true;
+        emit isFilter_signal(true);
+    }
+
     else
-        ui->widget->m_logo.isFilter = false;
+    {
+//        ui->widget->m_logo.isFilter = false;
+        emit isFilter_signal(false);
+    }
+
 }
 
 void MainWindow::on_gainImage_lineEdit_returnPressed()

@@ -129,7 +129,7 @@ void SurfaceGraph::fillSqrtSinProxy_2(QStringList dataList)
     if(len<16384)
         return;
 
-
+      //由于用的是指针 所以会存在内存泄漏的问题
 //     m_graph->axisY()->setTitle(QStringLiteral("均值"));
 //    QSurfaceDataArray *dataArray = new QSurfaceDataArray;
 //    dataArray->reserve(sampleCountZ);
@@ -157,7 +157,6 @@ void SurfaceGraph::fillSqrtSinProxy_2(QStringList dataList)
 
         int index = 0;
         for (int j = 0; j < sampleCountX; j++) {
-//            (*newRow)[index++].setPosition(QVector3D(j,dataList[j+i*256].toFloat(),i));
             newRow[i][index++].setPosition(QVector3D(j,dataList[j+i*256].toFloat(),i));
         }
         dataArray->push_back(&newRow[i]);

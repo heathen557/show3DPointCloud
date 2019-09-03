@@ -6,6 +6,7 @@
 #include<vector>
 #include<QMutex>
 #include<QTimer>
+#include<omp.h>
 using namespace std;
 
 class calMeanStdThread : public QObject

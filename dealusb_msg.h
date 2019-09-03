@@ -3,6 +3,9 @@
 #include<pcl/io/pcd_io.h>//pcd 读写类相关的头文件。
 #include<pcl/io/ply_io.h>
 #include<pcl/point_types.h> //PCL中支持的点类型头文件。
+#include <pcl/filters/passthrough.h>  //直通滤波相关
+#include <pcl/filters/radius_outlier_removal.h>
+#include <pcl/filters/statistical_outlier_removal.h>
 #include <QObject>
 #include<QImage>
 #include<QtNetwork/QTcpSocket>
@@ -10,6 +13,7 @@
 #include<QJsonObject>
 #include<QJsonArray>
 #include<vector>
+
 
 using namespace std;
 
@@ -27,6 +31,8 @@ public:
     QImage macroQimage;
 
     pcl::PointCloud<pcl::PointXYZRGB> tempRgbCloud;
+    pcl::PointCloud<pcl::PointXYZRGB> tempRgbCloud_pass;
+    pcl::PointCloud<pcl::PointXYZRGB> tempRgbCloud_radius;
 //    pcl::PointXYZRGB  cloutPoint;    //不再使用push_back的方式了，因为要考虑有序的方式
 
     int cloudIndex;
@@ -56,6 +62,9 @@ public:
     vector<vector<int>> tempStatisticTofPoints;   //用于统计 均值和方差的 容器
     vector<vector<int>> tempStatisticPeakPoints;   //用于统计 均值和方差的 容器
 
+
+    bool isFilterFlag;
+
 signals:
     void staticValueSignal(float,float,float,float,float,float,float,float,float,float);
 
@@ -65,6 +74,8 @@ signals:
 
 public slots:
     void recvMsgSlot(QByteArray array);
+
+    void isFilter_slot(bool isFiter);
 
     /*******tcp 协议相关*****/
     void linkServer();

@@ -267,6 +267,8 @@ signals:
     void saveSettingSignal(QString,int, bool );
 
     void read_usb_signal();
+
+    void isFilter_signal(bool);
 };
 
 #endif // MAINWINDOW_H

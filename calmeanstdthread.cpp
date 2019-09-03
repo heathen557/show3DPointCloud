@@ -1,6 +1,7 @@
 ﻿#include "calmeanstdthread.h"
 #include<qdebug.h>
 
+
 QMutex statisticMutex;
 vector<vector<int>> allStatisticTofPoints;   //用于统计 均值和方差的 容器  TOF
 vector<vector<int>> allStatisticPeakPoints;   //用于统计 均值和方差的 容器  TOF
@@ -45,11 +46,13 @@ void calMeanStdThread::updateSlot()
     peakMean_string.clear();
     peakStd_string.clear();
 
+
+
     for(int i =0; i<16384; i++)
     {
         frameSize = useStatisticTofPoints[i].size();
 
-        qDebug()<<QStringLiteral("统计的帧数为： ")<< frameSize<<endl;
+//        qDebug()<<QStringLiteral("统计的帧数为： ")<< frameSize<<endl;
 
         if(frameSize>1)                              //理论上应该与设置的帧数相等，此处是为了防止除数为零时引起程序异常；
         {

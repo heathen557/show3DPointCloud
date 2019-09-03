@@ -103,6 +103,8 @@
 //#include<QTime>
 
 
+
+
 pcl::PointCloud<pcl::PointXYZRGB> pointCloudRgb;
 bool  isShowPointCloud;
 extern QMutex mutex;
@@ -273,20 +275,16 @@ void Logo::readPCDFile1()
     pcl::copyPointCloud(pointCloudRgb,DealedCloud_rgb);
     mutex.unlock();
 
-    if(isFilter)
+    if(isFilter==100)
     {
         /*******************开启滤波功能*********************************/
         //先用直通滤波把所有零点重复的零点过滤掉
        pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
         pass.setInputCloud(needDealCloud_rgb.makeShared());                //设置待滤波的点云
         pass.setFilterFieldName("y");                             //设置在Z轴方向上进行滤波
-//        pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下0.10米去除)
-
-        pass.setFilterLimits(0, 0.00);                               //设置滤波范围(从最高点向下0.10米去除)
-
+        pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下0.10米去除)
         pass.setFilterLimitsNegative(true);                       //保留
         pass.filter(tempCloud_rgb);                                   //滤波并存储
-
         if(tempCloud_rgb.size()<1)
             return;
 
@@ -300,8 +298,6 @@ void Logo::readPCDFile1()
 //        sor.filter(DealedCloud_rgb);
 //        qDebug()<<"after filter the points'Number = "<<DealedCloud_rgb.size()<<endl;
 
-
-
         //条件滤波   设置半径 以及 圆周内的点数
         DealedCloud_rgb.resize(0);
         pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
@@ -311,8 +307,7 @@ void Logo::readPCDFile1()
         outrem.filter (DealedCloud_rgb);//执行条件滤波，存储结果到cloud_filtered
 
         int len = outrem.getRemovedIndices()->size();
-
-        qDebug()<<"fileted size = "<<outrem.getRemovedIndices()->size();
+        qDebug()<<"logo fileted size = "<<outrem.getRemovedIndices()->size();
 
         /***************************************************************/
     }
@@ -331,9 +326,11 @@ void Logo::readPCDFile1()
 */
 
 
-//    qDebug()<<"the pointCloud num =  "<<DealedCloud_rgb.points.size()<<endl;
     m_data.resize(98500);
     int m = 0;
+
+
+//#pragma omp parallel for
     for(int n=0; n<DealedCloud_rgb.points.size(); n++)
     {
 
@@ -354,6 +351,9 @@ void Logo::readPCDFile1()
 
         m += 6;
     }
+
+
+
 //    m_data.resize(m);
 
     for(;m<98304;m++)

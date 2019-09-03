@@ -1,5 +1,6 @@
 ﻿#include "dealusb_msg.h"
 #include<qdebug.h>
+#include<QTime>
 
 
 extern QMutex mutex;
@@ -47,6 +48,7 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
 
     LSB = 0.015; //时钟频率
     isFirstLink = true;
+    isFilterFlag = false ;    //初始化时不进行滤波
 
 //    linkServer();
 
@@ -71,6 +73,17 @@ void DealUsb_msg::alterStatisticFrameNum_slot(int num)
     statisticFrameNumber = num ;
 }
 
+//修改是否进行滤波的槽函数
+void DealUsb_msg::isFilter_slot(bool isFiter)
+{
+    if(true == isFiter)
+    {
+        isFilterFlag = true;
+    }else{
+        isFilterFlag = false;
+    }
+}
+
 
 void DealUsb_msg::recvMsgSlot(QByteArray array)
 {
@@ -88,14 +101,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
     if(spadNum==0 && lastSpadNum==7)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
     {
-        mutex.lock();
-        tofImage = microQimage;
-        intensityImage = macroQimage;
-
-//        qDebug()<<QStringLiteral("接收到的数据点数为：")<<tempRgbCloud.points.size()<<endl;
-        pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
-        mutex.unlock();
-        isShowPointCloud = true;
 
         //判断是否保存数据
         if(isSaveFlag)
@@ -103,10 +108,10 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             if(formatFlag == 0)   //保存二进制pcd
             {
                 emit savePCDSignal(tempRgbCloud,0);
-            }else if(formatFlag == 1)
+            }else if(formatFlag == 1)      //保存ASCII码版本的 pcd文件
             {
                 emit savePCDSignal(tempRgbCloud,1);
-            }else if(formatFlag == 2)
+            }else if(formatFlag == 2)   //保存原始的TOF 和 PEAK 数据
             {
                 for(int i=0; i<16384; i++)
                 {
@@ -129,6 +134,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         }
 
 
+        //向主线程中发送最大值、最小值等统计信息
         emit staticValueSignal(tofMin,tofMax,peakMin,peakMax,xMin,xMax,yMin,yMax,zMin,zMax);
         //重置变量
         tofMin = 10000;
@@ -142,6 +148,102 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         zMin = 10000;
         zMax = -10000;
 
+
+/*
+        //将二维、三维数据存储到全局变量当中，主线程当中会调用全局变量进行二维、三维图像的显示
+        mutex.lock();
+        tofImage = microQimage;
+        intensityImage = macroQimage;
+        pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
+        mutex.unlock();
+        isShowPointCloud = true;
+*/
+
+        // 1、将滤波功能放到这里进行实现，
+        // 2、将滤波后的三维点云 同步到二维图像
+        if(true == isFilterFlag)
+        {
+            /*******************开启滤波功能*********************************/
+            //先用直通滤波把所有零点重复的零点过滤掉
+            pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
+            pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
+            pass.setFilterFieldName("y");                             //设置在Z轴方向上进行滤波
+            pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下0.10米去除)
+            pass.setFilterLimitsNegative(true);                       //保留
+            pass.filter(tempRgbCloud_pass);                                   //滤波并存储
+            if(tempRgbCloud_pass.size()<1)
+                return;
+
+            //  基于统计运算的滤波算法
+    //        DealedCloud_rgb.clear();
+    //        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
+    //        sor.setInputCloud(tempRgbCloud_pass.makeShared());
+    //        sor.setMeanK(20);
+    //        sor.setStddevMulThresh(0);
+    //        //40  0.1 不见前面噪点
+    //        sor.filter(tempRgbCloud_radius);
+    //        qDebug()<<"after filter the points'Number = "<<DealedCloud_rgb.size()<<endl;
+
+
+            //条件滤波   设置半径 以及 圆周内的点数
+            tempRgbCloud_radius.resize(0);
+            pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
+            outrem.setInputCloud(tempRgbCloud_pass.makeShared());              //设置输入点云
+            outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
+            outrem.setMinNeighborsInRadius(30);       //设置查询点的邻近点集数小于2的删除
+            outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
+            int len = outrem.getRemovedIndices()->size();
+            qDebug()<<"dealusb_msg    fileted size = "<<outrem.getRemovedIndices()->size();
+            /*************************以上为滤波处理部分************************************************************/
+
+            /***********************接下来 根据点云的序号 去除二维图像中的噪声************************/
+
+            int index,pix_x,pix_y;
+            QRgb clearTofCol,clearPeakCol;
+            for(int i=0; i<len; i++)
+            {
+                index = outrem.getRemovedIndices()->at(i);
+                pix_x = index % 256;
+                pix_y = index / 256;
+
+                //将像素去均值 后赋予噪点处的像素值
+                if(pix_y+1 < 64 && pix_y-1 >0)
+                {
+                     clearTofCol =  (microQimage.pixel(pix_x,pix_y+1) + microQimage.pixel(pix_x,pix_y-1))/2.0;
+                     clearPeakCol = (macroQimage.pixel(pix_x,pix_y+1) + macroQimage.pixel(pix_x,pix_y-1))/2.0;
+                }
+                else
+                {
+                     clearTofCol =  microQimage.pixel(pix_x,pix_y);
+                     clearPeakCol = macroQimage.pixel(pix_x,pix_y);
+                }
+                microQimage.setPixel(pix_x,pix_y,clearTofCol);
+                macroQimage.setPixel(pix_x,pix_y,clearPeakCol);
+
+
+            }
+
+
+
+            mutex.lock();
+            tofImage = microQimage;
+            intensityImage = macroQimage;
+            pcl::copyPointCloud(tempRgbCloud_radius,pointCloudRgb);
+            mutex.unlock();
+            /***************************************************************/
+
+        }else{                      //不进行滤波
+            mutex.lock();
+            tofImage = microQimage;
+            intensityImage = macroQimage;
+            pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
+            mutex.unlock();
+        }
+         isShowPointCloud = true;
+
+
+
+
 //        tempRgbCloud.clear();
     }//以上为处理完整的一帧数据
 
@@ -151,6 +253,8 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
     int line_offset = spadNum / 2;           //取值 0 1 2 3 ；
     int row_offset = (spadNum + 1) % 2;      //表示是在第一行 还是在第二行
+
+
 
     for(int i=0; i<64; i++)
     {
@@ -251,10 +355,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             tempRgbCloud.points[cloudIndex].z = temp_z;
             tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb);
 
-
-
-
-
             /***************统计均值 、方差相关***********************/
             if(statisticStartFlag == true)
             {
@@ -289,6 +389,9 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             qDebug()<<QStringLiteral("给像素赋值时出现异常 imgrow=")<<imgRow<<"   imgCol = "<<imgCol<<endl;
 
     }
+
+//    qDebug()<<QStringLiteral("处理时间为：")<<time.elapsed()<<endl;
+
     lastSpadNum = spadNum ;
 }
 
