@@ -757,14 +757,17 @@ void MainWindow::showImageSlot()
     if(!isShowPointCloud)
         return;
 
+    float width_scale = ui->showTOF_label->width()/256.0;
+    float height_scale = ui->showIntensity_label->width()/64.0;
+
 
     if(!tofImage.isNull() && !intensityImage.isNull())
     {
         mutex.lock();
 
         mutex.try_lock();
-        resImage = tofImage.scaled(tofImage.width()*1.5, tofImage.height()*3.5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        resIntenImage = intensityImage.scaled(intensityImage.width()*1.5, intensityImage.height()*3.5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        resImage = tofImage.scaled(tofImage.width()*width_scale, tofImage.height()*height_scale, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        resIntenImage = intensityImage.scaled(intensityImage.width()*width_scale, intensityImage.height()*height_scale, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         mutex.unlock();
 
         QPixmap pixmap2(QPixmap::fromImage (resImage));
@@ -1264,15 +1267,19 @@ void MainWindow::oneSecondSlot()
 //鼠标停靠处显示TOF 和 peak信息
 void MainWindow::queryPixSlot(int x,int y)
 {
-    int index = 256*y/3.5 +x/1.5 ;
+    float width_scale = ui->showTOF_label->width()/256.0;
+    float height_scale = ui->showIntensity_label->width()/64.0;
+
+
+    int index = 256*y/height_scale +x/width_scale ;
 //    QString str = "tof="+QString::number(tofInfo[index])+",peak="+QString::number(peakInfo[index]);
 
-    int xIndex = x/1.5;
-    int yIndex = y/3.5;
+    int xIndex = x/width_scale;
+    int yIndex = y/height_scale;
 
 
     mouseShowMutex.lock();
-    QString str ="x="+QString::number(int(x/1.5)) + ",y="+QString::number(int(y/3.5)) + ",tof="+QString::number(mouseShowTOF[xIndex][yIndex])+",peak="+QString::number(mouseShowPEAK[xIndex][yIndex]);
+    QString str ="x="+QString::number(int(x/width_scale)) + ",y="+QString::number(int(y/height_scale)) + ",tof="+QString::number(mouseShowTOF[xIndex][yIndex])+",peak="+QString::number(mouseShowPEAK[xIndex][yIndex]);
     mouseShowMutex.unlock();
 
     QToolTip::showText(QCursor::pos(),str);

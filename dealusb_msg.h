@@ -13,6 +13,7 @@
 #include<QJsonObject>
 #include<QJsonArray>
 #include<vector>
+#include<omp.h>
 
 
 using namespace std;
