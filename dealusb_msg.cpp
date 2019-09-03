@@ -642,14 +642,7 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                             // m_data.resize(size_ * 6);
                         }     //if(value_msg.isArray())
 
-                        /**********一帧数据接收完毕**********/
-                        mutex.lock();
-                        tofImage = microQimage;
-                        intensityImage = macroQimage;
-                        pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
-                        mutex.unlock();
 
-                        isShowPointCloud = true;
 
                         /**********************2019-8-21  add********************************************/
                         //判断是否保存数据
@@ -697,6 +690,102 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                         zMin = 10000;
                         zMax = -10000;
                         /************************************************************/
+
+
+                        /**********一帧数据接收完毕**********/
+/*                        mutex.lock();
+                        tofImage = microQimage;
+                        intensityImage = macroQimage;
+                        pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
+                        mutex.unlock();
+                        isShowPointCloud = true;
+*/
+                        // 1、将滤波功能放到这里进行实现，
+                        // 2、将滤波后的三维点云 同步到二维图像
+                        if(true == isFilterFlag)
+                        {
+                            /*******************开启滤波功能*********************************/
+                            //先用直通滤波把所有零点重复的零点过滤掉
+                            pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
+                            pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
+                            pass.setFilterFieldName("y");                             //设置在Z轴方向上进行滤波
+                            pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下0.10米去除)
+                            pass.setFilterLimitsNegative(true);                       //保留
+                            pass.filter(tempRgbCloud_pass);                                   //滤波并存储
+                            if(tempRgbCloud_pass.size()<1)
+                                return;
+
+                            //  基于统计运算的滤波算法
+                    //        DealedCloud_rgb.clear();
+                    //        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
+                    //        sor.setInputCloud(tempRgbCloud_pass.makeShared());
+                    //        sor.setMeanK(20);
+                    //        sor.setStddevMulThresh(0);
+                    //        //40  0.1 不见前面噪点
+                    //        sor.filter(tempRgbCloud_radius);
+                    //        qDebug()<<"after filter the points'Number = "<<DealedCloud_rgb.size()<<endl;
+
+
+                            //条件滤波   设置半径 以及 圆周内的点数
+                            tempRgbCloud_radius.resize(0);
+                            pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
+                            outrem.setInputCloud(tempRgbCloud_pass.makeShared());              //设置输入点云
+                            outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
+                            outrem.setMinNeighborsInRadius(30);       //设置查询点的邻近点集数小于2的删除
+                            outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
+                            int len = outrem.getRemovedIndices()->size();
+                            qDebug()<<"dealusb_msg    fileted size = "<<outrem.getRemovedIndices()->size();
+                            /*************************以上为滤波处理部分************************************************************/
+
+                            /***********************接下来 根据点云的序号 去除二维图像中的噪声************************/
+
+                            int index,pix_x,pix_y;
+                            QRgb clearTofCol,clearPeakCol;
+                            for(int i=0; i<len; i++)
+                            {
+                                index = outrem.getRemovedIndices()->at(i);
+                                pix_x = index % 256;
+                                pix_y = index / 256;
+
+                                //将像素去均值 后赋予噪点处的像素值
+                                if(pix_y+1 < 64 && pix_y-1 >0)
+                                {
+                                     clearTofCol =  (microQimage.pixel(pix_x,pix_y+1) + microQimage.pixel(pix_x,pix_y-1))/2.0;
+                                     clearPeakCol = (macroQimage.pixel(pix_x,pix_y+1) + macroQimage.pixel(pix_x,pix_y-1))/2.0;
+                                }
+                                else
+                                {
+                                     clearTofCol =  microQimage.pixel(pix_x,pix_y);
+                                     clearPeakCol = macroQimage.pixel(pix_x,pix_y);
+                                }
+                                microQimage.setPixel(pix_x,pix_y,clearTofCol);
+                                macroQimage.setPixel(pix_x,pix_y,clearPeakCol);
+
+
+                            }
+
+
+
+                            mutex.lock();
+                            tofImage = microQimage;
+                            intensityImage = macroQimage;
+                            pcl::copyPointCloud(tempRgbCloud_radius,pointCloudRgb);
+                            mutex.unlock();
+                            /***************************************************************/
+
+                        }else{                      //不进行滤波
+                            mutex.lock();
+                            tofImage = microQimage;
+                            intensityImage = macroQimage;
+                            pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
+                            mutex.unlock();
+                        }
+                         isShowPointCloud = true;
+
+
+
+
+
 
 //                        tempRgbCloud.clear();
 
