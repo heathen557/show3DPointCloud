@@ -84,7 +84,7 @@ void DealUsb_msg::isFilter_slot(bool isFiter)
     }
 }
 
-
+//260个字节的 解析协议的槽函数
 void DealUsb_msg::recvMsgSlot(QByteArray array)
 {
     int ret;
@@ -165,20 +165,12 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         {
             /*******************开启滤波功能*********************************/
             //先用直通滤波把所有零点重复的零点过滤掉
-
-
-
             pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
             pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
             pass.setFilterFieldName("y");                             //设置在Z轴方向上进行滤波
             pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下0.10米去除)
             pass.setFilterLimitsNegative(true);                       //保留
             pass.filter(tempRgbCloud_pass);                                   //滤波并存储
-
-
-
-
-
             if(tempRgbCloud_pass.size()<1)
                 return;
 
@@ -192,25 +184,23 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
     //        sor.filter(tempRgbCloud_radius);
     //        qDebug()<<"after filter the points'Number = "<<DealedCloud_rgb.size()<<endl;
 
-            QTime time;
-            time.start();
-            int len;
-
-
+//            QTime time;
+//            time.start();
+//            int len;
             tempRgbCloud_radius.resize(0);
             pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
             outrem.setInputCloud(tempRgbCloud_pass.makeShared());              //设置输入点云
             outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
             outrem.setMinNeighborsInRadius(30);       //设置查询点的邻近点集数小于2的删除
             outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
-            len = outrem.getRemovedIndices()->size();
+            int len = outrem.getRemovedIndices()->size();
 
 
             //条件滤波   设置半径 以及 圆周内的点数
 
 
 //            qDebug()<<"dealusb_msg    fileted size = "<<outrem.getRemovedIndices()->size();
-            qDebug()<<" passThrough cost time = "<<time.elapsed()<<endl;
+//            qDebug()<<" passThrough cost time = "<<time.elapsed()<<endl;
             /*************************以上为滤波处理部分************************************************************/
 
             /***********************接下来 根据点云的序号 去除二维图像中的噪声************************/
@@ -416,7 +406,15 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
 
 
-/*************TCP 协议相关************************************/
+
+
+
+
+
+
+
+
+/*************TCP 协议相关********************************************************************************************************************************/
 void DealUsb_msg::linkServer()
 {
     m_tcpSocket.connectToHost("127.0.0.1",6006);

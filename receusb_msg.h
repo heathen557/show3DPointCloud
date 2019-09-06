@@ -64,6 +64,8 @@ public:
 
     int idVendor_,idProduct_;
 
+    QByteArray tmpArray;    //用于协议2的缓存 缓存到260个字节时发送给数据处理线程
+
 
 
 
@@ -81,6 +83,8 @@ signals:
     void staticValueSignal(float,float,float,float,float,float,float,float,float,float);
 
     void recvMsgSignal(QByteArray); //发送给处理线程的信号
+
+//    void recvMsgSignal_2(QByteArray); //发送给处理线程的信号2  协议更改版本 （4个字节 + 256个字节）
 
     void reReadSysSignal(QString);  //读取系统指令 返回信号
 

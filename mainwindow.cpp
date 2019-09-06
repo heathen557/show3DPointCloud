@@ -48,6 +48,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     //    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
 
+    ui->statusBar->addWidget(&explainLabel);
+    ui->statusBar->setStyleSheet(QString("QStatusBar::item{border:0px}"));
+
     isWriteSuccess = false;
     framePerSecond = 0;   //统计帧率，初始化为0
     isLinkSuccess = false;
@@ -88,6 +91,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //接收数据线程、处理数据线程
     connect(recvUsbMsg_obj,SIGNAL(recvMsgSignal(QByteArray)),dealUsbMsg_obj,SLOT(recvMsgSlot(QByteArray)));
+
+
 
     connect(this,SIGNAL(read_usb_signal()),recvUsbMsg_obj,SLOT(read_usb()));
     connect(this,SIGNAL(readSignal(int,int)),recvUsbMsg_obj, SLOT(run(int,int)));
@@ -965,26 +970,36 @@ void MainWindow::on_pushButton_clicked()
 //播放槽函数
 void MainWindow::on_pushButton_2_clicked()
 {
+    if(!isLinkSuccess)
+    {
+        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+        return;
+    }
+
+//    isRecvFlag = true;
+//    emit read_usb_signal();
+
     if(ui->pushButton_2->text() == QStringLiteral("播放"))
     {
-        if(isWriteSuccess)
-        {
+//        if(isWriteSuccess)
+//        {
             showTimer.start(90);
             ui->widget->readFileTimer.start(20);
             oneSecondTimer.start(1000);
 
-            QString tempstr = QStringLiteral("数据接收正常,开始播放~");
+            QString tempstr = QStringLiteral("准备数据接收,开始播放~");
             QTime t1 = QTime::currentTime();
             QString str = tempstr + "               " +t1.toString("hh:mm:ss");
             ui->textEdit_2->append(str);
 
+            isRecvFlag = true;
             emit read_usb_signal();
 
 
-        }else
-        {
-            //QMessageBox::information(NULL,"告警","未接收到数据，请检查设备连接！");
-        }
+//        }else
+//        {
+////            QMessageBox::information(NULL,"告警","isWriteSuccess == FALSE 未接收到数据，请检查设备连接！");
+//        }
         ui->pushButton_2->setText(QStringLiteral("暂停"));
 
     }else
@@ -4143,16 +4158,17 @@ void MainWindow::on_toolBox_currentChanged(int index)
     {
         isRecvFlag = false ;             //关闭数据接收连接
         //将按钮改变
-        ui->pushButton_5->setText(QStringLiteral("播放"));
+        ui->pushButton_2->setText(QStringLiteral("播放"));
         if(isLinkSuccess)
             on_getALL_pushButton_clicked(); //读取所有寄存器的操作
     }else if(0 == index)
     {
-        if(isLinkSuccess)
-        {
-            isRecvFlag = true;
-            emit read_usb_signal();
-        }
+        explainLabel.setText("");
+//        if(isLinkSuccess  && ui->pushButton_2->text() == QStringLiteral("播放"))
+//        {
+//            isRecvFlag = true;
+//            emit read_usb_signal();
+//        }
 
     }
 }

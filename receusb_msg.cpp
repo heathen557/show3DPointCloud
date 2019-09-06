@@ -19,6 +19,7 @@ ReceUSB_Msg::ReceUSB_Msg(QObject *parent) : QObject(parent),
 {
     isFirstLink = true;
     isRecvFlag = false;
+    tmpArray.clear();
 
     tofMin = 10000;
     tofMax = -10000;
@@ -267,14 +268,14 @@ void ReceUSB_Msg::read_usb()
             readTimer->stop();
         }
 
+//        qDebug()<<"ret = " <<ret<<endl;
+
+
+
         if(260 == ret)
         {
             mArray = QByteArray(MyBuffer,260);
             emit recvMsgSignal(mArray);
-
-
-
-
 //            QDataStream out(&mArray,QIODevice::ReadWrite);
 //            QString strHex;
 //            while (!out.atEnd())
@@ -295,11 +296,25 @@ void ReceUSB_Msg::read_usb()
 //            strHex = strHex.toUpper();
 
 //            qDebug()<<QStringLiteral("原始数据为：")<<strHex<<endl;
+        }else if(ret <260)
+        {
+            mArray = QByteArray(MyBuffer,ret);
 
-//            emit recvMsgSignal(mArray);
-
+            if(4 == ret && 0 == tmpArray.size())
+            {
+                tmpArray.append(mArray);
+            }
+            if(256 == ret && 4 == tmpArray.size())
+            {
+                tmpArray.append(mArray);
+                emit recvMsgSignal(tmpArray);
+                tmpArray.clear();
+            }
 
         }
+
+
+
 
     }
 
@@ -313,7 +328,7 @@ void ReceUSB_Msg::run(int vId, int pId)
     idProduct_ = pId;
 
     readTimer = new QTimer();
-    connect(readTimer, SIGNAL(timeout()),this,SLOT(read_usb()));
+//    connect(readTimer, SIGNAL(timeout()),this,SLOT(read_usb()));
     openLinkDevSlot();
 
 }
@@ -519,8 +534,8 @@ void ReceUSB_Msg::loadSettingSlot(QString filePath,bool recvFlag)
 
     /************************开始接受数据****************************************************/
     //    readTimer->start(1);
-    isRecvFlag =true;
-    read_usb();
+//    isRecvFlag =true;
+//    read_usb();
 }
 
 //保存配置集槽函数

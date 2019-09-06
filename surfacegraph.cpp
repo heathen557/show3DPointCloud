@@ -79,6 +79,7 @@ SurfaceGraph::SurfaceGraph(Q3DSurface *surface)
 
 SurfaceGraph::~SurfaceGraph()
 {
+    delete dataArray;
     delete m_graph;
 }
 

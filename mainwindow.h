@@ -144,7 +144,7 @@ private slots:
 
     void showImageSlot();           //显示二维图像的槽函数
 
-    void on_pushButton_2_clicked();
+    void on_pushButton_2_clicked();   //播放的槽函数
 
     void linkInfoSlot(int );      //接收线程发过来的链接信息（告警、错误）
 

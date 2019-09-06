@@ -275,7 +275,7 @@ void Logo::readPCDFile1()
     pcl::copyPointCloud(pointCloudRgb,DealedCloud_rgb);
     mutex.unlock();
 
-    if(isFilter==100)
+    if(isFilter==100)    //这里的意思是在这里不进行滤波操作，设参数等于100（随意数）
     {
         /*******************开启滤波功能*********************************/
         //先用直通滤波把所有零点重复的零点过滤掉

@@ -76,6 +76,8 @@ signals:
 public slots:
     void recvMsgSlot(QByteArray array);
 
+//    void recvMsgSlot_2(QByteArray array);
+
     void isFilter_slot(bool isFiter);
 
     /*******tcp 协议相关*****/
