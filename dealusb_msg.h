@@ -14,6 +14,7 @@
 #include<QJsonArray>
 #include<vector>
 #include<omp.h>
+#include<QFile>
 
 
 using namespace std;
@@ -87,6 +88,9 @@ public slots:
 
     //修改统计帧数的槽函数
     void alterStatisticFrameNum_slot(int num);
+
+    //添加读取本地tof和PEAK的槽函数
+    void readLocalPCDFile();
 
 
 };

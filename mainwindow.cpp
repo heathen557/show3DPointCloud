@@ -62,10 +62,10 @@ MainWindow::MainWindow(QWidget *parent) :
     gainImage = 1;
 
     //USB数据粗粒线程
-     dealUsbMsg_obj = new DealUsb_msg();
-     dealUsbThread = new QThread;
-     dealUsbMsg_obj->moveToThread(dealUsbThread);
-     dealUsbThread->start();
+    dealUsbMsg_obj = new DealUsb_msg();
+    dealUsbThread = new QThread;
+    dealUsbMsg_obj->moveToThread(dealUsbThread);
+    dealUsbThread->start();
 
     //把读取USB信息放到线程当中，并开启线程
     recvUsbMsg_obj = new ReceUSB_Msg();
@@ -133,192 +133,192 @@ MainWindow::MainWindow(QWidget *parent) :
     initGUI();
     initTreeWidget();
 
-//    init3DShow();
+    //    init3DShow();
 
 
 }
 
- void MainWindow::init3DShow()
- {
-     Q3DSurface *graph = new Q3DSurface();
-     QWidget *container = QWidget::createWindowContainer(graph);
-     //! [0]
+void MainWindow::init3DShow()
+{
+    Q3DSurface *graph = new Q3DSurface();
+    QWidget *container = QWidget::createWindowContainer(graph);
+    //! [0]
 
-     if (!graph->hasContext()) {
-         QMessageBox msgBox;
-         msgBox.setText("Couldn't initialize the OpenGL context.");
-         msgBox.exec();
-         return ;
-     }
+    if (!graph->hasContext()) {
+        QMessageBox msgBox;
+        msgBox.setText("Couldn't initialize the OpenGL context.");
+        msgBox.exec();
+        return ;
+    }
 
-     QSize screenSize = graph->screen()->size();
-     container->setMinimumSize(QSize(screenSize.width() / 2, screenSize.height() / 1.6));
-     container->setMaximumSize(screenSize);
-     container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-     container->setFocusPolicy(Qt::StrongFocus);
+    QSize screenSize = graph->screen()->size();
+    container->setMinimumSize(QSize(screenSize.width() / 2, screenSize.height() / 1.6));
+    container->setMaximumSize(screenSize);
+    container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    container->setFocusPolicy(Qt::StrongFocus);
 
-     //! [1]
-     QWidget *widget = new QWidget;
-     QHBoxLayout *hLayout = new QHBoxLayout(widget);
-     QVBoxLayout *vLayout = new QVBoxLayout();
-     hLayout->addWidget(container, 1);
-     hLayout->addLayout(vLayout);
-     vLayout->setAlignment(Qt::AlignTop);
-     //! [1]
+    //! [1]
+    QWidget *widget = new QWidget;
+    QHBoxLayout *hLayout = new QHBoxLayout(widget);
+    QVBoxLayout *vLayout = new QVBoxLayout();
+    hLayout->addWidget(container, 1);
+    hLayout->addLayout(vLayout);
+    vLayout->setAlignment(Qt::AlignTop);
+    //! [1]
 
-     widget->setWindowTitle(QStringLiteral("Surface example"));
+    widget->setWindowTitle(QStringLiteral("Surface example"));
 
-     QGroupBox *modelGroupBox = new QGroupBox(QStringLiteral("Model"));
+    QGroupBox *modelGroupBox = new QGroupBox(QStringLiteral("Model"));
 
-     QRadioButton *sqrtSinModelRB = new QRadioButton(widget);
-     sqrtSinModelRB->setText(QStringLiteral("Sqrt && Sin"));
-     sqrtSinModelRB->setChecked(false);
+    QRadioButton *sqrtSinModelRB = new QRadioButton(widget);
+    sqrtSinModelRB->setText(QStringLiteral("Sqrt && Sin"));
+    sqrtSinModelRB->setChecked(false);
 
-     QRadioButton *heightMapModelRB = new QRadioButton(widget);
-     heightMapModelRB->setText(QStringLiteral("Height Map"));
-     heightMapModelRB->setChecked(false);
+    QRadioButton *heightMapModelRB = new QRadioButton(widget);
+    heightMapModelRB->setText(QStringLiteral("Height Map"));
+    heightMapModelRB->setChecked(false);
 
-     QVBoxLayout *modelVBox = new QVBoxLayout;
-     modelVBox->addWidget(sqrtSinModelRB);
-     modelVBox->addWidget(heightMapModelRB);
-     modelGroupBox->setLayout(modelVBox);
+    QVBoxLayout *modelVBox = new QVBoxLayout;
+    modelVBox->addWidget(sqrtSinModelRB);
+    modelVBox->addWidget(heightMapModelRB);
+    modelGroupBox->setLayout(modelVBox);
 
-     QGroupBox *selectionGroupBox = new QGroupBox(QStringLiteral("Selection Mode"));
+    QGroupBox *selectionGroupBox = new QGroupBox(QStringLiteral("Selection Mode"));
 
-     QRadioButton *modeNoneRB = new QRadioButton(widget);
-     modeNoneRB->setText(QStringLiteral("No selection"));
-     modeNoneRB->setChecked(false);
+    QRadioButton *modeNoneRB = new QRadioButton(widget);
+    modeNoneRB->setText(QStringLiteral("No selection"));
+    modeNoneRB->setChecked(false);
 
-     QRadioButton *modeItemRB = new QRadioButton(widget);
-     modeItemRB->setText(QStringLiteral("Item"));
-     modeItemRB->setChecked(false);
+    QRadioButton *modeItemRB = new QRadioButton(widget);
+    modeItemRB->setText(QStringLiteral("Item"));
+    modeItemRB->setChecked(false);
 
-     QRadioButton *modeSliceRowRB = new QRadioButton(widget);
-     modeSliceRowRB->setText(QStringLiteral("Row Slice"));
-     modeSliceRowRB->setChecked(false);
+    QRadioButton *modeSliceRowRB = new QRadioButton(widget);
+    modeSliceRowRB->setText(QStringLiteral("Row Slice"));
+    modeSliceRowRB->setChecked(false);
 
-     QRadioButton *modeSliceColumnRB = new QRadioButton(widget);
-     modeSliceColumnRB->setText(QStringLiteral("Column Slice"));
-     modeSliceColumnRB->setChecked(false);
+    QRadioButton *modeSliceColumnRB = new QRadioButton(widget);
+    modeSliceColumnRB->setText(QStringLiteral("Column Slice"));
+    modeSliceColumnRB->setChecked(false);
 
-     QVBoxLayout *selectionVBox = new QVBoxLayout;
-     selectionVBox->addWidget(modeNoneRB);
-     selectionVBox->addWidget(modeItemRB);
-     selectionVBox->addWidget(modeSliceRowRB);
-     selectionVBox->addWidget(modeSliceColumnRB);
-     selectionGroupBox->setLayout(selectionVBox);
+    QVBoxLayout *selectionVBox = new QVBoxLayout;
+    selectionVBox->addWidget(modeNoneRB);
+    selectionVBox->addWidget(modeItemRB);
+    selectionVBox->addWidget(modeSliceRowRB);
+    selectionVBox->addWidget(modeSliceColumnRB);
+    selectionGroupBox->setLayout(selectionVBox);
 
-     QSlider *axisMinSliderX = new QSlider(Qt::Horizontal, widget);
-     axisMinSliderX->setMinimum(0);
-     axisMinSliderX->setTickInterval(1);
-     axisMinSliderX->setEnabled(true);
-     QSlider *axisMaxSliderX = new QSlider(Qt::Horizontal, widget);
-     axisMaxSliderX->setMinimum(1);
-     axisMaxSliderX->setTickInterval(1);
-     axisMaxSliderX->setEnabled(true);
-     QSlider *axisMinSliderZ = new QSlider(Qt::Horizontal, widget);
-     axisMinSliderZ->setMinimum(0);
-     axisMinSliderZ->setTickInterval(1);
-     axisMinSliderZ->setEnabled(true);
-     QSlider *axisMaxSliderZ = new QSlider(Qt::Horizontal, widget);
-     axisMaxSliderZ->setMinimum(1);
-     axisMaxSliderZ->setTickInterval(1);
-     axisMaxSliderZ->setEnabled(true);
+    QSlider *axisMinSliderX = new QSlider(Qt::Horizontal, widget);
+    axisMinSliderX->setMinimum(0);
+    axisMinSliderX->setTickInterval(1);
+    axisMinSliderX->setEnabled(true);
+    QSlider *axisMaxSliderX = new QSlider(Qt::Horizontal, widget);
+    axisMaxSliderX->setMinimum(1);
+    axisMaxSliderX->setTickInterval(1);
+    axisMaxSliderX->setEnabled(true);
+    QSlider *axisMinSliderZ = new QSlider(Qt::Horizontal, widget);
+    axisMinSliderZ->setMinimum(0);
+    axisMinSliderZ->setTickInterval(1);
+    axisMinSliderZ->setEnabled(true);
+    QSlider *axisMaxSliderZ = new QSlider(Qt::Horizontal, widget);
+    axisMaxSliderZ->setMinimum(1);
+    axisMaxSliderZ->setTickInterval(1);
+    axisMaxSliderZ->setEnabled(true);
 
-     QComboBox *themeList = new QComboBox(widget);
-     themeList->addItem(QStringLiteral("Qt"));
-     themeList->addItem(QStringLiteral("Primary Colors"));
-     themeList->addItem(QStringLiteral("Digia"));
-     themeList->addItem(QStringLiteral("Stone Moss"));
-     themeList->addItem(QStringLiteral("Army Blue"));
-     themeList->addItem(QStringLiteral("Retro"));
-     themeList->addItem(QStringLiteral("Ebony"));
-     themeList->addItem(QStringLiteral("Isabelle"));
+    QComboBox *themeList = new QComboBox(widget);
+    themeList->addItem(QStringLiteral("Qt"));
+    themeList->addItem(QStringLiteral("Primary Colors"));
+    themeList->addItem(QStringLiteral("Digia"));
+    themeList->addItem(QStringLiteral("Stone Moss"));
+    themeList->addItem(QStringLiteral("Army Blue"));
+    themeList->addItem(QStringLiteral("Retro"));
+    themeList->addItem(QStringLiteral("Ebony"));
+    themeList->addItem(QStringLiteral("Isabelle"));
 
-     QGroupBox *colorGroupBox = new QGroupBox(QStringLiteral("Custom gradient"));
+    QGroupBox *colorGroupBox = new QGroupBox(QStringLiteral("Custom gradient"));
 
-     QLinearGradient grBtoY(0, 0, 1, 100);
-     grBtoY.setColorAt(1.0, Qt::black);
-     grBtoY.setColorAt(0.67, Qt::blue);
-     grBtoY.setColorAt(0.33, Qt::red);
-     grBtoY.setColorAt(0.0, Qt::yellow);
-     QPixmap pm(24, 100);
-     QPainter pmp(&pm);
-     pmp.setBrush(QBrush(grBtoY));
-     pmp.setPen(Qt::NoPen);
-     pmp.drawRect(0, 0, 24, 100);
-     QPushButton *gradientBtoYPB = new QPushButton(widget);
-     gradientBtoYPB->setIcon(QIcon(pm));
-     gradientBtoYPB->setIconSize(QSize(24, 100));
+    QLinearGradient grBtoY(0, 0, 1, 100);
+    grBtoY.setColorAt(1.0, Qt::black);
+    grBtoY.setColorAt(0.67, Qt::blue);
+    grBtoY.setColorAt(0.33, Qt::red);
+    grBtoY.setColorAt(0.0, Qt::yellow);
+    QPixmap pm(24, 100);
+    QPainter pmp(&pm);
+    pmp.setBrush(QBrush(grBtoY));
+    pmp.setPen(Qt::NoPen);
+    pmp.drawRect(0, 0, 24, 100);
+    QPushButton *gradientBtoYPB = new QPushButton(widget);
+    gradientBtoYPB->setIcon(QIcon(pm));
+    gradientBtoYPB->setIconSize(QSize(24, 100));
 
-     QLinearGradient grGtoR(0, 0, 1, 100);
-     grGtoR.setColorAt(1.0, Qt::darkGreen);
-     grGtoR.setColorAt(0.5, Qt::yellow);
-     grGtoR.setColorAt(0.2, Qt::red);
-     grGtoR.setColorAt(0.0, Qt::darkRed);
-     pmp.setBrush(QBrush(grGtoR));
-     pmp.drawRect(0, 0, 24, 100);
-     QPushButton *gradientGtoRPB = new QPushButton(widget);
-     gradientGtoRPB->setIcon(QIcon(pm));
-     gradientGtoRPB->setIconSize(QSize(24, 100));
+    QLinearGradient grGtoR(0, 0, 1, 100);
+    grGtoR.setColorAt(1.0, Qt::darkGreen);
+    grGtoR.setColorAt(0.5, Qt::yellow);
+    grGtoR.setColorAt(0.2, Qt::red);
+    grGtoR.setColorAt(0.0, Qt::darkRed);
+    pmp.setBrush(QBrush(grGtoR));
+    pmp.drawRect(0, 0, 24, 100);
+    QPushButton *gradientGtoRPB = new QPushButton(widget);
+    gradientGtoRPB->setIcon(QIcon(pm));
+    gradientGtoRPB->setIconSize(QSize(24, 100));
 
-     QHBoxLayout *colorHBox = new QHBoxLayout;
-     colorHBox->addWidget(gradientBtoYPB);
-     colorHBox->addWidget(gradientGtoRPB);
-     colorGroupBox->setLayout(colorHBox);
+    QHBoxLayout *colorHBox = new QHBoxLayout;
+    colorHBox->addWidget(gradientBtoYPB);
+    colorHBox->addWidget(gradientGtoRPB);
+    colorGroupBox->setLayout(colorHBox);
 
-     vLayout->addWidget(modelGroupBox);
-     vLayout->addWidget(selectionGroupBox);
-     vLayout->addWidget(new QLabel(QStringLiteral("Column range")));
-     vLayout->addWidget(axisMinSliderX);
-     vLayout->addWidget(axisMaxSliderX);
-     vLayout->addWidget(new QLabel(QStringLiteral("Row range")));
-     vLayout->addWidget(axisMinSliderZ);
-     vLayout->addWidget(axisMaxSliderZ);
-     vLayout->addWidget(new QLabel(QStringLiteral("Theme")));
-     vLayout->addWidget(themeList);
-     vLayout->addWidget(colorGroupBox);
+    vLayout->addWidget(modelGroupBox);
+    vLayout->addWidget(selectionGroupBox);
+    vLayout->addWidget(new QLabel(QStringLiteral("Column range")));
+    vLayout->addWidget(axisMinSliderX);
+    vLayout->addWidget(axisMaxSliderX);
+    vLayout->addWidget(new QLabel(QStringLiteral("Row range")));
+    vLayout->addWidget(axisMinSliderZ);
+    vLayout->addWidget(axisMaxSliderZ);
+    vLayout->addWidget(new QLabel(QStringLiteral("Theme")));
+    vLayout->addWidget(themeList);
+    vLayout->addWidget(colorGroupBox);
 
-     widget->show();
+    widget->show();
 
-     SurfaceGraph *modifier = new SurfaceGraph(graph);
+    SurfaceGraph *modifier = new SurfaceGraph(graph);
 
-     QObject::connect(heightMapModelRB, &QRadioButton::toggled,
-                      modifier, &SurfaceGraph::enableHeightMapModel);
-     QObject::connect(sqrtSinModelRB, &QRadioButton::toggled,
-                      modifier, &SurfaceGraph::enableSqrtSinModel);
-     QObject::connect(modeNoneRB, &QRadioButton::toggled,
-                      modifier, &SurfaceGraph::toggleModeNone);
-     QObject::connect(modeItemRB,  &QRadioButton::toggled,
-                      modifier, &SurfaceGraph::toggleModeItem);
-     QObject::connect(modeSliceRowRB,  &QRadioButton::toggled,
-                      modifier, &SurfaceGraph::toggleModeSliceRow);
-     QObject::connect(modeSliceColumnRB,  &QRadioButton::toggled,
-                      modifier, &SurfaceGraph::toggleModeSliceColumn);
-     QObject::connect(axisMinSliderX, &QSlider::valueChanged,
-                      modifier, &SurfaceGraph::adjustXMin);
-     QObject::connect(axisMaxSliderX, &QSlider::valueChanged,
-                      modifier, &SurfaceGraph::adjustXMax);
-     QObject::connect(axisMinSliderZ, &QSlider::valueChanged,
-                      modifier, &SurfaceGraph::adjustZMin);
-     QObject::connect(axisMaxSliderZ, &QSlider::valueChanged,
-                      modifier, &SurfaceGraph::adjustZMax);
-     QObject::connect(themeList, SIGNAL(currentIndexChanged(int)),
-                      modifier, SLOT(changeTheme(int)));
-     QObject::connect(gradientBtoYPB, &QPushButton::pressed,
-                      modifier, &SurfaceGraph::setBlackToYellowGradient);
-     QObject::connect(gradientGtoRPB, &QPushButton::pressed,
-                      modifier, &SurfaceGraph::setGreenToRedGradient);
+    QObject::connect(heightMapModelRB, &QRadioButton::toggled,
+                     modifier, &SurfaceGraph::enableHeightMapModel);
+    QObject::connect(sqrtSinModelRB, &QRadioButton::toggled,
+                     modifier, &SurfaceGraph::enableSqrtSinModel);
+    QObject::connect(modeNoneRB, &QRadioButton::toggled,
+                     modifier, &SurfaceGraph::toggleModeNone);
+    QObject::connect(modeItemRB,  &QRadioButton::toggled,
+                     modifier, &SurfaceGraph::toggleModeItem);
+    QObject::connect(modeSliceRowRB,  &QRadioButton::toggled,
+                     modifier, &SurfaceGraph::toggleModeSliceRow);
+    QObject::connect(modeSliceColumnRB,  &QRadioButton::toggled,
+                     modifier, &SurfaceGraph::toggleModeSliceColumn);
+    QObject::connect(axisMinSliderX, &QSlider::valueChanged,
+                     modifier, &SurfaceGraph::adjustXMin);
+    QObject::connect(axisMaxSliderX, &QSlider::valueChanged,
+                     modifier, &SurfaceGraph::adjustXMax);
+    QObject::connect(axisMinSliderZ, &QSlider::valueChanged,
+                     modifier, &SurfaceGraph::adjustZMin);
+    QObject::connect(axisMaxSliderZ, &QSlider::valueChanged,
+                     modifier, &SurfaceGraph::adjustZMax);
+    QObject::connect(themeList, SIGNAL(currentIndexChanged(int)),
+                     modifier, SLOT(changeTheme(int)));
+    QObject::connect(gradientBtoYPB, &QPushButton::pressed,
+                     modifier, &SurfaceGraph::setBlackToYellowGradient);
+    QObject::connect(gradientGtoRPB, &QPushButton::pressed,
+                     modifier, &SurfaceGraph::setGreenToRedGradient);
 
-     modifier->setAxisMinSliderX(axisMinSliderX);
-     modifier->setAxisMaxSliderX(axisMaxSliderX);
-     modifier->setAxisMinSliderZ(axisMinSliderZ);
-     modifier->setAxisMaxSliderZ(axisMaxSliderZ);
+    modifier->setAxisMinSliderX(axisMinSliderX);
+    modifier->setAxisMaxSliderX(axisMaxSliderX);
+    modifier->setAxisMinSliderZ(axisMinSliderZ);
+    modifier->setAxisMaxSliderZ(axisMaxSliderZ);
 
-     sqrtSinModelRB->setChecked(true);
-     modeItemRB->setChecked(true);
-     themeList->setCurrentIndex(2);
- }
+    sqrtSinModelRB->setChecked(true);
+    modeItemRB->setChecked(true);
+    themeList->setCurrentIndex(2);
+}
 
 
 
@@ -377,7 +377,7 @@ void MainWindow::initTreeWidget()
     ui->treeWidget->setColumnWidth(0,120);
     ui->treeWidget->setColumnWidth(1,32);
     ui->treeWidget->setColumnWidth(2,32);
-    ui->treeWidget->setColumnWidth(3,10);
+    ui->treeWidget->setColumnWidth(3,30);
 
     QStringList strList;
     strList.append(QStringLiteral("寄存器名称"));
@@ -827,7 +827,7 @@ void MainWindow::linkInfoSlot(int flagNum)
         isRecvFlag = false ;
         tempStr = QStringLiteral("未接收到数据，请检查设备！");
         tempStr.append("             ");
-//        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("未接收到数据，请检查设备，"));
+        //        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("未接收到数据，请检查设备，"));
         break;
     case 3:
         tempStr = QStringLiteral("打开设备失败！");
@@ -944,8 +944,8 @@ void MainWindow::on_pushButton_clicked()
 
         if(isWriteSuccess)
         {
-           isRecvFlag = true;
-           emit read_usb_signal();
+            isRecvFlag = true;
+            emit read_usb_signal();
         }
 
     }else if(ui->pushButton->text() == QStringLiteral("关闭连接"))
@@ -970,36 +970,40 @@ void MainWindow::on_pushButton_clicked()
 //播放槽函数
 void MainWindow::on_pushButton_2_clicked()
 {
+    ui->widget->readFileTimer.start(20);
+    showTimer.start(90);
+    oneSecondTimer.start(1000);
+
     if(!isLinkSuccess)
     {
         QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
         return;
     }
 
-//    isRecvFlag = true;
-//    emit read_usb_signal();
+    //    isRecvFlag = true;
+    //    emit read_usb_signal();
 
     if(ui->pushButton_2->text() == QStringLiteral("播放"))
     {
-//        if(isWriteSuccess)
-//        {
-            showTimer.start(90);
-            ui->widget->readFileTimer.start(20);
-            oneSecondTimer.start(1000);
+        //        if(isWriteSuccess)
+        //        {
+        showTimer.start(90);
+        ui->widget->readFileTimer.start(20);
+        oneSecondTimer.start(1000);
 
-            QString tempstr = QStringLiteral("准备数据接收,开始播放~");
-            QTime t1 = QTime::currentTime();
-            QString str = tempstr + "               " +t1.toString("hh:mm:ss");
-            ui->textEdit_2->append(str);
+        QString tempstr = QStringLiteral("准备数据接收,开始播放~");
+        QTime t1 = QTime::currentTime();
+        QString str = tempstr + "               " +t1.toString("hh:mm:ss");
+        ui->textEdit_2->append(str);
 
-            isRecvFlag = true;
-            emit read_usb_signal();
+        isRecvFlag = true;
+        emit read_usb_signal();
 
 
-//        }else
-//        {
-////            QMessageBox::information(NULL,"告警","isWriteSuccess == FALSE 未接收到数据，请检查设备连接！");
-//        }
+        //        }else
+        //        {
+        ////            QMessageBox::information(NULL,"告警","isWriteSuccess == FALSE 未接收到数据，请检查设备连接！");
+        //        }
         ui->pushButton_2->setText(QStringLiteral("暂停"));
 
     }else
@@ -1031,8 +1035,8 @@ void MainWindow::on_readSys_pushButton_clicked()
 
     int address = ui->lineEdit->text().toInt(NULL,16);
 
-//    qDebug()<<" the address = "<<address<<endl;
-//    emit readSysSignal();
+    //    qDebug()<<" the address = "<<address<<endl;
+    //    emit readSysSignal();
 
 
     if(isRecvFlag)
@@ -1059,7 +1063,7 @@ void MainWindow::on_writeSys_pushButton_clicked()
     int address = ui->lineEdit->text().toInt(NULL,16);
     QString data = ui->sysData_lineEdit->text();
 
-//    emit writeSysSignal(address,data);
+    //    emit writeSysSignal(address,data);
     if(isRecvFlag)
     {
         isRecvFlag = false;
@@ -1218,7 +1222,7 @@ void MainWindow::on_saveSetting_pushButton_clicked()
         return ;
     }
 
-//    int deviceId = ui->lineEdit_3->text().toInt(NULL,16);
+    //    int deviceId = ui->lineEdit_3->text().toInt(NULL,16);
     int deviceId = 216;
 
 
@@ -1238,10 +1242,10 @@ void MainWindow::on_saveSetting_pushButton_clicked()
 //读取系统指令 返回槽函数,str是十进制的数字
 void MainWindow::reReadSysSlot(QString str)
 {
-//    QByteArray ba = str.toLatin1();
-//    const char *c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
-//    int m = uint8_t(c_str[0]);
-//    qDebug()<<" the data =  "<<m<<endl;
+    //    QByteArray ba = str.toLatin1();
+    //    const char *c_str = ba.data();  //为何要使用const 应该跟使用Qt版本有关
+    //    int m = uint8_t(c_str[0]);
+    //    qDebug()<<" the data =  "<<m<<endl;
 
     int m = str.toInt();
     qDebug()<<" the data =  "<<m<<endl;
@@ -1261,7 +1265,7 @@ void MainWindow::reReadSysSlot(QString str)
 
 void MainWindow::oneSecondSlot()
 {
-    //   qDebug()<<"帧率 = "<<framePerSecond<<endl;
+       qDebug()<<"帧率 = "<<framePerSecond<<endl;
     framePerSecond = 0;
 
 
@@ -1287,7 +1291,7 @@ void MainWindow::queryPixSlot(int x,int y)
 
 
     int index = 256*y/height_scale +x/width_scale ;
-//    QString str = "tof="+QString::number(tofInfo[index])+",peak="+QString::number(peakInfo[index]);
+    //    QString str = "tof="+QString::number(tofInfo[index])+",peak="+QString::number(peakInfo[index]);
 
     int xIndex = x/width_scale;
     int yIndex = y/height_scale;
@@ -1314,7 +1318,7 @@ void MainWindow::isSaveFlagSlot(bool saveFlag, QString filePath,int formatSelect
     if(saveFlag)
         saveFileIndex = 1;
 
-    saveFilePath = filePath; 
+    saveFilePath = filePath;
     formatFlag = formatSelect ;
     isSaveFlag = saveFlag;
 }
@@ -1349,13 +1353,13 @@ void MainWindow::on_radioButton_clicked()
 {
     if(ui->radioButton->isChecked())
     {
-//        ui->widget->m_logo.isFilter = true;
+        //        ui->widget->m_logo.isFilter = true;
         emit isFilter_signal(true);
     }
 
     else
     {
-//        ui->widget->m_logo.isFilter = false;
+        //        ui->widget->m_logo.isFilter = false;
         emit isFilter_signal(false);
     }
 
@@ -1586,37 +1590,37 @@ void MainWindow::Integration_write_slot(int Integration_number)
         return;
     }
     int hardWareAddress = 216;
-     qDebug()<<"write Integration_number = "<<Integration_number<<endl;
+    qDebug()<<"write Integration_number = "<<Integration_number<<endl;
 
-     switch (Integration_number) {
-     case 0:{
-         int data  = Integration_lineEdit[0].text().toInt(NULL,16);
-         emit writeDevSignal(hardWareAddress, 6 , QString::number(data,16), false);
-         Integration_lineEdit[0].setText("");
-         break;
-     }
-     case 1:{
-         int data = (Integration_lineEdit[1].text().toInt(NULL,16)<<4) + Integration_lineEdit[2].text().toInt(NULL,16);
-         emit writeDevSignal(hardWareAddress, 7 , QString::number(data,16), false);
-         Integration_lineEdit[1].setText("");
-         Integration_lineEdit[2].setText("");
-         break;
-     }case 2:{
-         int data = (Integration_lineEdit[1].text().toInt(NULL,16)<<4) + Integration_lineEdit[2].text().toInt(NULL,16);
-         emit writeDevSignal(hardWareAddress, 7 , QString::number(data,16), false);
-         Integration_lineEdit[1].setText("");
-         Integration_lineEdit[2].setText("");
-         break;
-     }case 3:{
-         int data = Integration_lineEdit[3].text().toInt(NULL,16);
-         emit writeDevSignal(hardWareAddress, 8 , QString::number(data,16), false);
-         Integration_lineEdit[3].setText("");
-         break;
-     }
+    switch (Integration_number) {
+    case 0:{
+        int data  = Integration_lineEdit[0].text().toInt(NULL,16);
+        emit writeDevSignal(hardWareAddress, 6 , QString::number(data,16), false);
+        Integration_lineEdit[0].setText("");
+        break;
+    }
+    case 1:{
+        int data = (Integration_lineEdit[1].text().toInt(NULL,16)<<4) + Integration_lineEdit[2].text().toInt(NULL,16);
+        emit writeDevSignal(hardWareAddress, 7 , QString::number(data,16), false);
+        Integration_lineEdit[1].setText("");
+        Integration_lineEdit[2].setText("");
+        break;
+    }case 2:{
+        int data = (Integration_lineEdit[1].text().toInt(NULL,16)<<4) + Integration_lineEdit[2].text().toInt(NULL,16);
+        emit writeDevSignal(hardWareAddress, 7 , QString::number(data,16), false);
+        Integration_lineEdit[1].setText("");
+        Integration_lineEdit[2].setText("");
+        break;
+    }case 3:{
+        int data = Integration_lineEdit[3].text().toInt(NULL,16);
+        emit writeDevSignal(hardWareAddress, 8 , QString::number(data,16), false);
+        Integration_lineEdit[3].setText("");
+        break;
+    }
 
-     default:
-         break;
-     }
+    default:
+        break;
+    }
 }
 
 
@@ -2061,8 +2065,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
     switch (Analog_number) {
     case 0:{
         int data = Analog_lineEdit[0].text().toInt(NULL,16) + (Analog_lineEdit[1].text().toInt(NULL,16)<<3) +
-                   (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
 
         emit writeDevSignal(hardWareAddress, 21 , QString::number(data,16), false);
         Analog_lineEdit[0].setText("");
@@ -2074,8 +2078,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 1:{
         int data = Analog_lineEdit[0].text().toInt(NULL,16) + (Analog_lineEdit[1].text().toInt(NULL,16)<<3) +
-                   (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
 
         emit writeDevSignal(hardWareAddress, 21 , QString::number(data,16), false);
         Analog_lineEdit[0].setText("");
@@ -2087,8 +2091,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 2:{
         int data = Analog_lineEdit[0].text().toInt(NULL,16) + (Analog_lineEdit[1].text().toInt(NULL,16)<<3) +
-                   (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
 
         emit writeDevSignal(hardWareAddress, 21 , QString::number(data,16), false);
         Analog_lineEdit[0].setText("");
@@ -2100,8 +2104,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 3:{
         int data = Analog_lineEdit[0].text().toInt(NULL,16) + (Analog_lineEdit[1].text().toInt(NULL,16)<<3) +
-                   (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
 
         emit writeDevSignal(hardWareAddress, 21 , QString::number(data,16), false);
         Analog_lineEdit[0].setText("");
@@ -2113,8 +2117,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 4:{
         int data = Analog_lineEdit[0].text().toInt(NULL,16) + (Analog_lineEdit[1].text().toInt(NULL,16)<<3) +
-                   (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
 
         emit writeDevSignal(hardWareAddress, 21 , QString::number(data,16), false);
         Analog_lineEdit[0].setText("");
@@ -2126,8 +2130,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 5:{
         int data = Analog_lineEdit[0].text().toInt(NULL,16) + (Analog_lineEdit[1].text().toInt(NULL,16)<<3) +
-                   (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[2].text().toInt(NULL,16)<<4) + (Analog_lineEdit[3].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[4].text().toInt(NULL,16)<<6) + (Analog_lineEdit[5].text().toInt(NULL,16)<<7);
 
         emit writeDevSignal(hardWareAddress, 21 , QString::number(data,16), false);
         Analog_lineEdit[0].setText("");
@@ -2156,7 +2160,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 9:{
         int data = (Analog_lineEdit[9].text().toInt(NULL,16)<<7) + (Analog_lineEdit[10].text().toInt(NULL,16)<<6) +
-                   (Analog_lineEdit[11].text().toInt(NULL,16)<<5) + Analog_lineEdit[12].text().toInt(NULL,16);
+                (Analog_lineEdit[11].text().toInt(NULL,16)<<5) + Analog_lineEdit[12].text().toInt(NULL,16);
         emit writeDevSignal(hardWareAddress, 24 , QString::number(data,16), false);
         Analog_lineEdit[9].setText("");
         Analog_lineEdit[10].setText("");
@@ -2165,7 +2169,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 10:{
         int data = (Analog_lineEdit[9].text().toInt(NULL,16)<<7) + (Analog_lineEdit[10].text().toInt(NULL,16)<<6) +
-                   (Analog_lineEdit[11].text().toInt(NULL,16)<<5) + Analog_lineEdit[12].text().toInt(NULL,16);
+                (Analog_lineEdit[11].text().toInt(NULL,16)<<5) + Analog_lineEdit[12].text().toInt(NULL,16);
         emit writeDevSignal(hardWareAddress, 24 , QString::number(data,16), false);
         Analog_lineEdit[9].setText("");
         Analog_lineEdit[10].setText("");
@@ -2174,7 +2178,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 11:{
         int data = (Analog_lineEdit[9].text().toInt(NULL,16)<<7) + (Analog_lineEdit[10].text().toInt(NULL,16)<<6) +
-                   (Analog_lineEdit[11].text().toInt(NULL,16)<<5) + Analog_lineEdit[12].text().toInt(NULL,16);
+                (Analog_lineEdit[11].text().toInt(NULL,16)<<5) + Analog_lineEdit[12].text().toInt(NULL,16);
         emit writeDevSignal(hardWareAddress, 24 , QString::number(data,16), false);
         Analog_lineEdit[9].setText("");
         Analog_lineEdit[10].setText("");
@@ -2183,7 +2187,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 12:{
         int data = (Analog_lineEdit[9].text().toInt(NULL,16)<<7) + (Analog_lineEdit[10].text().toInt(NULL,16)<<6) +
-                   (Analog_lineEdit[11].text().toInt(NULL,16)<<5) + Analog_lineEdit[12].text().toInt(NULL,16);
+                (Analog_lineEdit[11].text().toInt(NULL,16)<<5) + Analog_lineEdit[12].text().toInt(NULL,16);
         emit writeDevSignal(hardWareAddress, 24 , QString::number(data,16), false);
         Analog_lineEdit[9].setText("");
         Analog_lineEdit[10].setText("");
@@ -2192,7 +2196,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 13:{
         int data = Analog_lineEdit[13].text().toInt(NULL,16) + (Analog_lineEdit[14].text().toInt(NULL,16)<<1) +
-                   (Analog_lineEdit[15].text().toInt(NULL,16)<<4) + (Analog_lineEdit[16].text().toInt(NULL,16)<<5);
+                (Analog_lineEdit[15].text().toInt(NULL,16)<<4) + (Analog_lineEdit[16].text().toInt(NULL,16)<<5);
         emit writeDevSignal(hardWareAddress, 25 , QString::number(data,16), false);
         Analog_lineEdit[13].setText("");
         Analog_lineEdit[14].setText("");
@@ -2201,7 +2205,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 14:{
         int data = Analog_lineEdit[13].text().toInt(NULL,16) + (Analog_lineEdit[14].text().toInt(NULL,16)<<1) +
-                   (Analog_lineEdit[15].text().toInt(NULL,16)<<4) + (Analog_lineEdit[16].text().toInt(NULL,16)<<5);
+                (Analog_lineEdit[15].text().toInt(NULL,16)<<4) + (Analog_lineEdit[16].text().toInt(NULL,16)<<5);
         emit writeDevSignal(hardWareAddress, 25 , QString::number(data,16), false);
         Analog_lineEdit[13].setText("");
         Analog_lineEdit[14].setText("");
@@ -2210,7 +2214,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 15:{
         int data = Analog_lineEdit[13].text().toInt(NULL,16) + (Analog_lineEdit[14].text().toInt(NULL,16)<<1) +
-                   (Analog_lineEdit[15].text().toInt(NULL,16)<<4) + (Analog_lineEdit[16].text().toInt(NULL,16)<<5);
+                (Analog_lineEdit[15].text().toInt(NULL,16)<<4) + (Analog_lineEdit[16].text().toInt(NULL,16)<<5);
         emit writeDevSignal(hardWareAddress, 25 , QString::number(data,16), false);
         Analog_lineEdit[13].setText("");
         Analog_lineEdit[14].setText("");
@@ -2219,7 +2223,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 16:{
         int data = Analog_lineEdit[13].text().toInt(NULL,16) + (Analog_lineEdit[14].text().toInt(NULL,16)<<1) +
-                   (Analog_lineEdit[15].text().toInt(NULL,16)<<4) + (Analog_lineEdit[16].text().toInt(NULL,16)<<5);
+                (Analog_lineEdit[15].text().toInt(NULL,16)<<4) + (Analog_lineEdit[16].text().toInt(NULL,16)<<5);
         emit writeDevSignal(hardWareAddress, 25 , QString::number(data,16), false);
         Analog_lineEdit[13].setText("");
         Analog_lineEdit[14].setText("");
@@ -2228,7 +2232,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 17:{
         int data = Analog_lineEdit[17].text().toInt(NULL,16) + (Analog_lineEdit[18].text().toInt(NULL,16)<<1) +
-                   (Analog_lineEdit[19].text().toInt(NULL,16)<<5) + (Analog_lineEdit[20].text().toInt(NULL,16)<<6);
+                (Analog_lineEdit[19].text().toInt(NULL,16)<<5) + (Analog_lineEdit[20].text().toInt(NULL,16)<<6);
         emit writeDevSignal(hardWareAddress, 26 , QString::number(data,16), false);
         Analog_lineEdit[17].setText("");
         Analog_lineEdit[18].setText("");
@@ -2237,7 +2241,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 18:{
         int data = Analog_lineEdit[17].text().toInt(NULL,16) + (Analog_lineEdit[18].text().toInt(NULL,16)<<1) +
-                   (Analog_lineEdit[19].text().toInt(NULL,16)<<5) + (Analog_lineEdit[20].text().toInt(NULL,16)<<6);
+                (Analog_lineEdit[19].text().toInt(NULL,16)<<5) + (Analog_lineEdit[20].text().toInt(NULL,16)<<6);
         emit writeDevSignal(hardWareAddress, 26 , QString::number(data,16), false);
         Analog_lineEdit[17].setText("");
         Analog_lineEdit[18].setText("");
@@ -2246,7 +2250,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 19:{
         int data = Analog_lineEdit[17].text().toInt(NULL,16) + (Analog_lineEdit[18].text().toInt(NULL,16)<<1) +
-                   (Analog_lineEdit[19].text().toInt(NULL,16)<<5) + (Analog_lineEdit[20].text().toInt(NULL,16)<<6);
+                (Analog_lineEdit[19].text().toInt(NULL,16)<<5) + (Analog_lineEdit[20].text().toInt(NULL,16)<<6);
         emit writeDevSignal(hardWareAddress, 26 , QString::number(data,16), false);
         Analog_lineEdit[17].setText("");
         Analog_lineEdit[18].setText("");
@@ -2255,7 +2259,7 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 20:{
         int data = Analog_lineEdit[17].text().toInt(NULL,16) + (Analog_lineEdit[18].text().toInt(NULL,16)<<1) +
-                   (Analog_lineEdit[19].text().toInt(NULL,16)<<5) + (Analog_lineEdit[20].text().toInt(NULL,16)<<6);
+                (Analog_lineEdit[19].text().toInt(NULL,16)<<5) + (Analog_lineEdit[20].text().toInt(NULL,16)<<6);
         emit writeDevSignal(hardWareAddress, 26 , QString::number(data,16), false);
         Analog_lineEdit[17].setText("");
         Analog_lineEdit[18].setText("");
@@ -2264,8 +2268,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 21:{
         int data = Analog_lineEdit[21].text().toInt(NULL,16) + (Analog_lineEdit[22].text().toInt(NULL,16)<<2) +
-                   (Analog_lineEdit[23].text().toInt(NULL,16)<<4) + (Analog_lineEdit[24].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[25].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[23].text().toInt(NULL,16)<<4) + (Analog_lineEdit[24].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[25].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 27 , QString::number(data,16), false);
         Analog_lineEdit[21].setText("");
         Analog_lineEdit[22].setText("");
@@ -2275,8 +2279,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 22:{
         int data = Analog_lineEdit[21].text().toInt(NULL,16) + (Analog_lineEdit[22].text().toInt(NULL,16)<<2) +
-                   (Analog_lineEdit[23].text().toInt(NULL,16)<<4) + (Analog_lineEdit[24].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[25].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[23].text().toInt(NULL,16)<<4) + (Analog_lineEdit[24].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[25].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 27 , QString::number(data,16), false);
         Analog_lineEdit[21].setText("");
         Analog_lineEdit[22].setText("");
@@ -2286,8 +2290,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 23:{
         int data = Analog_lineEdit[21].text().toInt(NULL,16) + (Analog_lineEdit[22].text().toInt(NULL,16)<<2) +
-                   (Analog_lineEdit[23].text().toInt(NULL,16)<<4) + (Analog_lineEdit[24].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[25].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[23].text().toInt(NULL,16)<<4) + (Analog_lineEdit[24].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[25].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 27 , QString::number(data,16), false);
         Analog_lineEdit[21].setText("");
         Analog_lineEdit[22].setText("");
@@ -2297,8 +2301,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 24:{
         int data = Analog_lineEdit[21].text().toInt(NULL,16) + (Analog_lineEdit[22].text().toInt(NULL,16)<<2) +
-                   (Analog_lineEdit[23].text().toInt(NULL,16)<<4) + (Analog_lineEdit[24].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[25].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[23].text().toInt(NULL,16)<<4) + (Analog_lineEdit[24].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[25].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 27 , QString::number(data,16), false);
         Analog_lineEdit[21].setText("");
         Analog_lineEdit[22].setText("");
@@ -2308,8 +2312,8 @@ void MainWindow::Analog_write_slot(int Analog_number)
         break;
     }case 25:{
         int data = Analog_lineEdit[21].text().toInt(NULL,16) + (Analog_lineEdit[22].text().toInt(NULL,16)<<2) +
-                   (Analog_lineEdit[23].text().toInt(NULL,16)<<4) + (Analog_lineEdit[24].text().toInt(NULL,16)<<5) +
-                   (Analog_lineEdit[25].text().toInt(NULL,16)<<7);
+                (Analog_lineEdit[23].text().toInt(NULL,16)<<4) + (Analog_lineEdit[24].text().toInt(NULL,16)<<5) +
+                (Analog_lineEdit[25].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 27 , QString::number(data,16), false);
         Analog_lineEdit[21].setText("");
         Analog_lineEdit[22].setText("");
@@ -2421,8 +2425,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 2:{
         int data = (Pixel_lineEdit[2].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[3].text().toInt(NULL,16)<<3) +
-                   (Pixel_lineEdit[4].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[5].text().toInt(NULL,16)<<1) +
-                    Pixel_lineEdit[6].text().toInt(NULL,16) ;
+                (Pixel_lineEdit[4].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[5].text().toInt(NULL,16)<<1) +
+                Pixel_lineEdit[6].text().toInt(NULL,16) ;
         emit writeDevSignal(hardWareAddress, 29 , QString::number(data,16), false);
         Pixel_lineEdit[2].setText("");
         Pixel_lineEdit[3].setText("");
@@ -2432,8 +2436,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 3:{
         int data = (Pixel_lineEdit[2].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[3].text().toInt(NULL,16)<<3) +
-                   (Pixel_lineEdit[4].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[5].text().toInt(NULL,16)<<1) +
-                    Pixel_lineEdit[6].text().toInt(NULL,16) ;
+                (Pixel_lineEdit[4].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[5].text().toInt(NULL,16)<<1) +
+                Pixel_lineEdit[6].text().toInt(NULL,16) ;
         emit writeDevSignal(hardWareAddress, 29 , QString::number(data,16), false);
         Pixel_lineEdit[2].setText("");
         Pixel_lineEdit[3].setText("");
@@ -2443,8 +2447,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 4:{
         int data = (Pixel_lineEdit[2].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[3].text().toInt(NULL,16)<<3) +
-                   (Pixel_lineEdit[4].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[5].text().toInt(NULL,16)<<1) +
-                    Pixel_lineEdit[6].text().toInt(NULL,16) ;
+                (Pixel_lineEdit[4].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[5].text().toInt(NULL,16)<<1) +
+                Pixel_lineEdit[6].text().toInt(NULL,16) ;
         emit writeDevSignal(hardWareAddress, 29 , QString::number(data,16), false);
         Pixel_lineEdit[2].setText("");
         Pixel_lineEdit[3].setText("");
@@ -2454,8 +2458,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 5:{
         int data = (Pixel_lineEdit[2].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[3].text().toInt(NULL,16)<<3) +
-                   (Pixel_lineEdit[4].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[5].text().toInt(NULL,16)<<1) +
-                    Pixel_lineEdit[6].text().toInt(NULL,16) ;
+                (Pixel_lineEdit[4].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[5].text().toInt(NULL,16)<<1) +
+                Pixel_lineEdit[6].text().toInt(NULL,16) ;
         emit writeDevSignal(hardWareAddress, 29 , QString::number(data,16), false);
         Pixel_lineEdit[2].setText("");
         Pixel_lineEdit[3].setText("");
@@ -2465,8 +2469,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 6:{
         int data = (Pixel_lineEdit[2].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[3].text().toInt(NULL,16)<<3) +
-                   (Pixel_lineEdit[4].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[5].text().toInt(NULL,16)<<1) +
-                    Pixel_lineEdit[6].text().toInt(NULL,16) ;
+                (Pixel_lineEdit[4].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[5].text().toInt(NULL,16)<<1) +
+                Pixel_lineEdit[6].text().toInt(NULL,16) ;
         emit writeDevSignal(hardWareAddress, 29 , QString::number(data,16), false);
         Pixel_lineEdit[2].setText("");
         Pixel_lineEdit[3].setText("");
@@ -2500,8 +2504,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 11:{
         int data = Pixel_lineEdit[11].text().toInt(NULL,16) + (Pixel_lineEdit[12].text().toInt(NULL,16)<<1) +
-                  (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
-                  (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
+                (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
+                (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 32 , QString::number(data,16), false);
         Pixel_lineEdit[11].setText("");
         Pixel_lineEdit[12].setText("");
@@ -2512,8 +2516,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 12:{
         int data = Pixel_lineEdit[11].text().toInt(NULL,16) + (Pixel_lineEdit[12].text().toInt(NULL,16)<<1) +
-                  (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
-                  (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
+                (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
+                (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 32 , QString::number(data,16), false);
         Pixel_lineEdit[11].setText("");
         Pixel_lineEdit[12].setText("");
@@ -2524,8 +2528,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 13:{
         int data = Pixel_lineEdit[11].text().toInt(NULL,16) + (Pixel_lineEdit[12].text().toInt(NULL,16)<<1) +
-                  (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
-                  (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
+                (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
+                (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 32 , QString::number(data,16), false);
         Pixel_lineEdit[11].setText("");
         Pixel_lineEdit[12].setText("");
@@ -2536,8 +2540,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 14:{
         int data = Pixel_lineEdit[11].text().toInt(NULL,16) + (Pixel_lineEdit[12].text().toInt(NULL,16)<<1) +
-                  (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
-                  (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
+                (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
+                (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 32 , QString::number(data,16), false);
         Pixel_lineEdit[11].setText("");
         Pixel_lineEdit[12].setText("");
@@ -2548,8 +2552,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 15:{
         int data = Pixel_lineEdit[11].text().toInt(NULL,16) + (Pixel_lineEdit[12].text().toInt(NULL,16)<<1) +
-                  (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
-                  (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
+                (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
+                (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 32 , QString::number(data,16), false);
         Pixel_lineEdit[11].setText("");
         Pixel_lineEdit[12].setText("");
@@ -2560,8 +2564,8 @@ void MainWindow::Pixel_write_slot(int Pixel_number)
         break;
     }case 16:{
         int data = Pixel_lineEdit[11].text().toInt(NULL,16) + (Pixel_lineEdit[12].text().toInt(NULL,16)<<1) +
-                  (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
-                  (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
+                (Pixel_lineEdit[13].text().toInt(NULL,16)<<2) + (Pixel_lineEdit[14].text().toInt(NULL,16)<<3) +
+                (Pixel_lineEdit[15].text().toInt(NULL,16)<<4) + (Pixel_lineEdit[16].text().toInt(NULL,16)<<7);
         emit writeDevSignal(hardWareAddress, 32 , QString::number(data,16), false);
         Pixel_lineEdit[11].setText("");
         Pixel_lineEdit[12].setText("");
@@ -2651,7 +2655,7 @@ void MainWindow::Top_write_slot(int Top_number)
     switch (Top_number) {
     case 0:{
         int data = Top_lineEdit[0].text().toInt(NULL,16) + (Top_lineEdit[1].text().toInt(NULL,16)<<4)+
-                   (Top_lineEdit[2].text().toInt(NULL,16)<<5);
+                (Top_lineEdit[2].text().toInt(NULL,16)<<5);
         emit writeDevSignal(hardWareAddress, 33 , QString::number(data,16), false);
         Top_lineEdit[0].setText("");
         Top_lineEdit[1].setText("");
@@ -2659,7 +2663,7 @@ void MainWindow::Top_write_slot(int Top_number)
         break;
     }case 1:{
         int data = Top_lineEdit[0].text().toInt(NULL,16) + (Top_lineEdit[1].text().toInt(NULL,16)<<4)+
-                   (Top_lineEdit[2].text().toInt(NULL,16)<<5);
+                (Top_lineEdit[2].text().toInt(NULL,16)<<5);
         emit writeDevSignal(hardWareAddress, 33 , QString::number(data,16), false);
         Top_lineEdit[0].setText("");
         Top_lineEdit[1].setText("");
@@ -2667,7 +2671,7 @@ void MainWindow::Top_write_slot(int Top_number)
         break;
     }case 2:{
         int data = Top_lineEdit[0].text().toInt(NULL,16) + (Top_lineEdit[1].text().toInt(NULL,16)<<4)+
-                   (Top_lineEdit[2].text().toInt(NULL,16)<<5);
+                (Top_lineEdit[2].text().toInt(NULL,16)<<5);
         emit writeDevSignal(hardWareAddress, 33 , QString::number(data,16), false);
         Top_lineEdit[0].setText("");
         Top_lineEdit[1].setText("");
@@ -2675,7 +2679,7 @@ void MainWindow::Top_write_slot(int Top_number)
         break;
     }case 3:{
         int data = Top_lineEdit[3].text().toInt(NULL,16) + (Top_lineEdit[4].text().toInt(NULL,16)<<1)+
-                   (Top_lineEdit[5].text().toInt(NULL,16)<<5);
+                (Top_lineEdit[5].text().toInt(NULL,16)<<5);
         emit writeDevSignal(hardWareAddress, 34 , QString::number(data,16), false);
         Top_lineEdit[3].setText("");
         Top_lineEdit[4].setText("");
@@ -2683,7 +2687,7 @@ void MainWindow::Top_write_slot(int Top_number)
         break;
     }case 4:{
         int data = Top_lineEdit[3].text().toInt(NULL,16) + (Top_lineEdit[4].text().toInt(NULL,16)<<1)+
-                   (Top_lineEdit[5].text().toInt(NULL,16)<<5);
+                (Top_lineEdit[5].text().toInt(NULL,16)<<5);
         emit writeDevSignal(hardWareAddress, 34 , QString::number(data,16), false);
         Top_lineEdit[3].setText("");
         Top_lineEdit[4].setText("");
@@ -2691,7 +2695,7 @@ void MainWindow::Top_write_slot(int Top_number)
         break;
     }case 5:{
         int data = Top_lineEdit[3].text().toInt(NULL,16) + (Top_lineEdit[4].text().toInt(NULL,16)<<1)+
-                   (Top_lineEdit[5].text().toInt(NULL,16)<<5);
+                (Top_lineEdit[5].text().toInt(NULL,16)<<5);
         emit writeDevSignal(hardWareAddress, 34 , QString::number(data,16), false);
         Top_lineEdit[3].setText("");
         Top_lineEdit[4].setText("");
@@ -2811,7 +2815,7 @@ void MainWindow::Delayline_read_slot(int Delayline_number)
     case 6:
         emit readDevSignal(hardWareAddress,42,false);
         break;
-     default:
+    default:
         break;
     }
 
@@ -2912,7 +2916,7 @@ void MainWindow::MISC_read_slot(int MISC_number)
     case 7:
         emit readDevSignal(hardWareAddress,47,false);
         break;
-     default:
+    default:
         break;
     }
 }
@@ -3022,7 +3026,7 @@ void MainWindow::Others_read_slot(int Others_number)
     case 5:
         emit readDevSignal(hardWareAddress,49,false);
         break;
-     default:
+    default:
         break;
     }
 
@@ -3100,7 +3104,7 @@ void MainWindow::Others_write_slot(int Others_number)
         break;
     }
 
-}
+    }
 
 
 
@@ -3516,7 +3520,7 @@ void MainWindow::on_treeWidget_itemExpanded(QTreeWidgetItem *item)
         emit readDevSignal(hardWareAddress,16,false);
     }else if("Digital" == item->text(0))
     {
-         expandItem_index = 4;    //allGet allRead
+        expandItem_index = 4;    //allGet allRead
 
         emit readDevSignal(hardWareAddress,17,false);
         emit readDevSignal(hardWareAddress,18,false);
@@ -3621,7 +3625,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 
     }else if("r_faster_clk(5)[4]" == itemName)
     {
-       explainLabel.setText(QStringLiteral("系统时钟的两倍，设为0"));
+        explainLabel.setText(QStringLiteral("系统时钟的两倍，设为0"));
     }else if("r_cnt_hld_dly1(5)[3:0]" == itemName)
     {
         explainLabel.setText(QStringLiteral("syncnt_rst结束后到计数器解除hold的时间间隔"));
@@ -3695,7 +3699,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
     }
 
 
-/*******************Digital ***************************************/
+    /*******************Digital ***************************************/
     else if("r_spi_en(17)[7]"== itemName)
     {
         explainLabel.setText(QStringLiteral("SPI时钟使能：1-使能SPI时钟，关闭DVP时钟；0-关闭SPI时钟，使能DVP时钟"));
@@ -3729,7 +3733,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
     }
 
 
-/*****************Analog****************************/
+    /*****************Analog****************************/
     else if("dl_sel_dly(21)[2:0]"== itemName)
     {
         explainLabel.setText(QStringLiteral("选择电容并入时钟传输线路上，3'b000:并入的电容最小；3'b111：并入的电容最大"));
@@ -3810,7 +3814,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
         explainLabel.setText(QStringLiteral("ana_reserve_out<23> 无功能"));
     }
 
-/*****************pixel *************************************/
+    /*****************pixel *************************************/
     else if("pixel_qch_bias_ctrl(28)[7:4]" == itemName)
     {
         explainLabel.setText(QStringLiteral("Passive rst current"));
@@ -3864,7 +3868,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
         explainLabel.setText(QStringLiteral(""));
     }
 
-/************top**************************/
+    /************top**************************/
     else if("top_reserve_out[3:0](33)[3:0]" == itemName)
     {
         explainLabel.setText(QStringLiteral("top_reserve_out<3:0> RC OSC内部电容控制字，fixed cap(min)=1.6pF，binary code，step=150fF，max=3.85pF，default=4b'1000；"));
@@ -3992,65 +3996,65 @@ void MainWindow::on_getALL_pushButton_clicked()
     qDebug()<<" on_getALL_pushButton_clicked  expandIndex ="<<expandItem_index<<endl;
 
 
-        emit readDevSignal(hardWareAddress,0,false);
-        emit readDevSignal(hardWareAddress,1,false);
-        emit readDevSignal(hardWareAddress,2,false);
-        emit readDevSignal(hardWareAddress,3,false);
-        emit readDevSignal(hardWareAddress,4,false);
-        emit readDevSignal(hardWareAddress,5,false);
+    emit readDevSignal(hardWareAddress,0,false);
+    emit readDevSignal(hardWareAddress,1,false);
+    emit readDevSignal(hardWareAddress,2,false);
+    emit readDevSignal(hardWareAddress,3,false);
+    emit readDevSignal(hardWareAddress,4,false);
+    emit readDevSignal(hardWareAddress,5,false);
 
-        emit readDevSignal(hardWareAddress,6,false);
-        emit readDevSignal(hardWareAddress,7,false);
-        emit readDevSignal(hardWareAddress,8,false);
+    emit readDevSignal(hardWareAddress,6,false);
+    emit readDevSignal(hardWareAddress,7,false);
+    emit readDevSignal(hardWareAddress,8,false);
 
-        emit readDevSignal(hardWareAddress,9,false);
-        emit readDevSignal(hardWareAddress,10,false);
-        emit readDevSignal(hardWareAddress,11,false);
-        emit readDevSignal(hardWareAddress,12,false);
-        emit readDevSignal(hardWareAddress,13,false);
-        emit readDevSignal(hardWareAddress,14,false);
-        emit readDevSignal(hardWareAddress,15,false);
-        emit readDevSignal(hardWareAddress,16,false);
+    emit readDevSignal(hardWareAddress,9,false);
+    emit readDevSignal(hardWareAddress,10,false);
+    emit readDevSignal(hardWareAddress,11,false);
+    emit readDevSignal(hardWareAddress,12,false);
+    emit readDevSignal(hardWareAddress,13,false);
+    emit readDevSignal(hardWareAddress,14,false);
+    emit readDevSignal(hardWareAddress,15,false);
+    emit readDevSignal(hardWareAddress,16,false);
 
-        emit readDevSignal(hardWareAddress,17,false);
-        emit readDevSignal(hardWareAddress,18,false);
-        emit readDevSignal(hardWareAddress,19,false);
-        emit readDevSignal(hardWareAddress,20,false);
+    emit readDevSignal(hardWareAddress,17,false);
+    emit readDevSignal(hardWareAddress,18,false);
+    emit readDevSignal(hardWareAddress,19,false);
+    emit readDevSignal(hardWareAddress,20,false);
 
-        emit readDevSignal(hardWareAddress,21,false);
-        emit readDevSignal(hardWareAddress,22,false);
-        emit readDevSignal(hardWareAddress,23,false);
-        emit readDevSignal(hardWareAddress,24,false);
-        emit readDevSignal(hardWareAddress,25,false);
-        emit readDevSignal(hardWareAddress,26,false);
-        emit readDevSignal(hardWareAddress,27,false);
+    emit readDevSignal(hardWareAddress,21,false);
+    emit readDevSignal(hardWareAddress,22,false);
+    emit readDevSignal(hardWareAddress,23,false);
+    emit readDevSignal(hardWareAddress,24,false);
+    emit readDevSignal(hardWareAddress,25,false);
+    emit readDevSignal(hardWareAddress,26,false);
+    emit readDevSignal(hardWareAddress,27,false);
 
-        emit readDevSignal(hardWareAddress,28,false);
-        emit readDevSignal(hardWareAddress,29,false);
-        emit readDevSignal(hardWareAddress,30,false);
-        emit readDevSignal(hardWareAddress,31,false);
-        emit readDevSignal(hardWareAddress,32,false);
+    emit readDevSignal(hardWareAddress,28,false);
+    emit readDevSignal(hardWareAddress,29,false);
+    emit readDevSignal(hardWareAddress,30,false);
+    emit readDevSignal(hardWareAddress,31,false);
+    emit readDevSignal(hardWareAddress,32,false);
 
-        emit readDevSignal(hardWareAddress,33,false);
-        emit readDevSignal(hardWareAddress,34,false);
-        emit readDevSignal(hardWareAddress,35,false);
-        emit readDevSignal(hardWareAddress,36,false);
+    emit readDevSignal(hardWareAddress,33,false);
+    emit readDevSignal(hardWareAddress,34,false);
+    emit readDevSignal(hardWareAddress,35,false);
+    emit readDevSignal(hardWareAddress,36,false);
 
-        emit readDevSignal(hardWareAddress,37,false);
-        emit readDevSignal(hardWareAddress,38,false);
-        emit readDevSignal(hardWareAddress,39,false);
-        emit readDevSignal(hardWareAddress,40,false);
-        emit readDevSignal(hardWareAddress,41,false);
-        emit readDevSignal(hardWareAddress,42,false);
+    emit readDevSignal(hardWareAddress,37,false);
+    emit readDevSignal(hardWareAddress,38,false);
+    emit readDevSignal(hardWareAddress,39,false);
+    emit readDevSignal(hardWareAddress,40,false);
+    emit readDevSignal(hardWareAddress,41,false);
+    emit readDevSignal(hardWareAddress,42,false);
 
-        emit readDevSignal(hardWareAddress,43,false);
-        emit readDevSignal(hardWareAddress,44,false);
-        emit readDevSignal(hardWareAddress,45,false);
-        emit readDevSignal(hardWareAddress,46,false);
-        emit readDevSignal(hardWareAddress,47,false);
+    emit readDevSignal(hardWareAddress,43,false);
+    emit readDevSignal(hardWareAddress,44,false);
+    emit readDevSignal(hardWareAddress,45,false);
+    emit readDevSignal(hardWareAddress,46,false);
+    emit readDevSignal(hardWareAddress,47,false);
 
-        emit readDevSignal(hardWareAddress,48,false);
-        emit readDevSignal(hardWareAddress,49,false);
+    emit readDevSignal(hardWareAddress,48,false);
+    emit readDevSignal(hardWareAddress,49,false);
 
 }
 
@@ -4065,88 +4069,68 @@ void MainWindow::on_setAll_pushButton_clicked()
 
 
 
-        TDC_write_slot(0);
-        TDC_write_slot(1);
-        TDC_write_slot(3);
-        TDC_write_slot(4);
-        TDC_write_slot(6);
-        TDC_write_slot(8);
+    TDC_write_slot(0);
+    TDC_write_slot(1);
+    TDC_write_slot(3);
+    TDC_write_slot(4);
+    TDC_write_slot(6);
+    TDC_write_slot(8);
 
 
+    Integration_write_slot(0);
+    Integration_write_slot(1);
+    Integration_write_slot(3);
 
 
-       Integration_write_slot(0);
-       Integration_write_slot(1);
-       Integration_write_slot(3);
+    MA_write_slot(0);
+    MA_write_slot(2);
+    MA_write_slot(4);
+    MA_write_slot(6);
+    MA_write_slot(8);
+    MA_write_slot(10);
+    MA_write_slot(12);
+    MA_write_slot(14);
+
+    Digital_write_slot(0);
+    Digital_write_slot(3);
+    Digital_write_slot(7);
+    Digital_write_slot(9);
+
+    Analog_write_slot(0);
+    Analog_write_slot(6);
+    Analog_write_slot(8);
+    Analog_write_slot(9);
+    Analog_write_slot(13);
+    Analog_write_slot(17);
+    Analog_write_slot(21);
+
+    Pixel_write_slot(0);
+    Pixel_write_slot(2);
+    Pixel_write_slot(7);
+    Pixel_write_slot(9);
+    Pixel_write_slot(11);
+
+    Top_write_slot(0);
+    Top_write_slot(3);
+    Top_write_slot(6);
+    Top_write_slot(8);
+
+    Delayline_write_slot(0);
+    Delayline_write_slot(2);
+    Delayline_write_slot(3);
+    Delayline_write_slot(4);
+    Delayline_write_slot(5);
+    Delayline_write_slot(6);
+
+    MISC_write_slot(0);
+    MISC_write_slot(4);
+    MISC_write_slot(5);
+    MISC_write_slot(6);
+    MISC_write_slot(7);
 
 
-
-
-        MA_write_slot(0);
-        MA_write_slot(2);
-        MA_write_slot(4);
-        MA_write_slot(6);
-        MA_write_slot(8);
-        MA_write_slot(10);
-        MA_write_slot(12);
-        MA_write_slot(14);
-
-
-
-        Digital_write_slot(0);
-        Digital_write_slot(3);
-        Digital_write_slot(7);
-        Digital_write_slot(9);
-
-
-
-
-        Analog_write_slot(0);
-        Analog_write_slot(6);
-        Analog_write_slot(8);
-        Analog_write_slot(9);
-        Analog_write_slot(13);
-        Analog_write_slot(17);
-        Analog_write_slot(21);
-
-
-
-
-        Pixel_write_slot(0);
-        Pixel_write_slot(2);
-        Pixel_write_slot(7);
-        Pixel_write_slot(9);
-        Pixel_write_slot(11);
-
-
-
-        Top_write_slot(0);
-        Top_write_slot(3);
-        Top_write_slot(6);
-        Top_write_slot(8);
-
-
-
-        Delayline_write_slot(0);
-        Delayline_write_slot(2);
-        Delayline_write_slot(3);
-        Delayline_write_slot(4);
-        Delayline_write_slot(5);
-        Delayline_write_slot(6);
-
-
-
-
-
-        MISC_write_slot(0);
-        MISC_write_slot(4);
-        MISC_write_slot(5);
-        MISC_write_slot(6);
-        MISC_write_slot(7);
-
-
-       Others_write_slot(0);
-       Others_write_slot(5);
+    Others_write_slot(0);
+    Others_write_slot(5);
 
 }
 
@@ -4164,11 +4148,11 @@ void MainWindow::on_toolBox_currentChanged(int index)
     }else if(0 == index)
     {
         explainLabel.setText("");
-//        if(isLinkSuccess  && ui->pushButton_2->text() == QStringLiteral("播放"))
-//        {
-//            isRecvFlag = true;
-//            emit read_usb_signal();
-//        }
+        //        if(isLinkSuccess  && ui->pushButton_2->text() == QStringLiteral("播放"))
+        //        {
+        //            isRecvFlag = true;
+        //            emit read_usb_signal();
+        //        }
 
     }
 }

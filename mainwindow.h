@@ -140,6 +140,7 @@ public:
 
 
 private slots:
+
     void on_pushButton_clicked();    //测试用的槽函数
 
     void showImageSlot();           //显示二维图像的槽函数

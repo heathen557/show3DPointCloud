@@ -313,7 +313,7 @@ void Logo::readPCDFile1()
     }
 
 /*
-    //  基于统计运算的滤波算法
+    //  不进行直通滤波 直接进行基于统计运算的滤波算法
     QTime t1 = QTime::currentTime();
     //qDebug()<<"BEGIN = "<< t1.toString("hh:mm:ss.zzz")<<endl;
     pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
