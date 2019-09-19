@@ -187,7 +187,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                         numArray.push_back(mouseShowTOF[imgX][imgY+1]);
 
                     sort(numArray.begin(),numArray.end());
-                    int midNumTof = numArray[numArray.size()/2+1];
+                    int midNumTof = numArray[numArray.size()/2];
 
                     //更新该点的值（鼠标显示）；
                     mouseShowTOF[imgX][imgY] =midNumTof;
@@ -325,7 +325,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                     numArray.push_back(mouseShowTOF[pix_x][pix_y+1]);
 
                 sort(numArray.begin(),numArray.end());
-                int midNumTof = numArray[numArray.size()/2+1];
+                int midNumTof = numArray[numArray.size()/2];
                 //                qDebug()<<"midNumTof = "<<midNumTof<<endl;
 
 

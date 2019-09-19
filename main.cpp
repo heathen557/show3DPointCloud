@@ -1,11 +1,11 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include <QApplication>
 #include "WriteLog.h"
 
 
 int main(int argc, char *argv[])
 {
-//    qInstallMessageHandler(myMessageOutput);
+    qInstallMessageHandler(myMessageOutput);
 
     QApplication a(argc, argv);
     MainWindow w;

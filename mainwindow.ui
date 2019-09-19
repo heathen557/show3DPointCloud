@@ -7,13 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>1390</width>
-    <height>806</height>
+    <height>710</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>1330</width>
-    <height>806</height>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -33,6 +39,12 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QFrame" name="frame_4">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">QFrame#frame_4{
 border:1px solid grey;}</string>
@@ -80,10 +92,16 @@ border:1px solid grey;}</string>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
                <widget class="QTabWidget" name="tabWidget">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
                 <property name="styleSheet">
                  <string notr="true">font:10pt &quot;黑体&quot;;</string>
                 </property>
-                <widget class="QWidget" name="tabWidgetPage1" native="true">
+                <widget class="QWidget" name="tabWidgetPage1">
                  <attribute name="title">
                   <string>深度图像(Tof)</string>
                  </attribute>
@@ -96,7 +114,7 @@ border:1px solid grey;}</string>
                     <property name="minimumSize">
                      <size>
                       <width>384</width>
-                      <height>224</height>
+                      <height>150</height>
                      </size>
                     </property>
                     <property name="maximumSize">
@@ -114,8 +132,6 @@ border:1px solid grey;}</string>
                    </widget>
                   </item>
                  </layout>
-                 <zorder>showTOF_label</zorder>
-                 <zorder>frame_7</zorder>
                 </widget>
                </widget>
               </item>
@@ -123,17 +139,23 @@ border:1px solid grey;}</string>
                <widget class="QTabWidget" name="tabWidget_2">
                 <property name="minimumSize">
                  <size>
-                  <width>384</width>
-                  <height>260</height>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
                  </size>
                 </property>
                 <property name="styleSheet">
                  <string notr="true">font:10pt &quot;黑体&quot;;</string>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
-                <widget class="QWidget" name="tabWidget_2Page1" native="true">
+                <widget class="QWidget" name="tabWidget_2Page1">
                  <attribute name="title">
                   <string>强度图像(Peak)</string>
                  </attribute>
@@ -146,7 +168,7 @@ border:1px solid grey;}</string>
                     <property name="minimumSize">
                      <size>
                       <width>384</width>
-                      <height>224</height>
+                      <height>100</height>
                      </size>
                     </property>
                     <property name="maximumSize">
@@ -181,7 +203,7 @@ border:1px solid grey;}</string>
                     <property name="minimumSize">
                      <size>
                       <width>384</width>
-                      <height>224</height>
+                      <height>150</height>
                      </size>
                     </property>
                     <property name="maximumSize">
@@ -242,7 +264,7 @@ border:1px solid grey;}</string>
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>520</height>
+                <height>300</height>
                </size>
               </property>
               <property name="maximumSize">
@@ -257,16 +279,13 @@ border:1px solid grey;}</string>
               <property name="title">
                <string>点云图像：</string>
               </property>
-              <layout class="QGridLayout" name="gridLayout_6">
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
+              <layout class="QGridLayout" name="gridLayout_20">
                <item row="0" column="0">
                 <widget class="GLWidget" name="widget" native="true">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>472</height>
+                   <height>200</height>
                   </size>
                  </property>
                  <property name="maximumSize">
@@ -279,111 +298,135 @@ border:1px solid grey;}</string>
                   <string notr="true">border:1px solid black;
 background-color: rgb(0, 0, 0);</string>
                  </property>
-                 <zorder>frame</zorder>
-                 <zorder>frame</zorder>
-                 <zorder>frame</zorder>
-                 <zorder>frame</zorder>
                 </widget>
                </item>
                <item row="1" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_15">
-                 <item>
-                  <widget class="QLabel" name="label_6">
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="gainImage_lineEdit">
-                   <property name="maximumSize">
-                    <size>
-                     <width>40</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string>1</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_14">
-                   <item>
-                    <widget class="QPushButton" name="pushButton_3">
-                     <property name="maximumSize">
-                      <size>
-                       <width>60</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>正视图</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="pushButton_4">
-                     <property name="maximumSize">
-                      <size>
-                       <width>60</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>侧视图</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="pushButton_5">
-                     <property name="maximumSize">
-                      <size>
-                       <width>60</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>俯视图</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="change_pushButton">
-                   <property name="maximumSize">
-                    <size>
-                     <width>100</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string>切换tof/peak</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="radioButton">
-                   <property name="maximumSize">
-                    <size>
-                     <width>20</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_10">
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <widget class="QFrame" name="frame_7">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>22</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_6">
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item row="0" column="0">
+                   <spacer name="horizontalSpacer_5">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>57</width>
+                      <height>17</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="gainImage_lineEdit">
+                    <property name="maximumSize">
+                     <size>
+                      <width>40</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>1</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="2">
+                   <widget class="QPushButton" name="pushButton_3">
+                    <property name="maximumSize">
+                     <size>
+                      <width>60</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>正视图</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="3">
+                   <widget class="QPushButton" name="pushButton_4">
+                    <property name="maximumSize">
+                     <size>
+                      <width>60</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>侧视图</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="4">
+                   <widget class="QPushButton" name="pushButton_5">
+                    <property name="maximumSize">
+                     <size>
+                      <width>60</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>俯视图</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="5">
+                   <widget class="QPushButton" name="change_pushButton">
+                    <property name="maximumSize">
+                     <size>
+                      <width>100</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>切换tof/peak</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="6">
+                   <widget class="QRadioButton" name="radioButton">
+                    <property name="maximumSize">
+                     <size>
+                      <width>20</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="7">
+                   <spacer name="horizontalSpacer_6">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>57</width>
+                      <height>17</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -435,7 +478,7 @@ background-color: rgb(0, 0, 0);</string>
                  <x>0</x>
                  <y>0</y>
                  <width>282</width>
-                 <height>461</height>
+                 <height>385</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -526,19 +569,6 @@ background-color: rgb(0, 0, 0);</string>
                    </widget>
                   </item>
                   <item>
-                   <spacer name="horizontalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
                    <widget class="QGroupBox" name="groupBox_6">
                     <property name="maximumSize">
                      <size>
@@ -608,19 +638,6 @@ background-color: rgb(0, 0, 0);</string>
                    </widget>
                   </item>
                   <item>
-                   <spacer name="horizontalSpacer_3">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
                    <widget class="QGroupBox" name="groupBox_8">
                     <property name="maximumSize">
                      <size>
@@ -654,19 +671,6 @@ background-color: rgb(0, 0, 0);</string>
                    </widget>
                   </item>
                   <item>
-                   <spacer name="horizontalSpacer_4">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_12">
                     <item>
                      <widget class="QPushButton" name="pushButton_2">
@@ -696,7 +700,7 @@ background-color: rgb(0, 0, 0);</string>
                   <property name="sizeHint" stdset="0">
                    <size>
                     <width>138</width>
-                    <height>21</height>
+                    <height>20</height>
                    </size>
                   </property>
                  </spacer>
@@ -709,7 +713,7 @@ background-color: rgb(0, 0, 0);</string>
                  <x>0</x>
                  <y>0</y>
                  <width>282</width>
-                 <height>461</height>
+                 <height>385</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -756,16 +760,22 @@ background-color: rgb(0, 0, 0);</string>
     </item>
     <item row="1" column="0">
      <widget class="QGroupBox" name="groupBox_5">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>170</height>
+        <height>150</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>500</height>
+        <height>150</height>
        </size>
       </property>
       <property name="styleSheet">

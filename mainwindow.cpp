@@ -327,10 +327,10 @@ void MainWindow::initGUI()
 
     //**********************************************************
 
-    ui->tableWidget_2->setColumnWidth(0,117);
-    ui->tableWidget_2->setColumnWidth(1,117);
-    ui->tableWidget_2->setRowHeight(0,35);
-    ui->tableWidget_2->setRowHeight(1,35);
+//    ui->tableWidget_2->setColumnWidth(0,117);
+//    ui->tableWidget_2->setColumnWidth(1,117);
+//    ui->tableWidget_2->setRowHeight(0,35);
+//    ui->tableWidget_2->setRowHeight(1,35);
     ui->tableWidget_2->setSelectionBehavior(QAbstractItemView::SelectRows); //整行选中
     ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);   //禁止编辑
     ui->tableWidget_2->setItem(0,0,&tofMinItem_value);
@@ -339,11 +339,11 @@ void MainWindow::initGUI()
     ui->tableWidget_2->setItem(1,1,&peakMaxItem_value);
 
 
-    ui->tableWidget_4->setColumnWidth(0,130);
-    ui->tableWidget_4->setColumnWidth(1,130);
-    ui->tableWidget_4->setRowHeight(0,20);
-    ui->tableWidget_4->setRowHeight(1,25);
-    ui->tableWidget_4->setRowHeight(2,25);
+//    ui->tableWidget_4->setColumnWidth(0,130);
+//    ui->tableWidget_4->setColumnWidth(1,130);
+//    ui->tableWidget_4->setRowHeight(0,20);
+//    ui->tableWidget_4->setRowHeight(1,25);
+//    ui->tableWidget_4->setRowHeight(2,25);
     ui->tableWidget_4->setSelectionBehavior(QAbstractItemView::SelectRows); //整行选中
     ui->tableWidget_4->setEditTriggers(QAbstractItemView::NoEditTriggers);   //禁止编辑
     ui->tableWidget_4->setItem(0,0,&xMinItem_value);
@@ -1265,7 +1265,15 @@ void MainWindow::reReadSysSlot(QString str)
 
 void MainWindow::oneSecondSlot()
 {
-    qDebug()<<QStringLiteral("帧率 = ") <<framePerSecond<<endl;
+//    qDebug()<<QStringLiteral("帧率 = ") <<framePerSecond<<endl;
+    QString textStr;
+
+    textStr = QString::number(framePerSecond) + "fps";
+
+
+    explainLabel.setText(textStr);
+
+
     framePerSecond = 0;
 
 
