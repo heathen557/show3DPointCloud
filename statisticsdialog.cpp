@@ -90,6 +90,9 @@ void statisticsDialog::initTofMean_slot()
     QObject::connect(this, SIGNAL(sendTofMean_signal(QStringList)),
                      tofMean_modifier, SLOT(fillSqrtSinProxy_2(QStringList)));
 
+    QObject::connect(this, SIGNAL(sendTofMeanclear_signal()),
+                     tofMean_modifier, SLOT(clearSlot()));
+
 
     tofMean_modifier->setAxisMinSliderX(axisMinSliderX);
     tofMean_modifier->setAxisMaxSliderX(axisMaxSliderX);
@@ -176,6 +179,8 @@ void statisticsDialog::initTofStd_slot()
                      tofStd_modifier, &SurfaceGraph::enableSqrtSinModel);
     QObject::connect(this, SIGNAL(sendTofStd_signal(QStringList)),
                      tofStd_modifier, SLOT(fillSqrtSinProxy_2(QStringList)));
+    QObject::connect(this, SIGNAL(sendTofStdclear_signal()),
+                     tofStd_modifier, SLOT(clearSlot()));
 
 
     tofStd_modifier->setAxisMinSliderX(axisMinSliderX);
@@ -259,6 +264,8 @@ void statisticsDialog::initPeakMean_slot()
 
     QObject::connect(this, SIGNAL(sendPeakMean_signal(QStringList)),
                      peakMean_modifier, SLOT(fillSqrtSinProxy_2(QStringList)));
+    QObject::connect(this, SIGNAL(sendPeakMeanclear_signal()),
+                     peakMean_modifier, SLOT(clearSlot()));
 
 
     peakMean_modifier->setAxisMinSliderX(axisMinSliderX);
@@ -340,6 +347,8 @@ void statisticsDialog::initPeakStd_slot()
                      peakStd_modifier, &SurfaceGraph::enableSqrtSinModel);
     QObject::connect(this, SIGNAL(sendPeakStd_signal(QStringList)),
                      peakStd_modifier, SLOT(fillSqrtSinProxy_2(QStringList)));
+    QObject::connect(this, SIGNAL(sendPeakStdclear_signal()),
+                     peakStd_modifier, SLOT(clearSlot()));
 
 
     peakStd_modifier->setAxisMinSliderX(axisMinSliderX);
@@ -412,6 +421,16 @@ void statisticsDialog::closeEvent(QCloseEvent *event)
     qDebug()<<" QCloseEvent "<<endl;
     isRun = false;
      startStop_signal(0);
+
+
+     emit sendTofMeanclear_signal();
+
+     emit sendTofStdclear_signal();
+
+     emit sendPeakMeanclear_signal();
+
+     emit sendPeakStdclear_signal();
+
 
     this->hide();
     event->ignore();

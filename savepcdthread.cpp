@@ -17,7 +17,15 @@ savePCDThread::savePCDThread(QObject *parent) : QObject(parent)
 //保存二进制效率会高的多，但不利于查看
 void savePCDThread::savePCDSlot(pcl::PointCloud<pcl::PointXYZRGB> cloud,int formatFlag)
 {
-    QString filePathName = saveFilePath + QString::number(saveFileIndex)+".pcd";
+    //第一包数据丢掉不完整
+    if(1 == saveFileIndex)
+    {
+        saveFileIndex++;
+        return;
+    }
+
+
+    QString filePathName = saveFilePath + QString::number(saveFileIndex-1)+".pcd";
     if(0 == formatFlag)
     {
         pcl::io::savePCDFileBinary(filePathName.toLatin1().toStdString(),cloud);
@@ -33,6 +41,14 @@ void savePCDThread::savePCDSlot(pcl::PointCloud<pcl::PointXYZRGB> cloud,int form
 
 void savePCDThread::saveTXTSlot(QString msgStr)
 {
+    if(1 == saveFileIndex)
+    {
+        saveFileIndex++;
+        return;
+    }
+
+
+
     writeTXT(msgStr,saveFileIndex);
     saveFileIndex++;
 }
@@ -44,7 +60,7 @@ void savePCDThread::saveTXTSlot(QString msgStr)
 // numOfFile：第几个文件
 void savePCDThread::writeTXT(QString text, int index)
 {
-    QString sFilePath = saveFilePath + QString::number(saveFileIndex)+".txt";
+    QString sFilePath = saveFilePath + QString::number(saveFileIndex-1)+".txt";
     QFile file(sFilePath);
     file.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Append);
 

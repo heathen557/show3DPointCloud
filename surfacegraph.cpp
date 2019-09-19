@@ -81,6 +81,14 @@ SurfaceGraph::~SurfaceGraph()
 {
     delete dataArray;
     delete m_graph;
+
+
+    delete m_graph;
+    delete m_heightMapProxy;
+    delete m_sqrtSinProxy;
+    delete m_heightMapSeries;
+    delete m_sqrtSinSeries;
+
 }
 
 //! [1]
@@ -129,31 +137,9 @@ void SurfaceGraph::fillSqrtSinProxy_2(QStringList dataList)
     int len = dataList.length();
     if(len<16384)
         return;
-
-      //由于用的是指针 所以会存在内存泄漏的问题
-//     m_graph->axisY()->setTitle(QStringLiteral("均值"));
-//    QSurfaceDataArray *dataArray = new QSurfaceDataArray;
-//    dataArray->reserve(sampleCountZ);
-
-//    dataArray->clear();
-
-//    for (int i = 0 ; i < sampleCountZ ; i++) {
-//        QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountX);
-
-//        int index = 0;
-//        for (int j = 0; j < sampleCountX; j++) {
-//            (*newRow)[index++].setPosition(QVector3D(j,dataList[j+i*256].toFloat(),i));
-//        }
-//        *dataArray << newRow;
-//    }
-//    m_sqrtSinProxy->resetArray(dataArray);
-
-
-
     //修复原来存在内存泄漏的问题
     dataArray->clear();
     for (int i = 0 ; i < sampleCountZ ; i++) {
-//        QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountX);
         newRow[i].resize(sampleCountX);
 
         int index = 0;
@@ -162,6 +148,15 @@ void SurfaceGraph::fillSqrtSinProxy_2(QStringList dataList)
         }
         dataArray->push_back(&newRow[i]);
     }
+    m_sqrtSinProxy->resetArray(dataArray);
+
+}
+
+
+void SurfaceGraph::clearSlot()
+{
+    qDebug()<<"clear slot has come in"<<endl;
+    dataArray->clear();
     m_sqrtSinProxy->resetArray(dataArray);
 }
 

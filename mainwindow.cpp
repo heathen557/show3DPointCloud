@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType<pcl::PointCloud<pcl::PointXYZRGB>>("pcl::PointCloud<pcl::PointXYZRGB>");   //注册函数
 
     //接收数据线程、处理数据线程
-    connect(recvUsbMsg_obj,SIGNAL(recvMsgSignal(QByteArray)),dealUsbMsg_obj,SLOT(recvMsgSlot(QByteArray)));
+    connect(recvUsbMsg_obj,SIGNAL(recvMsgSignal(QByteArray)),dealUsbMsg_obj,SLOT(recvMsgSlot(QByteArray)),Qt::QueuedConnection   );
 
 
 
@@ -341,9 +341,9 @@ void MainWindow::initGUI()
 
 //    ui->tableWidget_4->setColumnWidth(0,130);
 //    ui->tableWidget_4->setColumnWidth(1,130);
-//    ui->tableWidget_4->setRowHeight(0,20);
-//    ui->tableWidget_4->setRowHeight(1,25);
-//    ui->tableWidget_4->setRowHeight(2,25);
+    ui->tableWidget_4->setRowHeight(0,25);
+    ui->tableWidget_4->setRowHeight(1,25);
+    ui->tableWidget_4->setRowHeight(2,25);
     ui->tableWidget_4->setSelectionBehavior(QAbstractItemView::SelectRows); //整行选中
     ui->tableWidget_4->setEditTriggers(QAbstractItemView::NoEditTriggers);   //禁止编辑
     ui->tableWidget_4->setItem(0,0,&xMinItem_value);
@@ -4163,4 +4163,17 @@ void MainWindow::on_toolBox_currentChanged(int index)
         //        }
 
     }
+}
+
+
+
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    qDebug()<<"closeEvent"<<endl;
+    calThread->terminate();
+    delete calMeanStd_obj;
+
+//    sleep(1);
+//    event->ignore();
 }

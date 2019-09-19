@@ -28,6 +28,7 @@ public:
     QByteArray recvArray;
 
     int lastSpadNum;
+    int lastLineNum;
 
     QImage microQimage;
     QImage macroQimage;

@@ -78,6 +78,16 @@ signals:
      void startStop_signal(int);
 
 
+
+     void sendTofMeanclear_signal();
+
+     void sendTofStdclear_signal();
+
+     void sendPeakMeanclear_signal();
+
+     void sendPeakStdclear_signal();
+
+
 private:
     Ui::statisticsDialog *ui;
 };

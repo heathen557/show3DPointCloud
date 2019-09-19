@@ -105,6 +105,12 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
     int line_number = (quint8)(MyBuffer[2]) +  (((quint8)(MyBuffer[3]))<<8);
 //    qDebug()<<"here111   spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
 
+    if(line_number!=0  && ( (lastLineNum+1) != line_number) )
+    {
+        qDebug()<<"lastLineNum="<<lastLineNum <<"   "<<line_number<<endl;
+    }
+    lastLineNum = line_number;
+
 
     if(spadNum==0 && lastSpadNum==7)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
     {
@@ -120,12 +126,17 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                 emit savePCDSignal(tempRgbCloud,1);
             }else if(formatFlag == 2)   //保存原始的TOF 和 PEAK 数据
             {
+                bool flag = true;
                 for(int i=0; i<16384; i++)
                 {
+                    if(tofPeakNum[i].isEmpty())
+                        flag =false;
                      tofPeakToSave_string.append(tofPeakNum[i]);
                      tofPeakNum[i].clear();
                 }
-                emit saveTXTSignal(tofPeakToSave_string);
+
+                if(flag)
+                    emit saveTXTSignal(tofPeakToSave_string);
                 tofPeakToSave_string.clear();
             }
         }

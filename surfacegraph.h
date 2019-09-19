@@ -76,6 +76,7 @@ public:
 public Q_SLOTS:
     void changeTheme(int theme);
     void fillSqrtSinProxy_2(QStringList dataList);
+    void clearSlot();
 
 private:
     Q3DSurface *m_graph;
