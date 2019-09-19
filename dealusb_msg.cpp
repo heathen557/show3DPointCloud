@@ -67,7 +67,6 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
         allStatisticPeakPoints.push_back(singlePoint);
     }
 
-
 //    readLocalPCDFile();
 }
 
@@ -76,13 +75,12 @@ void DealUsb_msg::alterStatisticFrameNum_slot(int num)
 {
     statisticFrameNumber = num ;
 
-//    readLocalPCDFile();
 }
 
 //修改是否进行滤波的槽函数
 void DealUsb_msg::isFilter_slot(bool isFiter)
 {
-    readLocalPCDFile();
+//    readLocalPCDFile();
     if(true == isFiter)
     {
         isFilterFlag = true;
@@ -168,39 +166,97 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         isShowPointCloud = true;
 */
 
+        /*******************对Tof 图像进行过滤0的滤波处理*******************************/
+        vector<int> numArray;
+        QRgb tofColor;
+        int gainIndex_tof;
+        int cloudIndex;
+        for(int imgX=0; imgX<256; imgX++)
+            for(int imgY=1; imgY<64; imgY++)
+            {
+                if(0 == mouseShowTOF[imgX][imgY])
+                {
+
+                    if( imgX>=1 )
+                        numArray.push_back(mouseShowTOF[imgX-1][imgY]);
+                    if( imgX<=254 )
+                        numArray.push_back(mouseShowTOF[imgX+1][imgY]);
+                    if( imgY>=1)
+                        numArray.push_back(mouseShowTOF[imgX][imgY-1]);
+                    if( imgY<=62)
+                        numArray.push_back(mouseShowTOF[imgX][imgY+1]);
+
+                    sort(numArray.begin(),numArray.end());
+                    int midNumTof = numArray[numArray.size()/2+1];
+
+                    //更新该点的值（鼠标显示）；
+                    mouseShowTOF[imgX][imgY] =midNumTof;
+
+                    //更新TOF 图像的像素值
+                    gainIndex_tof = midNumTof*gainImage;
+                    if(gainIndex_tof<1024 && gainIndex_tof>=0)
+                        tofColor = qRgb(colormap[gainIndex_tof * 3], colormap[gainIndex_tof * 3 + 1], colormap[gainIndex_tof * 3 + 2]);
+                    else
+                        tofColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
+                    microQimage.setPixel(imgX,imgY,tofColor);         //TOF图像的赋值
+
+                    //更新点云数据的值 以及颜色
+                    cloudIndex = imgY*256 + imgX;
+                    temp_x = midNumTof * x_Weight[cloudIndex] * LSB;
+                    temp_y = midNumTof * y_Weight[cloudIndex] * LSB;
+                    temp_z = midNumTof * z_Weight[cloudIndex] * LSB;
+                    QColor mColor = QColor(tofColor);
+                    r = mColor.red();
+                    g = mColor.green();
+                    b = mColor.blue();
+                    rgb = ((int)r << 16 | (int)g << 8 | (int)b);
+                    tempRgbCloud.points[cloudIndex].x = temp_x;
+                    tempRgbCloud.points[cloudIndex].y = temp_y;
+                    tempRgbCloud.points[cloudIndex].z = temp_z;
+                    tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb);
+                    numArray.clear();
+                }
+            }
+
+
+
+
+
+
+
         // 1、将滤波功能放到这里进行实现，
         // 2、将滤波后的三维点云 同步到二维图像
         if(true == isFilterFlag)
         {
             /*******************开启滤波功能*********************************/
             //先用直通滤波把所有零点重复的零点过滤掉
-            pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
-            pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
-            pass.setFilterFieldName("y");                             //设置在Z轴方向上进行滤波
-            pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下0.10米去除)
-            pass.setFilterLimitsNegative(true);                       //保留
-            pass.filter(tempRgbCloud_pass);                                   //滤波并存储
-            if(tempRgbCloud_pass.size()<1)
-                return;
+            //            pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
+            //            pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
+            //            pass.setFilterFieldName("y");                                 //设置在Z轴方向上进行滤波
+            //            pass.setFilterLimits(0, 0.10);                                //设置滤波范围(从最高点向下0.10米去除)
+            //            pass.setFilterLimitsNegative(true);                           //保留
+            //            pass.filter(tempRgbCloud_pass);                                   //滤波并存储
+            //            if(tempRgbCloud_pass.size()<1)
+            //                return;
 
             //  基于统计运算的滤波算法
-    //        DealedCloud_rgb.clear();
-    //        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
-    //        sor.setInputCloud(tempRgbCloud_pass.makeShared());
-    //        sor.setMeanK(20);
-    //        sor.setStddevMulThresh(0);
-    //        //40  0.1 不见前面噪点
-    //        sor.filter(tempRgbCloud_radius);
-    //        qDebug()<<"after filter the points'Number = "<<DealedCloud_rgb.size()<<endl;
+            //        DealedCloud_rgb.clear();
+            //        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
+            //        sor.setInputCloud(tempRgbCloud_pass.makeShared());
+            //        sor.setMeanK(20);
+            //        sor.setStddevMulThresh(0);
+            //        //40  0.1 不见前面噪点
+            //        sor.filter(tempRgbCloud_radius);
+            //        qDebug()<<"after filter the points'Number = "<<DealedCloud_rgb.size()<<endl;
 
-//            QTime time;
-//            time.start();
-//            int len;
+            //            QTime time;
+            //            time.start();
+            //            int len;
             tempRgbCloud_radius.resize(0);
             pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
-            outrem.setInputCloud(tempRgbCloud_pass.makeShared());              //设置输入点云
+            outrem.setInputCloud(tempRgbCloud.makeShared());              //设置输入点云
             outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
-            outrem.setMinNeighborsInRadius(30);       //设置查询点的邻近点集数小于2的删除
+            outrem.setMinNeighborsInRadius(15);       //设置查询点的邻近点集数小于2的删除  30
             outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
             int len = outrem.getRemovedIndices()->size();
 
@@ -208,17 +264,20 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             //条件滤波   设置半径 以及 圆周内的点数
 
 
-//            qDebug()<<"dealusb_msg    fileted size = "<<outrem.getRemovedIndices()->size();
-//            qDebug()<<" passThrough cost time = "<<time.elapsed()<<endl;
+            //            qDebug()<<"dealusb_msg    fileted size = "<<outrem.getRemovedIndices()->size();
+            //            qDebug()<<" passThrough cost time = "<<time.elapsed()<<endl;
             /*************************以上为滤波处理部分************************************************************/
 
             /***********************接下来 根据点云的序号 去除二维图像中的噪声************************/
 
+            /*            //此种方法采用取均值的方法，效果不是太好
             int index,pix_x,pix_y;
             QRgb clearTofCol,clearPeakCol;
             for(int i=0; i<len; i++)
             {
                 index = outrem.getRemovedIndices()->at(i);
+
+
                 pix_x = index % 256;
                 pix_y = index / 256;
 
@@ -235,10 +294,54 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                 }
                 microQimage.setPixel(pix_x,pix_y,clearTofCol);
                 macroQimage.setPixel(pix_x,pix_y,clearPeakCol);
+            }
+*/
 
-
+            int index,pix_x,pix_y;
+            for(int i=0; i<len; i++)
+            {
+                index = outrem.getRemovedIndices()->at(i);
+                pix_x = index % 256;
+                pix_y = index / 256;
+                mouseShowTOF[pix_x][pix_y] = 0;   //噪点赋值为黑色
             }
 
+            vector<int> numArray;
+            QRgb tofColor;
+            int gainIndex_tof;
+            for(int i=0;i<len; i++)
+            {
+                index = outrem.getRemovedIndices()->at(i);
+                pix_x = index % 256;
+                pix_y = index / 256;
+
+                if( pix_x>=1 )
+                    numArray.push_back(mouseShowTOF[pix_x-1][pix_y]);
+                if( pix_x<=254 )
+                    numArray.push_back(mouseShowTOF[pix_x+1][pix_y]);
+                if( pix_y>=1)
+                    numArray.push_back(mouseShowTOF[pix_x][pix_y-1]);
+                if( pix_y<=62)
+                    numArray.push_back(mouseShowTOF[pix_x][pix_y+1]);
+
+                sort(numArray.begin(),numArray.end());
+                int midNumTof = numArray[numArray.size()/2+1];
+                //                qDebug()<<"midNumTof = "<<midNumTof<<endl;
+
+
+                numArray.clear();
+
+                //更新鼠标显示的TOF值
+                mouseShowTOF[pix_x][pix_y] = midNumTof;
+
+                //更新TOF 图像的像素值
+                gainIndex_tof = midNumTof*gainImage;
+                if(gainIndex_tof<1024 && gainIndex_tof>=0)
+                    tofColor = qRgb(colormap[gainIndex_tof * 3], colormap[gainIndex_tof * 3 + 1], colormap[gainIndex_tof * 3 + 2]);
+                else
+                    tofColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
+                microQimage.setPixel(pix_x,pix_y,tofColor);         //TOF图像的赋值
+            }
 
 
             mutex.lock();
@@ -849,9 +952,6 @@ void DealUsb_msg::readLocalPCDFile()
         fileName = "E:/0918_tof/" + QString::number(fileIndex)+".txt";
         fileIndex++;
 
-
-//        break;
-
         QFile file(fileName);
 
         if (file.open(QIODevice::ReadOnly))
@@ -1196,9 +1296,6 @@ void DealUsb_msg::readLocalPCDFile()
 
 
     }
-
-
-
 
 
     Sleep(100);

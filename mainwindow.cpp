@@ -970,9 +970,9 @@ void MainWindow::on_pushButton_clicked()
 //播放槽函数
 void MainWindow::on_pushButton_2_clicked()
 {
-    ui->widget->readFileTimer.start(20);
-    showTimer.start(90);
-    oneSecondTimer.start(1000);
+//    ui->widget->readFileTimer.start(20);
+//    showTimer.start(90);
+//    oneSecondTimer.start(1000);
 
     if(!isLinkSuccess)
     {
@@ -1265,7 +1265,7 @@ void MainWindow::reReadSysSlot(QString str)
 
 void MainWindow::oneSecondSlot()
 {
-       qDebug()<<"帧率 = "<<framePerSecond<<endl;
+    qDebug()<<QStringLiteral("帧率 = ") <<framePerSecond<<endl;
     framePerSecond = 0;
 
 

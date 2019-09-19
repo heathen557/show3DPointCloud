@@ -455,87 +455,188 @@ void ReceUSB_Msg::writeDevSlot(int slavId,int addr,QString data,bool recvFlag)
 //加载配置集槽函数
 void ReceUSB_Msg::loadSettingSlot(QString filePath,bool recvFlag)
 {
-    QFile file(filePath);
-    QString line[20];
+    //    QFile file(filePath);
+    //    QString line[20];
 
-    if (file.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&file);
-        int i = 0;
-        while (!in.atEnd())
+    //    if (file.open(QIODevice::ReadOnly))
+    //    {
+    //        QTextStream in(&file);
+    //        int i = 0;
+    //        while (!in.atEnd())
+    //        {
+    //            line[i] = in.readLine();
+    //            qDebug()<<"line["<<i<<"] = "<<line[i];
+    //            i++;
+    //        }
+    //        file.close();
+    //    }
+    //    //line[0] 对应 str1;
+    //    //line[1] 对应 str2;
+    //    //line[2] 对应 str3;
+
+    //    bool res = true;
+    //    QString array;
+    //    /**********************测试STR2******************************************/
+    //    // 1、 0x11= 17  0x41=65
+    //    //    QString str2 = "41 01 00";
+    //    QString str2 = line[1];
+    //    res = System_Register_Write(17,str2.mid(0,2));
+    //    qDebug()<<"[w]sys write str2="<<str2.mid(0,2)<<"   res="<<res<<endl;
+
+    //    // 0x12 = 18
+    //    res = System_Register_Write(18,str2.mid(3,2));
+    //    qDebug()<<"[w]sys write str2="<<str2.mid(3,2)<<"   res="<<res<<endl;
+
+    //    //0xe2 = 226
+    //    res = System_Register_Write(226,str2.mid(6,2));
+    //    qDebug()<<"[w]sys write str2="<<str2.mid(6,2)<<"   res="<<res<<endl;
+
+    //    //0x13 = 19
+    //    res = System_Register_Read(19,array);
+    //    qDebug()<<"[R]sys Read array="<<array<<"   res="<<res<<endl;
+
+
+    //    /************************测试STR3********************************************/
+    //    //    QString str3 = "00 00 26 0A 00 64 00 14 00 01 00 00";   //len = 12
+    //    QString str3 = line[2];
+
+    //    //起始位置从32 开始
+    //    for(int i=0 ; i<12; i++)
+    //    {
+    //        res = System_Register_Write(32+i, str3.mid(i*3,2));
+    //        qDebug()<<"[w]sys write str3="<<str3.mid(i*3,2)<<"   res="<<res<<endl;
+    //    }
+
+
+    //    /*************************测试STR1******************************************************/
+    //    //    QString str1 = "00 44 1F 44 45 44 EE 02 64 11 22 44 88 88 44 22 11 03 40 00 1F E0 81 4A 84 08 00 00 CC 01 00 00 00 00 00 00 00 0A 06 06 06 06 06 34 FF FF FF FF 04 1E";
+    //    QString str1 = line[0];
+
+
+    //    //0xd8 = 216,
+    //    for(int k=1; k<50; k++)
+    //    {
+    //        res = Device_Register_Write(216,k,str1.mid(3*k,2));
+    //        qDebug()<<"[w]Device write str1="<<str1.mid(3*k,2)<<"   res="<<res<<str1.mid(3*k,2).toInt(NULL,16) <<endl;
+    //    }
+
+    //    QString str = "00";                                       //2019-8-15
+    //    res = Device_Register_Write(216,0,str);
+    //    qDebug()<<"[w]Device write str1="<<"00"<<"   res="<<res<<endl;
+
+    //    if(res)
+    //    {
+    //        emit linkInfoSignal(8);
+    //    }else
+    //    {
+    //        emit linkInfoSignal(9);
+    //    }
+
+        /************************开始接受数据****************************************************/
+        //    readTimer->start(1);
+    //    isRecvFlag =true;
+    //    read_usb();
+
+
+        QFile file(filePath);
+        QString line[20];
+
+        if (file.open(QIODevice::ReadOnly))
         {
-            line[i] = in.readLine();
-            qDebug()<<"line["<<i<<"] = "<<line[i];
-            i++;
+            QTextStream in(&file);
+            int i = 0;
+            while (!in.atEnd())
+            {
+                line[i] = in.readLine();
+                qDebug()<<"line["<<i<<"] = "<<line[i];
+                i++;
+            }
+            file.close();
         }
-        file.close();
-    }
-    //line[0] 对应 str1;
-    //line[1] 对应 str2;
-    //line[2] 对应 str3;
+        //line[0] 对应 str1;
+        //line[1] 对应 str2;
+        //line[2] 对应 str3;
 
-    bool res = true;
-    QString array;
-    /**********************测试STR2******************************************/
-    // 1、 0x11= 17  0x41=65
-    //    QString str2 = "41 01 00";
-    QString str2 = line[1];
-    res = System_Register_Write(17,str2.mid(0,2));
-    qDebug()<<"[w]sys write str2="<<str2.mid(0,2)<<"   res="<<res<<endl;
+        bool res = true;
+        QString array;
+        /**********************测试STR2******************************************/
+        // 1、 0x11= 17  0x41=65    （17-22）（0x11 0x16）
+        //    QString str2 = "41 01 00";
+        QString str2 = line[1];
+    //    res = System_Register_Write(17,str2.mid(0,2));
+    //    qDebug()<<"[w]sys write str2="<<str2.mid(0,2)<<"   res="<<res<<endl;
 
-    // 0x12 = 18
-    res = System_Register_Write(18,str2.mid(3,2));
-    qDebug()<<"[w]sys write str2="<<str2.mid(3,2)<<"   res="<<res<<endl;
+    //    // 0x12 = 18
+    //    res = System_Register_Write(18,str2.mid(3,2));
+    //    qDebug()<<"[w]sys write str2="<<str2.mid(3,2)<<"   res="<<res<<endl;
 
-    //0xe2 = 226
-    res = System_Register_Write(226,str2.mid(6,2));
-    qDebug()<<"[w]sys write str2="<<str2.mid(6,2)<<"   res="<<res<<endl;
+    //    //0xe2 = 226
+    //    res = System_Register_Write(226,str2.mid(6,2));
+    //    qDebug()<<"[w]sys write str2="<<str2.mid(6,2)<<"   res="<<res<<endl;
 
-    //0x13 = 19
-    res = System_Register_Read(19,array);
-    qDebug()<<"[R]sys Read array="<<array<<"   res="<<res<<endl;
+    //    //0x13 = 19
+    //    res = System_Register_Read(19,array);
+    //    qDebug()<<"[R]sys Read array="<<array<<"   res="<<res<<endl;
 
-
-    /************************测试STR3********************************************/
-    //    QString str3 = "00 00 26 0A 00 64 00 14 00 01 00 00";   //len = 12
-    QString str3 = line[2];
-
-    //起始位置从32 开始
-    for(int i=0 ; i<12; i++)
-    {
-        res = System_Register_Write(32+i, str3.mid(i*3,2));
-        qDebug()<<"[w]sys write str3="<<str3.mid(i*3,2)<<"   res="<<res<<endl;
-    }
+        for(int n=0; n<6; n++)
+        {
+            res = System_Register_Write(17+n,str2.mid(n*3,2));
+            qDebug()<<"[R]sys Read array="<<array<<"   res="<<res<<endl;
+        }
 
 
-    /*************************测试STR1******************************************************/
-    //    QString str1 = "00 44 1F 44 45 44 EE 02 64 11 22 44 88 88 44 22 11 03 40 00 1F E0 81 4A 84 08 00 00 CC 01 00 00 00 00 00 00 00 0A 06 06 06 06 06 34 FF FF FF FF 04 1E";
-    QString str1 = line[0];
 
 
-    //0xd8 = 216,
-    for(int k=1; k<50; k++)
-    {
-        res = Device_Register_Write(216,k,str1.mid(3*k,2));
-        qDebug()<<"[w]Device write str1="<<str1.mid(3*k,2)<<"   res="<<res<<str1.mid(3*k,2).toInt(NULL,16) <<endl;
-    }
 
-    QString str = "00";                                       //2019-8-15
-    res = Device_Register_Write(216,0,str);
-    qDebug()<<"[w]Device write str1="<<"00"<<"   res="<<res<<endl;
+        /************************测试STR3********************************************/
+        //    QString str3 = "00 00 26 0A 00 64 00 14 00 01 00 00";   //len = 12    (0x20-0x2c)
+        QString str3 = line[2];
 
-    if(res)
-    {
-        emit linkInfoSignal(8);
-    }else
-    {
-        emit linkInfoSignal(9);
-    }
+        //起始位置从32 开始
+        for(int i=0 ; i<13; i++)
+        {
+            res = System_Register_Write(32+i, str3.mid(i*3,2));
+            qDebug()<<"[w]sys write str3="<<str3.mid(i*3,2)<<"   res="<<res<<endl;
+        }
 
-    /************************开始接受数据****************************************************/
-    //    readTimer->start(1);
-//    isRecvFlag =true;
-//    read_usb();
+
+        /*************************测试STR1******************************************************/
+        //    QString str1 = "00 44 1F 44 45 44 EE 02 64 11 22 44 88 88 44 22 11 03 40 00 1F E0 81 4A 84 08 00 00 CC 01 00 00 00 00 00 00 00 0A 06 06 06 06 06 34 FF FF FF FF 04 1E";
+        QString str1 = line[0];
+
+        QString str = "34";               //0x2b = 43                        //2019-8-15
+        res = Device_Register_Write(216,43,str);
+        qDebug()<<"[w]Device write str1="<<"00"<<"   res="<<res<<endl;
+
+        str = "4A";              //0x17 =23                         //2019-8-15
+        res = Device_Register_Write(216,23,str);
+        qDebug()<<"[w]Device write str1="<<"00"<<"   res="<<res<<endl;
+
+
+
+
+        //0xd8 = 216,
+        for(int k=0; k<50; k++)
+        {
+            res = Device_Register_Write(216,k,str1.mid(3*k,2));
+            qDebug()<<"[w]Device write str1="<<str1.mid(3*k,2)<<"   res="<<res<<str1.mid(3*k,2).toInt(NULL,16) <<endl;
+        }
+
+
+        //0x15 = 21
+        str = "01";
+        res = System_Register_Write(21, str);
+        qDebug()<<"[w]sys write str="<<"01"<<"   res="<<res<<endl;
+
+
+        if(res)
+        {
+            emit linkInfoSignal(8);
+        }else
+        {
+            emit linkInfoSignal(9);
+        }
+
 }
 
 //保存配置集槽函数
