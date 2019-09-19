@@ -106,7 +106,16 @@ border:1px solid grey;}</string>
                   <string>深度图像(Tof)</string>
                  </attribute>
                  <layout class="QGridLayout" name="gridLayout_3">
+                  <property name="leftMargin">
+                   <number>2</number>
+                  </property>
                   <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>2</number>
                   </property>
                   <item row="0" column="0">
@@ -160,7 +169,16 @@ border:1px solid grey;}</string>
                   <string>强度图像(Peak)</string>
                  </attribute>
                  <layout class="QGridLayout" name="gridLayout_4">
+                  <property name="leftMargin">
+                   <number>2</number>
+                  </property>
                   <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>2</number>
                   </property>
                   <item row="0" column="0">
@@ -168,7 +186,7 @@ border:1px solid grey;}</string>
                     <property name="minimumSize">
                      <size>
                       <width>384</width>
-                      <height>100</height>
+                      <height>150</height>
                      </size>
                     </property>
                     <property name="maximumSize">
@@ -192,31 +210,28 @@ border:1px solid grey;}</string>
                   <string>可见光设备</string>
                  </attribute>
                  <layout class="QGridLayout" name="gridLayout_18">
+                  <property name="leftMargin">
+                   <number>2</number>
+                  </property>
                   <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>2</number>
                   </property>
                   <item row="0" column="0">
-                   <widget class="myLabel" name="showIntensity_label_2">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
+                   <widget class="QCameraViewfinder" name="video_widget" native="true">
                     <property name="minimumSize">
                      <size>
                       <width>384</width>
                       <height>150</height>
                      </size>
                     </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>1677512</width>
-                      <height>1677512</height>
-                     </size>
-                    </property>
                     <property name="styleSheet">
                      <string notr="true">background-color: rgb(0, 0, 0);</string>
-                    </property>
-                    <property name="text">
-                     <string/>
                     </property>
                    </widget>
                   </item>
@@ -1082,6 +1097,12 @@ border:0px</string>
    <class>GLWidget</class>
    <extends>QWidget</extends>
    <header>glwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QCameraViewfinder</class>
+   <extends>QWidget</extends>
+   <header>qcameraviewfinder.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

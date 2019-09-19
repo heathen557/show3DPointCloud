@@ -17,6 +17,9 @@
 #include"calmeanstdthread.h"
 #include<QSignalMapper>
 #include<QLabel>
+#include <QCamera>
+#include <QCameraInfo>
+#include <QCameraViewfinder>
 
 namespace Ui {
 class MainWindow;
@@ -36,6 +39,8 @@ public:
     void initTreeWidget();          //设备寄存器读写的界面的初始化函数
 
     void closeEvent(QCloseEvent *event);
+
+    void resizeEvent(QResizeEvent *event);
 
     QTimer showTimer;
     QTimer oneSecondTimer;
@@ -139,6 +144,10 @@ public:
 
     QLabel explainLabel;  //显示注释
     int expandItem_index;
+
+     QCamera *camera;
+
+     bool isShowCamera;
 
 
 private slots:
@@ -248,6 +257,8 @@ private slots:
     void on_setAll_pushButton_clicked();
 
     void on_toolBox_currentChanged(int index);
+
+    void on_tabWidget_2_currentChanged(int index);
 
 private:
     Ui::MainWindow *ui;

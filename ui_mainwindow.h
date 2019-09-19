@@ -37,6 +37,7 @@
 #include <QtWidgets/QWidget>
 #include "glwidget.h"
 #include "mylabel.h"
+#include "qcameraviewfinder.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -65,7 +66,7 @@ public:
     myLabel *showIntensity_label;
     QWidget *tab_3;
     QGridLayout *gridLayout_18;
-    myLabel *showIntensity_label_2;
+    QCameraViewfinder *video_widget;
     QFrame *frame_3;
     QGridLayout *gridLayout_5;
     QGroupBox *groupBox_3;
@@ -216,7 +217,7 @@ public:
         gridLayout_3->setSpacing(6);
         gridLayout_3->setContentsMargins(11, 11, 11, 11);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
-        gridLayout_3->setContentsMargins(-1, 2, -1, -1);
+        gridLayout_3->setContentsMargins(2, 0, 2, 2);
         showTOF_label = new myLabel(tabWidgetPage1);
         showTOF_label->setObjectName(QStringLiteral("showTOF_label"));
         showTOF_label->setMinimumSize(QSize(384, 150));
@@ -240,10 +241,10 @@ public:
         gridLayout_4->setSpacing(6);
         gridLayout_4->setContentsMargins(11, 11, 11, 11);
         gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
-        gridLayout_4->setContentsMargins(-1, 2, -1, -1);
+        gridLayout_4->setContentsMargins(2, 0, 2, 2);
         showIntensity_label = new myLabel(tabWidget_2Page1);
         showIntensity_label->setObjectName(QStringLiteral("showIntensity_label"));
-        showIntensity_label->setMinimumSize(QSize(384, 100));
+        showIntensity_label->setMinimumSize(QSize(384, 150));
         showIntensity_label->setMaximumSize(QSize(1677512, 1677512));
         showIntensity_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
 
@@ -256,15 +257,13 @@ public:
         gridLayout_18->setSpacing(6);
         gridLayout_18->setContentsMargins(11, 11, 11, 11);
         gridLayout_18->setObjectName(QStringLiteral("gridLayout_18"));
-        gridLayout_18->setContentsMargins(-1, 2, -1, -1);
-        showIntensity_label_2 = new myLabel(tab_3);
-        showIntensity_label_2->setObjectName(QStringLiteral("showIntensity_label_2"));
-        showIntensity_label_2->setEnabled(true);
-        showIntensity_label_2->setMinimumSize(QSize(384, 150));
-        showIntensity_label_2->setMaximumSize(QSize(1677512, 1677512));
-        showIntensity_label_2->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
+        gridLayout_18->setContentsMargins(2, 0, 2, 2);
+        video_widget = new QCameraViewfinder(tab_3);
+        video_widget->setObjectName(QStringLiteral("video_widget"));
+        video_widget->setMinimumSize(QSize(384, 150));
+        video_widget->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
 
-        gridLayout_18->addWidget(showIntensity_label_2, 0, 0, 1, 1);
+        gridLayout_18->addWidget(video_widget, 0, 0, 1, 1);
 
         tabWidget_2->addTab(tab_3, QString());
 
@@ -805,7 +804,6 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tabWidgetPage1), QApplication::translate("MainWindow", "\346\267\261\345\272\246\345\233\276\345\203\217(Tof)", Q_NULLPTR));
         showIntensity_label->setText(QString());
         tabWidget_2->setTabText(tabWidget_2->indexOf(tabWidget_2Page1), QApplication::translate("MainWindow", "\345\274\272\345\272\246\345\233\276\345\203\217(Peak)", Q_NULLPTR));
-        showIntensity_label_2->setText(QString());
         tabWidget_2->setTabText(tabWidget_2->indexOf(tab_3), QApplication::translate("MainWindow", "\345\217\257\350\247\201\345\205\211\350\256\276\345\244\207", Q_NULLPTR));
         groupBox_3->setTitle(QApplication::translate("MainWindow", "\347\202\271\344\272\221\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
         gainImage_lineEdit->setText(QApplication::translate("MainWindow", "1", Q_NULLPTR));

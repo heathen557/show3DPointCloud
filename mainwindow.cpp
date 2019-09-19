@@ -58,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent) :
     isSaveFlag = false;
     saveFileIndex = 1;
 
+    isShowCamera = false;
+
     isTOF = true;
     gainImage = 1;
 
@@ -65,12 +67,14 @@ MainWindow::MainWindow(QWidget *parent) :
     dealUsbMsg_obj = new DealUsb_msg();
     dealUsbThread = new QThread;
     dealUsbMsg_obj->moveToThread(dealUsbThread);
+//    dealUsbThread->setPriority(QThread::HighestPriority);
     dealUsbThread->start();
 
     //把读取USB信息放到线程当中，并开启线程
     recvUsbMsg_obj = new ReceUSB_Msg();
     recvUsbThread = new QThread;
     recvUsbMsg_obj->moveToThread(recvUsbThread);
+//    recvUsbThread->setPriority(QThread::HighestPriority);
     recvUsbThread->start();
 
     //开启保存pcd文件的线程
@@ -4166,7 +4170,29 @@ void MainWindow::on_toolBox_currentChanged(int index)
 }
 
 
+//强度图像 和 可见光图像切换的槽函数
+void MainWindow::on_tabWidget_2_currentChanged(int index)
+{
 
+    qDebug()<<" index = "<<index<<endl;
+    if(0 == index)
+    {
+        camera->stop();
+        delete camera;
+        isShowCamera = false;
+    }else if(1 == index)
+    {
+        QCameraInfo cameraInfo =  QCameraInfo::defaultCamera();
+        camera = new QCamera(cameraInfo);
+        ui->video_widget->setAspectRatioMode(Qt::IgnoreAspectRatio);
+        int height =ui->showTOF_label->height();
+        ui->video_widget->setFixedHeight(height);
+        camera->setViewfinder(ui->video_widget);
+        camera->start();
+
+        isShowCamera = true;
+    }
+}
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -4174,6 +4200,17 @@ void MainWindow::closeEvent(QCloseEvent *event)
     calThread->terminate();
     delete calMeanStd_obj;
 
-//    sleep(1);
-//    event->ignore();
 }
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    if(isShowCamera)
+    {
+        int height =ui->showTOF_label->height();
+        ui->video_widget->setFixedHeight(height);
+        qDebug()<<"size has changed height = "<<height<<endl;
+    }
+
+
+}
+

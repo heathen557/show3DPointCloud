@@ -670,37 +670,51 @@ void ReceUSB_Msg::saveSettingSlot(QString filePath,int deviceId,bool recvFlag)
 
 
     /***************文本中写入str2*****************************************************/
-    res = System_Register_Read(17, dataStr);
-//    ba = dataStr.toLatin1();
-//    c_str = ba.data();
-//    m = uint8_t(c_str[0]);
-    m = dataStr.toInt();
-    QString tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
-    textString = tmpData;
+//    res = System_Register_Read(17, dataStr);
+////    ba = dataStr.toLatin1();
+////    c_str = ba.data();
+////    m = uint8_t(c_str[0]);
+//    m = dataStr.toInt();
+//    QString tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
+//    textString = tmpData;
 
-    res = System_Register_Read(18, dataStr);
-//    ba = dataStr.toLatin1();
-//    c_str = ba.data();
-//    m = uint8_t(c_str[0]);
-    m = dataStr.toInt();
-    tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
-    textString.append(tmpData);
+//    res = System_Register_Read(18, dataStr);
+////    ba = dataStr.toLatin1();
+////    c_str = ba.data();
+////    m = uint8_t(c_str[0]);
+//    m = dataStr.toInt();
+//    tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
+//    textString.append(tmpData);
 
 
-    res = System_Register_Read(226, dataStr);
-//    ba = dataStr.toLatin1();
-//    c_str = ba.data();
-//    m = uint8_t(c_str[0]);
-    m = dataStr.toInt();
-    tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
-    textString.append(tmpData);
+//    res = System_Register_Read(226, dataStr);
+////    ba = dataStr.toLatin1();
+////    c_str = ba.data();
+////    m = uint8_t(c_str[0]);
+//    m = dataStr.toInt();
+//    tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
+//    textString.append(tmpData);
 
+
+
+
+    QString tmpData ;
+    textString.clear();
+    for(int n=0; n<6; n++)
+    {
+        res = System_Register_Read(17+n,dataStr);
+        m = dataStr.toInt();
+        tmpData = QString("%1 ").arg(m,2,16,QLatin1Char('0')).toUpper();
+        textString.append(tmpData);
+
+    }
     out<<textString.toLocal8Bit()<<endl;
+
 
 
     /***************文本中写入str3*****************************************************/
     textString.clear();
-    for (i = 0; i < 12; i++)
+    for (i = 0; i < 13; i++)
     {
         res = System_Register_Read((32+i), dataStr);
 //        ba = dataStr.toLatin1();
