@@ -37,7 +37,8 @@ SOURCES += main.cpp\
     dealusb_msg.cpp \
     statisticsdialog.cpp \
     calmeanstdthread.cpp \
-    surfacegraph.cpp
+    surfacegraph.cpp \
+    openlocaldialog.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -52,12 +53,14 @@ HEADERS  += mainwindow.h \
     dealusb_msg.h \
     statisticsdialog.h \
     calmeanstdthread.h \
-    surfacegraph.h
+    surfacegraph.h \
+    openlocaldialog.h
 
 
 FORMS    += mainwindow.ui \
     filesave.ui \
-    statisticsdialog.ui
+    statisticsdialog.ui \
+    openlocaldialog.ui
 
 INCLUDEPATH += "D:/programInstall/libsub"
 #INCLUDEPATH += -lD:/programInstall/libsub

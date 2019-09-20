@@ -4186,6 +4186,7 @@ void MainWindow::on_tabWidget_2_currentChanged(int index)
         camera = new QCamera(cameraInfo);
         ui->video_widget->setAspectRatioMode(Qt::IgnoreAspectRatio);
         int height =ui->showTOF_label->height();
+//        int height = ui->showIntensity_label->height();
         ui->video_widget->setFixedHeight(height);
         camera->setViewfinder(ui->video_widget);
         camera->start();

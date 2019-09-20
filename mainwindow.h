@@ -20,6 +20,7 @@
 #include <QCamera>
 #include <QCameraInfo>
 #include <QCameraViewfinder>
+#include<openlocaldialog.h>
 
 namespace Ui {
 class MainWindow;
@@ -79,6 +80,8 @@ public:
     fileSave fileSaveDia;
 
     statisticsDialog  statisticsDia_;
+
+    openLocalDialog openLocalDia_;
 
 
     /***********单个寄存器配置**********/
