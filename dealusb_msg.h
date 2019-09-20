@@ -15,6 +15,7 @@
 #include<vector>
 #include<omp.h>
 #include<QFile>
+#include<QTimer>
 
 
 using namespace std;
@@ -68,6 +69,10 @@ public:
 
     bool isFilterFlag;
 
+    QString filePath;
+    QTimer *localFile_timer;
+    int fileIndex;
+
 signals:
     void staticValueSignal(float,float,float,float,float,float,float,float,float,float);
 
@@ -92,6 +97,8 @@ public slots:
 
     //添加读取本地tof和PEAK的槽函数
     void readLocalPCDFile();
+
+    void selectLocalFile_slot(QString sPath);
 
 
 };

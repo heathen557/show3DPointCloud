@@ -128,11 +128,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->action_3,SIGNAL(triggered()),this,SLOT(showStatisticDia_slot()));
     connect(calMeanStd_obj,SIGNAL(statistic_MeanStdSignal(QStringList,QStringList,QStringList,QStringList)),&statisticsDia_,SLOT(statistic_MeanStdSlot(QStringList,QStringList,QStringList,QStringList)));
-
     connect(&statisticsDia_,SIGNAL(startStop_signal(int)),calMeanStd_obj,SLOT(startStop_slot(int)));
-
     connect(&statisticsDia_,SIGNAL(alterStatisticFrameNum_signal(int)),dealUsbMsg_obj,SLOT(alterStatisticFrameNum_slot(int)));
 
+    //本地文件
+    connect(ui->action_4,SIGNAL(triggered()),this,SLOT(showOpenLocalDia_slot()));
+    connect(&openLocalDia_,SIGNAL(selectLocalFile_signal(QString)),dealUsbMsg_obj,SLOT(selectLocalFile_slot(QString)));
 
     initGUI();
     initTreeWidget();
@@ -974,13 +975,13 @@ void MainWindow::on_pushButton_clicked()
 //播放槽函数
 void MainWindow::on_pushButton_2_clicked()
 {
-//    ui->widget->readFileTimer.start(20);
-//    showTimer.start(90);
-//    oneSecondTimer.start(1000);
+    ui->widget->readFileTimer.start(20);
+    showTimer.start(90);
+    oneSecondTimer.start(1000);
 
     if(!isLinkSuccess)
     {
-        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+//        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
         return;
     }
 
@@ -1387,6 +1388,14 @@ void MainWindow::showStatisticDia_slot()
 {
     statisticsDia_.show();
 }
+
+
+/***************读取本地文件**********************************/
+void MainWindow::showOpenLocalDia_slot()
+{
+    openLocalDia_.show();
+}
+
 
 
 /**********************单个寄存器配置相关的槽函数******************************************/
