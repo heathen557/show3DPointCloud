@@ -327,24 +327,28 @@ public:
 
         pushButton_3 = new QPushButton(frame_7);
         pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        pushButton_3->setMinimumSize(QSize(60, 20));
         pushButton_3->setMaximumSize(QSize(60, 20));
 
         gridLayout_6->addWidget(pushButton_3, 0, 2, 1, 1);
 
         pushButton_4 = new QPushButton(frame_7);
         pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
+        pushButton_4->setMinimumSize(QSize(60, 20));
         pushButton_4->setMaximumSize(QSize(60, 20));
 
         gridLayout_6->addWidget(pushButton_4, 0, 3, 1, 1);
 
         pushButton_5 = new QPushButton(frame_7);
         pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
+        pushButton_5->setMinimumSize(QSize(60, 20));
         pushButton_5->setMaximumSize(QSize(60, 20));
 
         gridLayout_6->addWidget(pushButton_5, 0, 4, 1, 1);
 
         change_pushButton = new QPushButton(frame_7);
         change_pushButton->setObjectName(QStringLiteral("change_pushButton"));
+        change_pushButton->setMinimumSize(QSize(100, 20));
         change_pushButton->setMaximumSize(QSize(100, 16777215));
 
         gridLayout_6->addWidget(change_pushButton, 0, 5, 1, 1);
@@ -627,6 +631,7 @@ public:
         tabWidget1->setObjectName(QStringLiteral("tabWidget1"));
         tabWidget1->setMaximumSize(QSize(16777215, 400));
         tabWidget1->setStyleSheet(QString::fromUtf8("font:9pt \"\351\273\221\344\275\223\";"));
+        tabWidget1->setTabPosition(QTabWidget::South);
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
         gridLayout_13 = new QGridLayout(tab);

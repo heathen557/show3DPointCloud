@@ -364,6 +364,12 @@ background-color: rgb(0, 0, 0);</string>
                   </item>
                   <item row="0" column="2">
                    <widget class="QPushButton" name="pushButton_3">
+                    <property name="minimumSize">
+                     <size>
+                      <width>60</width>
+                      <height>20</height>
+                     </size>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -377,6 +383,12 @@ background-color: rgb(0, 0, 0);</string>
                   </item>
                   <item row="0" column="3">
                    <widget class="QPushButton" name="pushButton_4">
+                    <property name="minimumSize">
+                     <size>
+                      <width>60</width>
+                      <height>20</height>
+                     </size>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -390,6 +402,12 @@ background-color: rgb(0, 0, 0);</string>
                   </item>
                   <item row="0" column="4">
                    <widget class="QPushButton" name="pushButton_5">
+                    <property name="minimumSize">
+                     <size>
+                      <width>60</width>
+                      <height>20</height>
+                     </size>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -403,6 +421,12 @@ background-color: rgb(0, 0, 0);</string>
                   </item>
                   <item row="0" column="5">
                    <widget class="QPushButton" name="change_pushButton">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>100</width>
@@ -819,6 +843,9 @@ font:10pt &quot;黑体&quot;;
            </property>
            <property name="styleSheet">
             <string notr="true">font:9pt &quot;黑体&quot;;</string>
+           </property>
+           <property name="tabPosition">
+            <enum>QTabWidget::South</enum>
            </property>
            <property name="currentIndex">
             <number>1</number>

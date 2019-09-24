@@ -11,6 +11,7 @@ fileSave::fileSave(QWidget *parent) :
     ui->setupUi(this);
     ui->radioButton->setChecked(true);    //默认设置为不保存
     ui->lineEdit->setEnabled(false);
+    ui->lineEdit->setReadOnly(true);
     ui->SelFilePath_pushButton->setEnabled(false);
 
     ui->radioButton_3->setChecked(true);  //默认设置为保存pcd(二进制格式)

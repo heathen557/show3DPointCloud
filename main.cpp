@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-//    qInstallMessageHandler(myMessageOutput);
+    qInstallMessageHandler(myMessageOutput);
 
     QApplication a(argc, argv);
     MainWindow w;

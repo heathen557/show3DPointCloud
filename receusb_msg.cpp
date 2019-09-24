@@ -112,7 +112,7 @@ void ReceUSB_Msg::closeUSB()
 {
     if(devHandle)
     {
-        readTimer->stop();   //先关闭数据接收
+//        readTimer->stop();   //先关闭数据接收
         devOpenFlg = false;
         //        UsbListener::quit();
         int ret = usb_close(devHandle); // Exit Thread
@@ -265,12 +265,11 @@ void ReceUSB_Msg::read_usb()
         if (ret < 0) {
             qDebug("**************************************************error reading:%s", usb_strerror());
             emit linkInfoSignal(2);  //  2:没有接收到数据
-            readTimer->stop();
+//            readTimer->stop();
+//            break;
         }
 
 //        qDebug()<<"ret = " <<ret<<endl;
-
-
 
         if(260 == ret)
         {
@@ -313,10 +312,7 @@ void ReceUSB_Msg::read_usb()
 
         }
 
-
-
-
-    }
+    }//while
 
 
 }
@@ -327,7 +323,7 @@ void ReceUSB_Msg::run(int vId, int pId)
     idVendor_ = vId;
     idProduct_ = pId;
 
-    readTimer = new QTimer();
+//    readTimer = new QTimer();
 //    connect(readTimer, SIGNAL(timeout()),this,SLOT(read_usb()));
     openLinkDevSlot();
 

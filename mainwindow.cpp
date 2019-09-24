@@ -975,15 +975,15 @@ void MainWindow::on_pushButton_clicked()
 //播放槽函数
 void MainWindow::on_pushButton_2_clicked()
 {
-    ui->widget->readFileTimer.start(20);
-    showTimer.start(90);
-    oneSecondTimer.start(1000);
+//    ui->widget->readFileTimer.start(20);
+//    showTimer.start(90);
+//    oneSecondTimer.start(1000);
 
-    if(!isLinkSuccess)
-    {
+//    if(!isLinkSuccess)
+//    {
 //        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
-        return;
-    }
+//        return;
+//    }
 
     //    isRecvFlag = true;
     //    emit read_usb_signal();
@@ -993,7 +993,7 @@ void MainWindow::on_pushButton_2_clicked()
         //        if(isWriteSuccess)
         //        {
         showTimer.start(90);
-        ui->widget->readFileTimer.start(20);
+        ui->widget->readFileTimer.start(90);
         oneSecondTimer.start(1000);
 
         QString tempstr = QStringLiteral("准备数据接收,开始播放~");
@@ -1001,14 +1001,18 @@ void MainWindow::on_pushButton_2_clicked()
         QString str = tempstr + "               " +t1.toString("hh:mm:ss");
         ui->textEdit_2->append(str);
 
-        isRecvFlag = true;
-        emit read_usb_signal();
+        if(isLinkSuccess)
+        {
+            isRecvFlag = true;
+            emit read_usb_signal();
+        }
 
 
-        //        }else
-        //        {
-        ////            QMessageBox::information(NULL,"告警","isWriteSuccess == FALSE 未接收到数据，请检查设备连接！");
-        //        }
+
+//        }else
+//        {
+////            QMessageBox::information(NULL,"告警","isWriteSuccess == FALSE 未接收到数据，请检查设备连接！");
+//        }
         ui->pushButton_2->setText(QStringLiteral("暂停"));
 
     }else

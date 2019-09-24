@@ -134,7 +134,7 @@ Logo::Logo(QObject *parent):
     m_count = 0;
     isShowPointCloud = false;
 
-    const int NumSectors = 10000;
+    const int NumSectors = 50000;
 
     isFilter = false;
 
@@ -142,12 +142,12 @@ Logo::Logo(QObject *parent):
 
 //        m_data.append(0.0);
         GLfloat *p = m_data.data() + m_count;
-        *p++ = 10000;
-        *p++ = 10000;;
-        *p++ = 10000;;
-        *p++ = 1.0;
-        *p++ = 1.0;
-        *p++ = 1.0;
+        *p++ = 0;
+        *p++ = 0;;
+        *p++ = 0;;
+        *p++ = 0;
+        *p++ = 0;
+        *p++ = 0;
         m_count += 6;
 
     }
@@ -271,46 +271,50 @@ void Logo::readPCDFile1()
         return;
 
     mutex.lock();
-    pcl::copyPointCloud(pointCloudRgb,needDealCloud_rgb);
-    pcl::copyPointCloud(pointCloudRgb,DealedCloud_rgb);
+//    pcl::copyPointCloud(pointCloudRgb , needDealCloud_rgb);
+    pcl::copyPointCloud(pointCloudRgb , DealedCloud_rgb);
+
+    QString str = "E:/22/" +  QString::number(index) + "_.pcd";
+    pcl::io::savePCDFile(str.toStdString(),DealedCloud_rgb);
+    index++;
     mutex.unlock();
 
-    if(isFilter==100)    //这里的意思是在这里不进行滤波操作，设参数等于100（随意数）
-    {
-        /*******************开启滤波功能*********************************/
-        //先用直通滤波把所有零点重复的零点过滤掉
-       pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
-        pass.setInputCloud(needDealCloud_rgb.makeShared());                //设置待滤波的点云
-        pass.setFilterFieldName("y");                             //设置在Z轴方向上进行滤波
-        pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下0.10米去除)
-        pass.setFilterLimitsNegative(true);                       //保留
-        pass.filter(tempCloud_rgb);                                   //滤波并存储
-        if(tempCloud_rgb.size()<1)
-            return;
+//    if(isFilter==100)    //这里的意思是在这里不进行滤波操作，设参数等于100（随意数）
+//    {
+//        /*******************开启滤波功能*********************************/
+//        //先用直通滤波把所有零点重复的零点过滤掉
+//        pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
+//        pass.setInputCloud(needDealCloud_rgb.makeShared());                //设置待滤波的点云
+//        pass.setFilterFieldName("y");                             //设置在Z轴方向上进行滤波
+//        pass.setFilterLimits(0, 0.10);                               //设置滤波范围(从最高点向下0.10米去除)
+//        pass.setFilterLimitsNegative(true);                       //保留
+//        pass.filter(tempCloud_rgb);                                   //滤波并存储
+//        if(tempCloud_rgb.size()<1)
+//            return;
 
-        //  基于统计运算的滤波算法
-//        DealedCloud_rgb.clear();
-//        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
-//        sor.setInputCloud(tempCloud_rgb.makeShared());
-//        sor.setMeanK(20);
-//        sor.setStddevMulThresh(0);
-//        //40  0.1 不见前面噪点
-//        sor.filter(DealedCloud_rgb);
-//        qDebug()<<"after filter the points'Number = "<<DealedCloud_rgb.size()<<endl;
+//        //  基于统计运算的滤波算法
+////        DealedCloud_rgb.clear();
+////        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
+////        sor.setInputCloud(tempCloud_rgb.makeShared());
+////        sor.setMeanK(20);
+////        sor.setStddevMulThresh(0);
+////        //40  0.1 不见前面噪点
+////        sor.filter(DealedCloud_rgb);
+////        qDebug()<<"after filter the points'Number = "<<DealedCloud_rgb.size()<<endl;
 
-        //条件滤波   设置半径 以及 圆周内的点数
-        DealedCloud_rgb.resize(0);
-        pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
-        outrem.setInputCloud(tempCloud_rgb.makeShared());              //设置输入点云
-        outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
-        outrem.setMinNeighborsInRadius(30);       //设置查询点的邻近点集数小于2的删除
-        outrem.filter (DealedCloud_rgb);//执行条件滤波，存储结果到cloud_filtered
+//        //条件滤波   设置半径 以及 圆周内的点数
+//        DealedCloud_rgb.resize(0);
+//        pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
+//        outrem.setInputCloud(tempCloud_rgb.makeShared());              //设置输入点云
+//        outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
+//        outrem.setMinNeighborsInRadius(30);       //设置查询点的邻近点集数小于2的删除
+//        outrem.filter (DealedCloud_rgb);//执行条件滤波，存储结果到cloud_filtered
 
-        int len = outrem.getRemovedIndices()->size();
-        qDebug()<<"logo fileted size = "<<outrem.getRemovedIndices()->size();
+//        int len = outrem.getRemovedIndices()->size();
+//        qDebug()<<"logo fileted size = "<<outrem.getRemovedIndices()->size();
 
-        /***************************************************************/
-    }
+//        /***************************************************************/
+//    }  //Filter
 
 /*
     //  不进行直通滤波 直接进行基于统计运算的滤波算法
@@ -330,7 +334,7 @@ void Logo::readPCDFile1()
     int m = 0;
 
 
-//#pragma omp parallel for
+//    qDebug()<<"show thre pointCloud, the size = "<<DealedCloud_rgb.points.size()<<endl;
     for(int n=0; n<DealedCloud_rgb.points.size(); n++)
     {
 
@@ -348,13 +352,9 @@ void Logo::readPCDFile1()
         m_data[4+m] = ng/225.0;
         m_data[5+m] = nb/255.0;
 
-
         m += 6;
     }
 
-
-
-//    m_data.resize(m);
 
     for(;m<98304;m++)
     {
