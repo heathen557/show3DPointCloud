@@ -955,7 +955,6 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
 void DealUsb_msg::selectLocalFile_slot(QString sPath)
 {
     filePath = sPath;
-    //    readLocalPCDFile();
 
     if( NULL == localFile_timer)
     {
