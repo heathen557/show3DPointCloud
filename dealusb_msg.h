@@ -104,7 +104,7 @@ public slots:
 };
 
 
-static float colormap[1024*3]={
+static double colormap[1024*3]={
          0,  0,129,
          0,  0,130,
          0,  0,131,
@@ -17518,7 +17518,7 @@ static float x_Weight[] = {
 };
 
 
-static float y_Weight[] = {
+static double y_Weight[] = {
 0.86683,
 0.86821,
 0.86959,
@@ -33906,7 +33906,7 @@ static float y_Weight[] = {
 };
 
 
-static float z_Weight[] = {
+static double z_Weight[] = {
 0.21211,
 0.21245,
 0.21279,

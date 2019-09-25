@@ -266,7 +266,7 @@ void ReceUSB_Msg::read_usb()
             qDebug("**************************************************error reading:%s", usb_strerror());
             emit linkInfoSignal(2);  //  2:没有接收到数据
 //            readTimer->stop();
-//            break;
+            break;
         }
 
 //        qDebug()<<"ret = " <<ret<<endl;
@@ -647,7 +647,7 @@ void ReceUSB_Msg::saveSettingSlot(QString filePath,int deviceId,bool recvFlag)
     QString textString;
 
     QByteArray ba;
-    const char *c_str;
+//    const char *c_str;
     int m;
     /***************文本中写入str1******************************************/
     for(; i<50 ; i++)

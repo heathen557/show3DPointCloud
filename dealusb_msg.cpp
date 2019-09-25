@@ -81,7 +81,6 @@ void DealUsb_msg::alterStatisticFrameNum_slot(int num)
 //修改是否进行滤波的槽函数
 void DealUsb_msg::isFilter_slot(bool isFiter)
 {
-    //    readLocalPCDFile();
     if(true == isFiter)
     {
         isFilterFlag = true;
@@ -104,7 +103,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
     int imgRow,imgCol;
     int spadNum = (quint8)(MyBuffer[0]) +  (((quint8)(MyBuffer[1]))<<8);
     int line_number = (quint8)(MyBuffer[2]) +  (((quint8)(MyBuffer[3]))<<8);
-    //    qDebug()<<"here111   spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;
+//     qDebug()<<"spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;     //打包发布会导致打包发布后的程序卡顿
 
     if(line_number!=0  && ( (lastLineNum+1) != line_number) )
     {
@@ -1199,7 +1198,7 @@ void DealUsb_msg::readLocalPCDFile()
         //        if(tempRgbCloud_pass.size()<1)
         //                return;
 
-        //  基于统计运算的滤波算法
+        //  统计
         tempRgbCloud_radius.clear();
         pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> outrem(true);
         outrem.setInputCloud(tempRgbCloud.makeShared());

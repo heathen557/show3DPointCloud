@@ -134,7 +134,9 @@ Logo::Logo(QObject *parent):
     m_count = 0;
     isShowPointCloud = false;
 
-    const int NumSectors = 50000;
+//    const int NumSectors = 50000;
+
+    const int NumSectors = 30000;
 
     isFilter = false;
 
@@ -273,10 +275,6 @@ void Logo::readPCDFile1()
     mutex.lock();
 //    pcl::copyPointCloud(pointCloudRgb , needDealCloud_rgb);
     pcl::copyPointCloud(pointCloudRgb , DealedCloud_rgb);
-
-    QString str = "E:/22/" +  QString::number(index) + "_.pcd";
-    pcl::io::savePCDFile(str.toStdString(),DealedCloud_rgb);
-    index++;
     mutex.unlock();
 
 //    if(isFilter==100)    //这里的意思是在这里不进行滤波操作，设参数等于100（随意数）
