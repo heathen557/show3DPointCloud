@@ -631,7 +631,8 @@ public:
         tabWidget1->setObjectName(QStringLiteral("tabWidget1"));
         tabWidget1->setMaximumSize(QSize(16777215, 400));
         tabWidget1->setStyleSheet(QString::fromUtf8("font:9pt \"\351\273\221\344\275\223\";"));
-        tabWidget1->setTabPosition(QTabWidget::South);
+        tabWidget1->setTabPosition(QTabWidget::North);
+        tabWidget1->setTabShape(QTabWidget::Triangular);
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
         gridLayout_13 = new QGridLayout(tab);
@@ -838,8 +839,8 @@ public:
         setAll_pushButton->setText(QApplication::translate("MainWindow", "\345\205\250\351\203\250\345\206\231\345\205\245", Q_NULLPTR));
         toolBox->setItemText(toolBox->indexOf(page_2), QApplication::translate("MainWindow", "           \350\256\276\345\244\207\345\257\204\345\255\230\345\231\250\351\205\215\347\275\256", Q_NULLPTR));
         groupBox_5->setTitle(QApplication::translate("MainWindow", "\347\233\221\346\216\247\347\252\227\345\217\243\357\274\232", Q_NULLPTR));
-        tabWidget1->setTabText(tabWidget1->indexOf(tab), QApplication::translate("MainWindow", "\350\277\236\346\216\245\344\277\241\346\201\257", Q_NULLPTR));
-        tabWidget1->setTabText(tabWidget1->indexOf(tab_2), QApplication::translate("MainWindow", "\350\277\220\350\241\214\346\227\245\345\277\227", Q_NULLPTR));
+        tabWidget1->setTabText(tabWidget1->indexOf(tab), QApplication::translate("MainWindow", "\350\277\220\350\241\214\346\227\245\345\277\227", Q_NULLPTR));
+        tabWidget1->setTabText(tabWidget1->indexOf(tab_2), QApplication::translate("MainWindow", "\345\221\212\350\255\246\346\227\245\345\277\227", Q_NULLPTR));
         label_11->setText(QApplication::translate("MainWindow", "           TOF/PEAK\344\277\241\346\201\257\347\273\237\350\256\241", Q_NULLPTR));
         QTableWidgetItem *___qtablewidgetitem = tableWidget_2->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QApplication::translate("MainWindow", "minValue", Q_NULLPTR));

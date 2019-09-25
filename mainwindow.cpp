@@ -103,6 +103,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,SIGNAL(closeLinkSignal()),recvUsbMsg_obj,SLOT(closeUSB()));
     connect(recvUsbMsg_obj,SIGNAL(linkInfoSignal(int)),this,SLOT(linkInfoSlot(int)));
 
+    connect(recvUsbMsg_obj,SIGNAL(showRunInfoSignal(QString)),this,SLOT(showRunInfoSlot(QString)));
+    connect(recvUsbMsg_obj,SIGNAL(showWarnInfoSignal(QString)),this,SLOT(showWarnInfoSlot(QString)));
+
     connect(this,SIGNAL(readSysSignal(int,bool)),recvUsbMsg_obj,SLOT(readSysSlot(int,bool)));
     connect(this,SIGNAL(writeSysSignal(int,QString,bool)),recvUsbMsg_obj,SLOT(writeSysSlot(int,QString,bool)));
     connect(this,SIGNAL(readDevSignal(int,int,bool)),recvUsbMsg_obj,SLOT(readDevSlot(int,int,bool)));
@@ -825,7 +828,7 @@ void MainWindow::linkInfoSlot(int flagNum)
         tempstr_1 = QStringLiteral("接收数据异常，请检查设备！");
         t1 = QTime::currentTime();
         str = tempstr_1 + "           " +t1.toString("hh:mm:ss");
-        ui->textEdit_2->append(str);
+//        ui->textEdit_2->append(str);
 
 
 
@@ -898,8 +901,41 @@ void MainWindow::linkInfoSlot(int flagNum)
     }
 
     str = tempStr  +t1.toString("hh:mm:ss");
+//    ui->textEdit->append(str);
+}
+
+
+//显示运行日志的槽函数
+void MainWindow::showRunInfoSlot(QString msgStr)
+{
+    int len = msgStr.length();
+    QTime t1 = QTime::currentTime();
+    QString timeStr = t1.toString("hh:mm:ss.zzz");
+    QString str =QString("%1%2").arg(msgStr).arg(timeStr,100-len,QLatin1Char(' '));
+
     ui->textEdit->append(str);
 }
+
+
+
+//显示告警信息日志的槽函数
+void MainWindow::showWarnInfoSlot(QString warnStr)
+{
+    int len = warnStr.length();
+    QTime t1 = QTime::currentTime();
+    QString timeStr = t1.toString("hh:mm:ss.zzz");
+    QString str =QString("%1%2").arg(warnStr).arg(timeStr,100-len,QLatin1Char(' '));
+
+    ui->textEdit_2->append(str);
+}
+
+
+
+
+
+
+
+
 
 //没接收到一帧会进入一次，故可以统计 帧率
 void MainWindow::recvStaticValueSlot(float tofMin,float tofMax,float peakMin,float peakMax,float xMin,float xMax,float yMin,float yMax,float zMin,float zMax)
@@ -963,10 +999,9 @@ void MainWindow::on_pushButton_clicked()
 
 
         /*****打印到运行日志*****/
-        QString tempstr = QStringLiteral("已经关闭USB的连接！");
-        QTime t1 = QTime::currentTime();
-        QString str = tempstr + "               " +t1.toString("hh:mm:ss");
-        ui->textEdit_2->append(str);
+        QString tempstr = QStringLiteral("USB link closed");
+        showRunInfoSlot(tempstr);
+
     }
 
 }
@@ -996,10 +1031,11 @@ void MainWindow::on_pushButton_2_clicked()
         ui->widget->readFileTimer.start(90);
         oneSecondTimer.start(1000);
 
-        QString tempstr = QStringLiteral("准备数据接收,开始播放~");
-        QTime t1 = QTime::currentTime();
-        QString str = tempstr + "               " +t1.toString("hh:mm:ss");
-        ui->textEdit_2->append(str);
+        QString tempstr = QStringLiteral("receive USB data, vedio start...");
+//        QTime t1 = QTime::currentTime();
+//        QString str = tempstr + "               " +t1.toString("hh:mm:ss");
+//        ui->textEdit_2->append(str);
+        showRunInfoSlot(tempstr);
 
         if(isLinkSuccess)
         {
@@ -1022,10 +1058,11 @@ void MainWindow::on_pushButton_2_clicked()
         ui->pushButton_2->setText(QStringLiteral("播放"));
 
         /*****打印到运行日志*****/
-        QString tempstr = QStringLiteral("播放暂停！");
-        QTime t1 = QTime::currentTime();
-        QString str = tempstr + "                           " +t1.toString("hh:mm:ss");
-        ui->textEdit_2->append(str);
+        QString tempstr = QStringLiteral("vedio pause");
+//        QTime t1 = QTime::currentTime();
+//        QString str = tempstr + "                           " +t1.toString("hh:mm:ss");
+//        ui->textEdit_2->append(str);
+        showRunInfoSlot(tempstr);
     }
 
 

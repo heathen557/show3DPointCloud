@@ -90,6 +90,10 @@ signals:
 
     void reReadDevSignal(int,QString); //读取设备指令 返回信号
 
+    void showRunInfoSignal(QString msgStr);     //显示运行日志的槽函数
+
+    void showWarnInfoSignal(QString warnStr);  //显示告警信息日志的槽函数
+
 
 
 

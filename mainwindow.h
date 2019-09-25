@@ -163,6 +163,10 @@ private slots:
 
     void linkInfoSlot(int );      //接收线程发过来的链接信息（告警、错误）
 
+    void showRunInfoSlot(QString msgStr);     //显示运行日志的槽函数
+
+    void showWarnInfoSlot(QString warnStr);  //显示告警信息日志的槽函数
+
     void initGUI();
 
     void on_readSys_pushButton_clicked();

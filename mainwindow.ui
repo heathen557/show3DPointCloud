@@ -845,14 +845,17 @@ font:10pt &quot;黑体&quot;;
             <string notr="true">font:9pt &quot;黑体&quot;;</string>
            </property>
            <property name="tabPosition">
-            <enum>QTabWidget::South</enum>
+            <enum>QTabWidget::North</enum>
+           </property>
+           <property name="tabShape">
+            <enum>QTabWidget::Triangular</enum>
            </property>
            <property name="currentIndex">
             <number>1</number>
            </property>
            <widget class="QWidget" name="tab">
             <attribute name="title">
-             <string>连接信息</string>
+             <string>运行日志</string>
             </attribute>
             <layout class="QGridLayout" name="gridLayout_13">
              <property name="leftMargin">
@@ -874,7 +877,7 @@ font:10pt &quot;黑体&quot;;
            </widget>
            <widget class="QWidget" name="tab_2">
             <attribute name="title">
-             <string>运行日志</string>
+             <string>告警日志</string>
             </attribute>
             <layout class="QGridLayout" name="gridLayout_17">
              <property name="leftMargin">

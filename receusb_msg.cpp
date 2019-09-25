@@ -119,6 +119,8 @@ void ReceUSB_Msg::closeUSB()
         qDebug() << "Close USB Device [" << ret << "]";
         devHandle = NULL;
         isFirstLink = false;   //以后就不是第一次连接了
+
+        emit showRunInfoSignal(QStringLiteral("断开设备连接"));
     }
 
 }
@@ -129,7 +131,7 @@ void ReceUSB_Msg::closeUSB()
 bool ReceUSB_Msg::System_Register_Read(int Address, QString &Data)
 {
 
-    bool res = true;
+    int res = 0;
     int transLen = 0;
     struct usb_ctrl_setup Cmd;
     Cmd.bRequestType = 0xC0;
@@ -139,11 +141,25 @@ bool ReceUSB_Msg::System_Register_Read(int Address, QString &Data)
     Cmd.wLength = 0x0001;
     char data[1];
     QString arr;
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
-//    Data = QString(data[0]);
+    int num =  usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+
 
     quint8 tmp = quint8(data[0]);
     Data = QString::number(tmp);
+
+    if(num>0)
+    {
+        res= true;
+        QString str = "System_Register_Read [R]addr="+ QString::number(Address,16).toUpper() + ", msg="+QString::number(tmp,16).toUpper()+" ,res=1 ";
+        emit showRunInfoSignal(str);
+
+    }else
+    {
+        res = false;
+        QString str = "System_Register_Read [R]addr="+ QString::number(Address,16).toUpper() + ", msg="+QString::number(tmp,16).toUpper()+" ,res=0 ";
+        emit showRunInfoSignal(str);
+    }
+
 
     return res;
 }
@@ -162,7 +178,22 @@ bool ReceUSB_Msg::System_Register_Write(int Address, QString &Data)
     Cmd.wIndex = Address;  // need change
     Cmd.wLength = 0x0001;
     data[0] = Data.toInt(NULL,16);    //need modify
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    int num =  usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+
+    if(num>0)
+    {
+        res = true;
+
+        QString str = "System_Register_Write [W]addr="+ QString::number(Address,16).toUpper() + ", msg="+Data+" ,res=1 ";
+        emit showRunInfoSignal(str);
+
+    }else
+    {
+        res = false;
+        QString str = "System_Register_Write [W]addr="+ QString::number(Address,16).toUpper() + ", msg="+Data+" ,res=0 ";
+        emit showRunInfoSignal(str);
+    }
+
 
     return res;
 }
@@ -180,30 +211,44 @@ bool ReceUSB_Msg::Device_Register_Read(int slavedId,int Address,QString &Data)
     Cmd.wIndex = 0x00f1;
     Cmd.wLength = 0x0001;
     data[0]= slavedId;   //need modify
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    int num;
+    num =  usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
 
     Cmd.wIndex = 0x00f5;
     data[0] = 0x33;
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    num +=  usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
 
     Cmd.wIndex = 0x00f2;
     data[0] = Address;      //need modify
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    num +=  usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
 
     Cmd.wIndex = 0x00f5;
     data[0] = 0xf9;
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    num +=  usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
 
     Cmd.bRequestType = 0xC0;
     Cmd.wIndex = 0x00f4;
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
+    num +=  usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,data,1,transLen);
 
     quint8 tmp = quint8(data[0]);
     Data = QString::number(tmp);
+
+
+    if(num>0)
+    {
+        res = true;
+        QString str = "Device_Register_Read [R]addr="+ QString::number(Address,16).toUpper() + ", msg="+QString::number(tmp,16).toUpper()+" ,res=1 ";
+        emit showRunInfoSignal(str);
+    }else
+    {
+        res = false;
+        QString str = "Device_Register_Read [R]addr="+ QString::number(Address,16).toUpper() + ", msg="+QString::number(tmp,16).toUpper()+" ,res=0 ";
+        emit showRunInfoSignal(str);
+    }
 
     //此处返回的是  十进制数字
     return res;
@@ -223,25 +268,37 @@ bool ReceUSB_Msg::Device_Register_Write(int slavedId,int Address,QString &Data)
     Cmd.wIndex = 0x00f1;
     Cmd.wLength = 0x0001;
     data[0] = slavedId;      //need modify
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,(char*)(&data[0]),1,transLen);
+
+    int num;
+    num = usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,(char*)(&data[0]),1,transLen);
 
     Cmd.wIndex = 0x00f5;
     data[0] = 0x37;
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,(char*)(&data[0]),1,transLen);
+    num += usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,(char*)(&data[0]),1,transLen);
 
 
     Cmd.wIndex = 0x00f2;
     data[0] = Address;      //need modify
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,(char*)(&data[0]),1,transLen);
+    num += usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,(char*)(&data[0]),1,transLen);
 
 
     Cmd.wIndex = 0x00f3;
-
     int tmp = Data.toInt(NULL,16);
     data[0] = tmp;
 
+    num += usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,(char*)(&data[0]),1,transLen);
 
-    res = res && usb_control_msg(devHandle,Cmd.bRequestType,Cmd.bRequest,Cmd.wValue,Cmd.wIndex,(char*)(&data[0]),1,transLen);
+    if(num>0)
+    {
+        res = true;
+        QString str = "Device_Register_Write [W]addr="+ QString::number(Address,16).toUpper() + ", msg="+Data.toUpper() +" ,res=1 ";
+        emit showRunInfoSignal(str);
+    }else
+    {
+        res = false;
+        QString str = "Device_Register_Write [W]addr="+ QString::number(Address,16).toUpper() + ", msg="+Data.toUpper() +" ,res=0 ";
+        emit showRunInfoSignal(str);
+    }
 
     return res;
 }
@@ -265,6 +322,9 @@ void ReceUSB_Msg::read_usb()
         if (ret < 0) {
             qDebug("**************************************************error reading:%s", usb_strerror());
             emit linkInfoSignal(2);  //  2:没有接收到数据
+            emit showRunInfoSignal(QStringLiteral("device can not receive data"));
+            emit showWarnInfoSignal(QStringLiteral("device can not receive data"));
+
 //            readTimer->stop();
             break;
         }
@@ -347,6 +407,8 @@ void ReceUSB_Msg::openLinkDevSlot()
         if(numBus <= 0 || numDevs<=0)
         {
             emit linkInfoSignal(1);                //没有发现设备
+            emit showRunInfoSignal(QStringLiteral("can not finf USB devices"));
+
             return;
         }
     }
@@ -363,8 +425,11 @@ void ReceUSB_Msg::openLinkDevSlot()
     if(true ==openUSB(dev))                               //打开USB设备
     {
         emit linkInfoSignal(0);                //打开设备成功
+        emit showRunInfoSignal(QStringLiteral("open USB device success "));
     }else{
         emit linkInfoSignal(3);                //打开设备失败
+        emit showRunInfoSignal(QStringLiteral("can not open USB device"));
+        emit showWarnInfoSignal(QStringLiteral("can not open USB device"));
     }
 
 }
@@ -399,9 +464,12 @@ void ReceUSB_Msg::readSysSlot(int address,bool recvFlag)
 // 12：写入系统成功      13：写入系统失败
 void ReceUSB_Msg::writeSysSlot(int addr,QString data,bool recvFlag)
 {
+    int res;
     if(System_Register_Write(addr, data))
     {
+        res =true;
         emit linkInfoSignal(12);
+
     }
     else
     {
@@ -417,12 +485,16 @@ void ReceUSB_Msg::readDevSlot(int id,int address,bool recvFlag)
 {
     QString data;
 
+    int res;
     if(true == Device_Register_Read(id, address, data))
     {
+        res =true;
         emit reReadDevSignal(address,data);
         emit linkInfoSignal(6);
+
     }else
     {
+        res= false;
         emit linkInfoSignal(7);
     }
 
@@ -441,6 +513,7 @@ void ReceUSB_Msg::writeDevSlot(int slavId,int addr,QString data,bool recvFlag)
     }else
     {
         emit linkInfoSignal(15);
+
     }
 
     isRecvFlag = recvFlag;
@@ -628,8 +701,11 @@ void ReceUSB_Msg::loadSettingSlot(QString filePath,bool recvFlag)
         if(res)
         {
             emit linkInfoSignal(8);
+            emit showRunInfoSignal(QStringLiteral("load setting file success"));
         }else
         {
+            emit showRunInfoSignal(QStringLiteral("load setting file fail !"));
+            emit showWarnInfoSignal(QStringLiteral("load setting file fail !"));
             emit linkInfoSignal(9);
         }
 
@@ -737,6 +813,7 @@ void ReceUSB_Msg::saveSettingSlot(QString filePath,int deviceId,bool recvFlag)
     if(res)
     {
         linkInfoSignal(10);
+        emit showRunInfoSignal(QStringLiteral("save setting file success"));
     }else
     {
         linkInfoSignal(11);
