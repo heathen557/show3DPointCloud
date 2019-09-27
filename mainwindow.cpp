@@ -914,22 +914,10 @@ void MainWindow::showRunInfoSlot(QString msgStr)
 
     QTime t1 = QTime::currentTime();
     QString timeStr = t1.toString("hh:mm:ss.zzz");
-//    QString str =QString("%1%2").arg(msgStr).arg(timeStr,100-len,QLatin1Char(' '));
-
-    QString tmpStr = QString("%1").arg(timeStr,100-len,QLatin1Char(' '));
-
-    qDebug()<<"tmpStr"<<tmpStr<<" tmpStr's len = "<<  tmpStr.length()<< endl;
-
-    QString str;
-    str.append(msgStr).append(tmpStr).append("\n");
-    qDebug()<<"str="<<str<<"  str's len = "<<str.length()<<endl;
+    QString str = timeStr.append("                                                  ").append(msgStr);
 
 
-     logStr = logStr.append(str);
-
-    ui->textEdit->setText(logStr);
-
-//    ui->textEdit->append(str);
+    ui->textEdit->append(str);
 }
 
 
