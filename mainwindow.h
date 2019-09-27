@@ -83,6 +83,8 @@ public:
 
     openLocalDialog openLocalDia_;
 
+    QString logStr;
+
 
     /***********单个寄存器配置**********/
     QLineEdit TDC_lineEdit[13];

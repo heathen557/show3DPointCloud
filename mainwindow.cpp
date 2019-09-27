@@ -39,7 +39,7 @@ int saveFileIndex;      //文件标号；1作为开始
 int formatFlag;         //0:二进制； 1：ASCII 2：TXT
 extern bool  isShowPointCloud;
 bool isTOF;
-int gainImage;
+float gainImage;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -770,8 +770,9 @@ void MainWindow::showImageSlot()
     if(!isShowPointCloud)
         return;
 
-    float width_scale = ui->showTOF_label->width()/256.0;
-    float height_scale = ui->showIntensity_label->width()/64.0;
+    float showWidth = ui->showIntensity_label->width();
+    float showHeight = ui->showIntensity_label->height();
+//    qDebug()<<"width= "<<showWidth<<"    height="<<showHeight<<endl;
 
 
     if(!tofImage.isNull() && !intensityImage.isNull())
@@ -779,8 +780,8 @@ void MainWindow::showImageSlot()
         mutex.lock();
 
         mutex.try_lock();
-        resImage = tofImage.scaled(tofImage.width()*width_scale, tofImage.height()*height_scale, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        resIntenImage = intensityImage.scaled(intensityImage.width()*width_scale, intensityImage.height()*height_scale, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        resImage = tofImage.scaled(showWidth, showHeight , Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        resIntenImage = intensityImage.scaled(showWidth, showHeight , Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         mutex.unlock();
 
         QPixmap pixmap2(QPixmap::fromImage (resImage));
@@ -909,11 +910,26 @@ void MainWindow::linkInfoSlot(int flagNum)
 void MainWindow::showRunInfoSlot(QString msgStr)
 {
     int len = msgStr.length();
+    qDebug()<<"len = "<<len<<endl;
+
     QTime t1 = QTime::currentTime();
     QString timeStr = t1.toString("hh:mm:ss.zzz");
-    QString str =QString("%1%2").arg(msgStr).arg(timeStr,100-len,QLatin1Char(' '));
+//    QString str =QString("%1%2").arg(msgStr).arg(timeStr,100-len,QLatin1Char(' '));
 
-    ui->textEdit->append(str);
+    QString tmpStr = QString("%1").arg(timeStr,100-len,QLatin1Char(' '));
+
+    qDebug()<<"tmpStr"<<tmpStr<<" tmpStr's len = "<<  tmpStr.length()<< endl;
+
+    QString str;
+    str.append(msgStr).append(tmpStr).append("\n");
+    qDebug()<<"str="<<str<<"  str's len = "<<str.length()<<endl;
+
+
+     logStr = logStr.append(str);
+
+    ui->textEdit->setText(logStr);
+
+//    ui->textEdit->append(str);
 }
 
 
@@ -1031,7 +1047,7 @@ void MainWindow::on_pushButton_2_clicked()
         ui->widget->readFileTimer.start(90);
         oneSecondTimer.start(1000);
 
-        QString tempstr = QStringLiteral("receive USB data, vedio start...");
+        QString tempstr = QStringLiteral("receive USB data, vedio start");
 //        QTime t1 = QTime::currentTime();
 //        QString str = tempstr + "               " +t1.toString("hh:mm:ss");
 //        ui->textEdit_2->append(str);
@@ -1340,8 +1356,8 @@ void MainWindow::oneSecondSlot()
 //鼠标停靠处显示TOF 和 peak信息
 void MainWindow::queryPixSlot(int x,int y)
 {
-    float width_scale = ui->showTOF_label->width()/256.0;
-    float height_scale = ui->showIntensity_label->width()/64.0;
+    float width_scale = ui->showIntensity_label->width()/256.0;
+    float height_scale = ui->showIntensity_label->height()/64.0;
 
 
     int index = 256*y/height_scale +x/width_scale ;
@@ -1353,6 +1369,7 @@ void MainWindow::queryPixSlot(int x,int y)
 
     mouseShowMutex.lock();
     QString str ="x="+QString::number(int(x/width_scale)) + ",y="+QString::number(int(y/height_scale)) + ",tof="+QString::number(mouseShowTOF[xIndex][yIndex])+",peak="+QString::number(mouseShowPEAK[xIndex][yIndex]);
+//    QString str ="x="+QString::number(int(x/width_scale)) + ",y="+show_y+ ",tof="+QString::number(mouseShowTOF[xIndex][yIndex])+",peak="+QString::number(mouseShowPEAK[xIndex][yIndex]);
     mouseShowMutex.unlock();
 
     QToolTip::showText(QCursor::pos(),str);
@@ -1421,7 +1438,7 @@ void MainWindow::on_radioButton_clicked()
 
 void MainWindow::on_gainImage_lineEdit_returnPressed()
 {
-    gainImage = ui->gainImage_lineEdit->text().toInt();
+    gainImage = ui->gainImage_lineEdit->text().toFloat();
 }
 
 /***********显示统计均值、方差的槽函数******************************/
@@ -4255,12 +4272,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    if(isShowCamera)
-    {
-        int height =ui->showTOF_label->height();
-        ui->video_widget->setFixedHeight(height);
-        qDebug()<<"size has changed height = "<<height<<endl;
-    }
+//    if(isShowCamera)
+//    {
+//        int height =ui->showTOF_label->height();
+//        ui->video_widget->setFixedHeight(height);
+//        qDebug()<<"size has changed height = "<<height<<endl;
+//    }
 
 
 }

@@ -642,6 +642,7 @@ public:
         gridLayout_13->setContentsMargins(0, 0, 0, 0);
         textEdit = new QTextEdit(tab);
         textEdit->setObjectName(QStringLiteral("textEdit"));
+        textEdit->setStyleSheet(QStringLiteral("font: 9pt \"Times New Roman\";"));
 
         gridLayout_13->addWidget(textEdit, 0, 1, 1, 1);
 
@@ -793,7 +794,7 @@ public:
 
         tabWidget_2->setCurrentIndex(0);
         toolBox->setCurrentIndex(0);
-        tabWidget1->setCurrentIndex(1);
+        tabWidget1->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);

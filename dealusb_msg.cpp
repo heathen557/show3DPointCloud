@@ -23,7 +23,7 @@ extern int formatFlag;         //0:二进制； 1：ASCII 2：TXT
 
 /***tof/peak 切换标识****/
 extern bool isTOF;
-extern int gainImage;   //增益
+extern float gainImage;   //增益
 
 /*******统计信息相关的变量***********/
 extern QMutex statisticMutex;
@@ -51,6 +51,7 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     isFilterFlag = false ;    //初始化时不进行滤波
     isTOF = true;
     localFile_timer = NULL;
+    gainImage = 1;
 
     //    linkServer();
 
@@ -997,14 +998,27 @@ void DealUsb_msg::readLocalPCDFile()
         fileIndex = 1;
         return;
     }
-    for(int i=0; i<countNum-5; i++)            //去掉空的数据
+    for(int i=0; i<countNum; i++)            //去掉空的数据
     {
         int tof,intensity;
+        if(line[i].isEmpty())
+            continue;
+
         tofPeakList = line[i].split(",");
         if(tofPeakList.size()<2)
             return;
-        tof = tofPeakList[0].toInt();
-        intensity = tofPeakList[1].toInt();
+
+        if(isTOF)
+        {
+            tof = tofPeakList[0].toInt();
+            intensity = tofPeakList[1].toInt();
+        }else
+        {
+           intensity = tofPeakList[0].toInt();
+           tof = tofPeakList[1].toInt();
+        }
+
+
 
         //行列以及颜色传递给图像
         imgRow = i%256;
@@ -1017,6 +1031,10 @@ void DealUsb_msg::readLocalPCDFile()
         QRgb tofColor,intenColor;
         int gainIndex_tof = tof*gainImage;
         int gainIndex_intensity =intensity * gainImage;
+
+//        int gainIndex_tof = tof *0.5;
+//        int gainIndex_intensity = intensity * 0.5;
+
         if(gainIndex_tof<1024 && gainIndex_tof>=0)
             tofColor = qRgb(colormap[gainIndex_tof * 3], colormap[gainIndex_tof * 3 + 1], colormap[gainIndex_tof * 3 + 2]);
         else

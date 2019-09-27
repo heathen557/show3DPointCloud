@@ -120,7 +120,7 @@ void ReceUSB_Msg::closeUSB()
         devHandle = NULL;
         isFirstLink = false;   //以后就不是第一次连接了
 
-        emit showRunInfoSignal(QStringLiteral("断开设备连接"));
+        emit showRunInfoSignal("USB link closed");
     }
 
 }
@@ -131,7 +131,7 @@ void ReceUSB_Msg::closeUSB()
 bool ReceUSB_Msg::System_Register_Read(int Address, QString &Data)
 {
 
-    int res = 0;
+    bool res = true;
     int transLen = 0;
     struct usb_ctrl_setup Cmd;
     Cmd.bRequestType = 0xC0;
@@ -407,7 +407,7 @@ void ReceUSB_Msg::openLinkDevSlot()
         if(numBus <= 0 || numDevs<=0)
         {
             emit linkInfoSignal(1);                //没有发现设备
-            emit showRunInfoSignal(QStringLiteral("can not finf USB devices"));
+            emit showRunInfoSignal(QStringLiteral("can not find USB devices"));
 
             return;
         }
