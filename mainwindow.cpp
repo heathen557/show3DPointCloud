@@ -345,6 +345,12 @@ void MainWindow::initGUI()
     ui->tableWidget_2->setItem(0,1,&tofMaxItem_value);
     ui->tableWidget_2->setItem(1,0,&peakMinItem_value);
     ui->tableWidget_2->setItem(1,1,&peakMaxItem_value);
+    ui->tableWidget_2->horizontalHeader()->setStyleSheet("QHeaderView::section{background:rgb(240,240,240)}"); //设置表头背景色
+    ui->tableWidget_2->verticalHeader()->setStyleSheet("QHeaderView::section{background:rgb(240,240,240)}");
+
+
+
+
 
 
 //    ui->tableWidget_4->setColumnWidth(0,130);
@@ -354,6 +360,8 @@ void MainWindow::initGUI()
     ui->tableWidget_4->setRowHeight(2,25);
     ui->tableWidget_4->setSelectionBehavior(QAbstractItemView::SelectRows); //整行选中
     ui->tableWidget_4->setEditTriggers(QAbstractItemView::NoEditTriggers);   //禁止编辑
+    ui->tableWidget_4->horizontalHeader()->setStyleSheet("QHeaderView::section{background:rgb(240,240,240)}"); //设置表头背景色
+    ui->tableWidget_4->verticalHeader()->setStyleSheet("QHeaderView::section{background:rgb(240,240,240)}");
     ui->tableWidget_4->setItem(0,0,&xMinItem_value);
     ui->tableWidget_4->setItem(0,1,&xMaxItem_value);
     ui->tableWidget_4->setItem(1,0,&yMinItem_value);
@@ -4260,12 +4268,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-//    if(isShowCamera)
-//    {
-//        int height =ui->showTOF_label->height();
-//        ui->video_widget->setFixedHeight(height);
-//        qDebug()<<"size has changed height = "<<height<<endl;
-//    }
+    if(isShowCamera)
+    {
+        int height =ui->showTOF_label->height();
+        ui->video_widget->setFixedHeight(height);
+        qDebug()<<"size has changed height = "<<height<<endl;
+    }
 
 
 }

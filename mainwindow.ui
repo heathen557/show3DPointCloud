@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1390</width>
-    <height>710</height>
+    <width>1403</width>
+    <height>729</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1330</width>
-    <height>600</height>
+    <width>80</width>
+    <height>150</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -517,7 +517,7 @@ background-color: rgb(0, 0, 0);</string>
                  <x>0</x>
                  <y>0</y>
                  <width>282</width>
-                 <height>385</height>
+                 <height>384</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -752,7 +752,7 @@ background-color: rgb(0, 0, 0);</string>
                  <x>0</x>
                  <y>0</y>
                  <width>282</width>
-                 <height>385</height>
+                 <height>384</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -797,254 +797,6 @@ background-color: rgb(0, 0, 0);</string>
       </layout>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QGroupBox" name="groupBox_5">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>150</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>150</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">
-
-#groupBox_5{
-font:10pt &quot;黑体&quot;;
-}</string>
-      </property>
-      <property name="title">
-       <string>监控窗口：</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_16">
-       <property name="bottomMargin">
-        <number>3</number>
-       </property>
-       <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_13">
-         <item>
-          <widget class="QTabWidget" name="tabWidget">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>400</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">font:9pt &quot;黑体&quot;;</string>
-           </property>
-           <property name="tabPosition">
-            <enum>QTabWidget::North</enum>
-           </property>
-           <property name="tabShape">
-            <enum>QTabWidget::Triangular</enum>
-           </property>
-           <property name="currentIndex">
-            <number>0</number>
-           </property>
-           <widget class="QWidget" name="tab">
-            <attribute name="title">
-             <string>运行日志</string>
-            </attribute>
-            <layout class="QGridLayout" name="gridLayout_13">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="1">
-              <widget class="QTextEdit" name="textEdit">
-               <property name="styleSheet">
-                <string notr="true">font: 9pt &quot;Times New Roman&quot;;</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="tab_2">
-            <attribute name="title">
-             <string>告警日志</string>
-            </attribute>
-            <layout class="QGridLayout" name="gridLayout_17">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QTextEdit" name="textEdit_2"/>
-             </item>
-            </layout>
-           </widget>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="frame_6">
-           <property name="maximumSize">
-            <size>
-             <width>300</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_15">
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item row="0" column="0">
-             <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item>
-               <widget class="QLabel" name="label_11">
-                <property name="styleSheet">
-                 <string notr="true">font:10pt &quot;黑体&quot;;</string>
-                </property>
-                <property name="text">
-                 <string>           TOF/PEAK信息统计</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QTableWidget" name="tableWidget_2">
-                <property name="styleSheet">
-                 <string notr="true">font:10pt &quot;黑体&quot;;
-border:0px</string>
-                </property>
-                <row>
-                 <property name="text">
-                  <string>tof</string>
-                 </property>
-                </row>
-                <row>
-                 <property name="text">
-                  <string>peak</string>
-                 </property>
-                </row>
-                <column>
-                 <property name="text">
-                  <string>minValue</string>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>maxValue</string>
-                 </property>
-                </column>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="frame_5">
-           <property name="maximumSize">
-            <size>
-             <width>300</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_14">
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item row="0" column="0">
-             <layout class="QVBoxLayout" name="verticalLayout_4">
-              <item>
-               <widget class="QLabel" name="label_9">
-                <property name="styleSheet">
-                 <string notr="true">font:10pt &quot;黑体&quot;;</string>
-                </property>
-                <property name="text">
-                 <string>             空间信息统计</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QTableWidget" name="tableWidget_4">
-                <property name="styleSheet">
-                 <string notr="true">font:10pt &quot;黑体&quot;;
-border:0px</string>
-                </property>
-                <row>
-                 <property name="text">
-                  <string>x</string>
-                 </property>
-                </row>
-                <row>
-                 <property name="text">
-                  <string>y</string>
-                 </property>
-                </row>
-                <row>
-                 <property name="text">
-                  <string>z</string>
-                 </property>
-                </row>
-                <column>
-                 <property name="text">
-                  <string>minValue</string>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>maxValue</string>
-                 </property>
-                </column>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -1052,7 +804,7 @@ border:0px</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1390</width>
+     <width>1403</width>
      <height>23</height>
     </rect>
    </property>
@@ -1099,6 +851,305 @@ border:0px</string>
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>700</width>
+     <height>175</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>524287</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>监控窗口</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_16">
+     <item row="0" column="0">
+      <widget class="QTabWidget" name="tabWidget_3">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>135</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font:9pt &quot;黑体&quot;;</string>
+       </property>
+       <property name="tabPosition">
+        <enum>QTabWidget::North</enum>
+       </property>
+       <property name="tabShape">
+        <enum>QTabWidget::Rounded</enum>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <property name="movable">
+        <bool>false</bool>
+       </property>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>运行日志</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_13">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item row="0" column="1">
+          <widget class="QTextEdit" name="textEdit">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">font: 9pt &quot;Times New Roman&quot;;</string>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QAbstractScrollArea::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_2">
+        <attribute name="title">
+         <string>告警日志</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_17">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QTextEdit" name="textEdit_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QFrame" name="frame_6">
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_14">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font:10pt &quot;黑体&quot;;</string>
+          </property>
+          <property name="text">
+           <string>           TOF/PEAK信息统计</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QTableWidget" name="tableWidget_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>245</width>
+            <height>85</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font:10pt &quot;黑体&quot;;
+</string>
+          </property>
+          <row>
+           <property name="text">
+            <string>tof</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>peak</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>minValue</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>maxValue</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QFrame" name="frame_5">
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_15">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font:10pt &quot;黑体&quot;;</string>
+          </property>
+          <property name="text">
+           <string>             空间信息统计</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QTableWidget" name="tableWidget_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>245</width>
+            <height>90</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font:10pt &quot;黑体&quot;;
+</string>
+          </property>
+          <row>
+           <property name="text">
+            <string>x</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>y</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>z</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>minValue</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>maxValue</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="action">
    <property name="text">
     <string>文件保存</string>
