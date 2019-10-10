@@ -778,27 +778,37 @@ void MainWindow::showImageSlot()
     if(!isShowPointCloud)
         return;
 
-    float showWidth = ui->showIntensity_label->width();
-    float showHeight = ui->showIntensity_label->height();
-//    qDebug()<<"width= "<<showWidth<<"    height="<<showHeight<<endl;
+//    float showWidth = ui->showIntensity_label->width();
+//    float showHeight = ui->showIntensity_label->height();
+
+    float showWidth = ui->showTOF_label->width();
+    float showHeight = ui->showTOF_label->height();
+
+
+//    showWidth = 384;
+//    showHeight = 191;
+    qDebug()<<"width= "<<showWidth<<"    height="<<showHeight<<endl;
 
 
     if(!tofImage.isNull() && !intensityImage.isNull())
     {
         mutex.lock();
 
-        mutex.try_lock();
-        resImage = tofImage.scaled(showWidth, showHeight , Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        resIntenImage = intensityImage.scaled(showWidth, showHeight , Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        mutex.unlock();
+//        mutex.try_lock();
+//        resImage = tofImage.scaled(showWidth-2, showHeight-1 , Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+//        resIntenImage = intensityImage.scaled(showWidth-2, showHeight-1 , Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
-        QPixmap pixmap2(QPixmap::fromImage (resImage));
+
+        QPixmap pixmap2(QPixmap::fromImage (tofImage));
         ui->showTOF_label->setPixmap(pixmap2);
 
-        QPixmap pixmap3(QPixmap::fromImage (resIntenImage));
+        QPixmap pixmap3(QPixmap::fromImage (intensityImage));
         ui->showIntensity_label->setPixmap(pixmap3);
-
+        mutex.unlock();
     }
+
+
+
 }
 
 

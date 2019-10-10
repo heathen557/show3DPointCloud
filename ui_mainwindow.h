@@ -50,24 +50,10 @@ public:
     QAction *action_3;
     QAction *action_4;
     QWidget *centralWidget;
-    QGridLayout *gridLayout;
-    QFrame *frame_4;
     QGridLayout *gridLayout_7;
+    QFrame *frame_4;
+    QGridLayout *gridLayout_21;
     QHBoxLayout *horizontalLayout;
-    QFrame *frame;
-    QGridLayout *gridLayout_2;
-    QVBoxLayout *verticalLayout;
-    QTabWidget *tabWidget;
-    QWidget *tabWidgetPage1;
-    QGridLayout *gridLayout_3;
-    myLabel *showTOF_label;
-    QTabWidget *tabWidget_2;
-    QWidget *tabWidget_2Page1;
-    QGridLayout *gridLayout_4;
-    myLabel *showIntensity_label;
-    QWidget *tab_3;
-    QGridLayout *gridLayout_18;
-    QCameraViewfinder *video_widget;
     QFrame *frame_3;
     QGridLayout *gridLayout_5;
     QGroupBox *groupBox_3;
@@ -150,6 +136,23 @@ public:
     QGridLayout *gridLayout_15;
     QLabel *label_9;
     QTableWidget *tableWidget_4;
+    QDockWidget *dockWidget_2;
+    QWidget *dockWidgetContents;
+    QGridLayout *gridLayout;
+    QFrame *frame;
+    QGridLayout *gridLayout_2;
+    QVBoxLayout *verticalLayout;
+    QTabWidget *tabWidget;
+    QWidget *tabWidgetPage1;
+    QGridLayout *gridLayout_3;
+    myLabel *showTOF_label;
+    QTabWidget *tabWidget_2;
+    QWidget *tabWidget_2Page1;
+    QGridLayout *gridLayout_4;
+    myLabel *showIntensity_label;
+    QWidget *tab_3;
+    QGridLayout *gridLayout_18;
+    QCameraViewfinder *video_widget;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -173,111 +176,29 @@ public:
         action_4->setObjectName(QStringLiteral("action_4"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        gridLayout = new QGridLayout(centralWidget);
-        gridLayout->setSpacing(6);
-        gridLayout->setContentsMargins(11, 11, 11, 11);
-        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        gridLayout_7 = new QGridLayout(centralWidget);
+        gridLayout_7->setSpacing(6);
+        gridLayout_7->setContentsMargins(11, 11, 11, 11);
+        gridLayout_7->setObjectName(QStringLiteral("gridLayout_7"));
         frame_4 = new QFrame(centralWidget);
         frame_4->setObjectName(QStringLiteral("frame_4"));
         frame_4->setMaximumSize(QSize(16777215, 16777215));
         frame_4->setStyleSheet(QLatin1String("QFrame#frame_4{\n"
-"border:1px solid grey;}"));
+"border:1px solid white;}"));
         frame_4->setFrameShape(QFrame::StyledPanel);
         frame_4->setFrameShadow(QFrame::Raised);
-        gridLayout_7 = new QGridLayout(frame_4);
-        gridLayout_7->setSpacing(6);
-        gridLayout_7->setContentsMargins(11, 11, 11, 11);
-        gridLayout_7->setObjectName(QStringLiteral("gridLayout_7"));
+        gridLayout_21 = new QGridLayout(frame_4);
+        gridLayout_21->setSpacing(6);
+        gridLayout_21->setContentsMargins(11, 11, 11, 11);
+        gridLayout_21->setObjectName(QStringLiteral("gridLayout_21"));
+        gridLayout_21->setContentsMargins(6, 6, 0, 0);
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        frame = new QFrame(frame_4);
-        frame->setObjectName(QStringLiteral("frame"));
-        frame->setMinimumSize(QSize(0, 0));
-        frame->setMaximumSize(QSize(500, 16777215));
-        frame->setStyleSheet(QStringLiteral(""));
-        frame->setFrameShape(QFrame::StyledPanel);
-        frame->setFrameShadow(QFrame::Raised);
-        gridLayout_2 = new QGridLayout(frame);
-        gridLayout_2->setSpacing(6);
-        gridLayout_2->setContentsMargins(11, 11, 11, 11);
-        gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
-        gridLayout_2->setContentsMargins(0, 0, -1, -1);
-        verticalLayout = new QVBoxLayout();
-        verticalLayout->setSpacing(6);
-        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        tabWidget = new QTabWidget(frame);
-        tabWidget->setObjectName(QStringLiteral("tabWidget"));
-        tabWidget->setMaximumSize(QSize(16777215, 16777215));
-        tabWidget->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
-        tabWidgetPage1 = new QWidget();
-        tabWidgetPage1->setObjectName(QStringLiteral("tabWidgetPage1"));
-        gridLayout_3 = new QGridLayout(tabWidgetPage1);
-        gridLayout_3->setSpacing(6);
-        gridLayout_3->setContentsMargins(11, 11, 11, 11);
-        gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
-        gridLayout_3->setContentsMargins(2, 0, 2, 2);
-        showTOF_label = new myLabel(tabWidgetPage1);
-        showTOF_label->setObjectName(QStringLiteral("showTOF_label"));
-        showTOF_label->setMinimumSize(QSize(384, 150));
-        showTOF_label->setMaximumSize(QSize(1677512, 1677512));
-        showTOF_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
-
-        gridLayout_3->addWidget(showTOF_label, 0, 0, 1, 1);
-
-        tabWidget->addTab(tabWidgetPage1, QString());
-
-        verticalLayout->addWidget(tabWidget);
-
-        tabWidget_2 = new QTabWidget(frame);
-        tabWidget_2->setObjectName(QStringLiteral("tabWidget_2"));
-        tabWidget_2->setMinimumSize(QSize(0, 0));
-        tabWidget_2->setMaximumSize(QSize(16777215, 16777215));
-        tabWidget_2->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
-        tabWidget_2Page1 = new QWidget();
-        tabWidget_2Page1->setObjectName(QStringLiteral("tabWidget_2Page1"));
-        gridLayout_4 = new QGridLayout(tabWidget_2Page1);
-        gridLayout_4->setSpacing(6);
-        gridLayout_4->setContentsMargins(11, 11, 11, 11);
-        gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
-        gridLayout_4->setContentsMargins(2, 0, 2, 2);
-        showIntensity_label = new myLabel(tabWidget_2Page1);
-        showIntensity_label->setObjectName(QStringLiteral("showIntensity_label"));
-        showIntensity_label->setMinimumSize(QSize(384, 150));
-        showIntensity_label->setMaximumSize(QSize(1677512, 1677512));
-        showIntensity_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
-
-        gridLayout_4->addWidget(showIntensity_label, 0, 0, 1, 1);
-
-        tabWidget_2->addTab(tabWidget_2Page1, QString());
-        tab_3 = new QWidget();
-        tab_3->setObjectName(QStringLiteral("tab_3"));
-        gridLayout_18 = new QGridLayout(tab_3);
-        gridLayout_18->setSpacing(6);
-        gridLayout_18->setContentsMargins(11, 11, 11, 11);
-        gridLayout_18->setObjectName(QStringLiteral("gridLayout_18"));
-        gridLayout_18->setContentsMargins(2, 0, 2, 2);
-        video_widget = new QCameraViewfinder(tab_3);
-        video_widget->setObjectName(QStringLiteral("video_widget"));
-        video_widget->setMinimumSize(QSize(384, 150));
-        video_widget->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
-
-        gridLayout_18->addWidget(video_widget, 0, 0, 1, 1);
-
-        tabWidget_2->addTab(tab_3, QString());
-
-        verticalLayout->addWidget(tabWidget_2);
-
-
-        gridLayout_2->addLayout(verticalLayout, 0, 0, 1, 1);
-
-
-        horizontalLayout->addWidget(frame);
-
         frame_3 = new QFrame(frame_4);
         frame_3->setObjectName(QStringLiteral("frame_3"));
         frame_3->setMinimumSize(QSize(0, 0));
-        frame_3->setMaximumSize(QSize(1000, 16777215));
+        frame_3->setMaximumSize(QSize(16777215, 16777215));
         frame_3->setStyleSheet(QStringLiteral(""));
         frame_3->setFrameShape(QFrame::StyledPanel);
         frame_3->setFrameShadow(QFrame::Raised);
@@ -295,9 +216,10 @@ public:
         gridLayout_20->setSpacing(6);
         gridLayout_20->setContentsMargins(11, 11, 11, 11);
         gridLayout_20->setObjectName(QStringLiteral("gridLayout_20"));
+        gridLayout_20->setContentsMargins(0, 3, 0, 0);
         widget = new GLWidget(groupBox_3);
         widget->setObjectName(QStringLiteral("widget"));
-        widget->setMinimumSize(QSize(0, 200));
+        widget->setMinimumSize(QSize(0, 0));
         widget->setMaximumSize(QSize(16777215, 16777215));
         widget->setStyleSheet(QLatin1String("border:1px solid black;\n"
 "background-color: rgb(0, 0, 0);"));
@@ -306,7 +228,7 @@ public:
 
         frame_7 = new QFrame(groupBox_3);
         frame_7->setObjectName(QStringLiteral("frame_7"));
-        frame_7->setMaximumSize(QSize(16777215, 22));
+        frame_7->setMaximumSize(QSize(16777215, 16777215));
         frame_7->setFrameShape(QFrame::StyledPanel);
         frame_7->setFrameShadow(QFrame::Raised);
         gridLayout_6 = new QGridLayout(frame_7);
@@ -365,6 +287,8 @@ public:
 
         gridLayout_20->addWidget(frame_7, 1, 0, 1, 1);
 
+        gridLayout_20->setRowStretch(0, 16);
+        gridLayout_20->setRowStretch(1, 1);
 
         gridLayout_5->addWidget(groupBox_3, 0, 0, 1, 1);
 
@@ -379,8 +303,8 @@ public:
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(frame_2->sizePolicy().hasHeightForWidth());
         frame_2->setSizePolicy(sizePolicy);
-        frame_2->setMinimumSize(QSize(280, 0));
-        frame_2->setMaximumSize(QSize(300, 16777215));
+        frame_2->setMinimumSize(QSize(0, 0));
+        frame_2->setMaximumSize(QSize(270, 16777215));
         frame_2->setStyleSheet(QStringLiteral(""));
         gridLayout_12 = new QGridLayout(frame_2);
         gridLayout_12->setSpacing(6);
@@ -392,9 +316,10 @@ public:
         font.setFamily(QString::fromUtf8("\351\273\221\344\275\223"));
         font.setPointSize(10);
         toolBox->setFont(font);
+        toolBox->setLayoutDirection(Qt::LeftToRight);
         page = new QWidget();
         page->setObjectName(QStringLiteral("page"));
-        page->setGeometry(QRect(0, 0, 282, 384));
+        page->setGeometry(QRect(0, 0, 251, 396));
         gridLayout_10 = new QGridLayout(page);
         gridLayout_10->setSpacing(6);
         gridLayout_10->setContentsMargins(11, 11, 11, 11);
@@ -570,7 +495,7 @@ public:
         toolBox->addItem(page, QString::fromUtf8("              \345\270\270\347\224\250\351\205\215\347\275\256"));
         page_2 = new QWidget();
         page_2->setObjectName(QStringLiteral("page_2"));
-        page_2->setGeometry(QRect(0, 0, 282, 384));
+        page_2->setGeometry(QRect(0, 0, 251, 396));
         gridLayout_19 = new QGridLayout(page_2);
         gridLayout_19->setSpacing(6);
         gridLayout_19->setContentsMargins(11, 11, 11, 11);
@@ -601,11 +526,13 @@ public:
 
         horizontalLayout->addWidget(frame_2);
 
+        horizontalLayout->setStretch(0, 5);
+        horizontalLayout->setStretch(1, 2);
 
-        gridLayout_7->addLayout(horizontalLayout, 0, 0, 1, 1);
+        gridLayout_21->addLayout(horizontalLayout, 0, 0, 1, 1);
 
 
-        gridLayout->addWidget(frame_4, 0, 0, 1, 1);
+        gridLayout_7->addWidget(frame_4, 0, 0, 1, 1);
 
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
@@ -703,11 +630,8 @@ public:
         gridLayout_14->setObjectName(QStringLiteral("gridLayout_14"));
         label_11 = new QLabel(frame_6);
         label_11->setObjectName(QStringLiteral("label_11"));
-        QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        sizePolicy2.setHorizontalStretch(0);
-        sizePolicy2.setVerticalStretch(0);
-        sizePolicy2.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
-        label_11->setSizePolicy(sizePolicy2);
+        sizePolicy.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
+        label_11->setSizePolicy(sizePolicy);
         label_11->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
 
         gridLayout_14->addWidget(label_11, 0, 0, 1, 1);
@@ -748,8 +672,8 @@ public:
         gridLayout_15->setObjectName(QStringLiteral("gridLayout_15"));
         label_9 = new QLabel(frame_5);
         label_9->setObjectName(QStringLiteral("label_9"));
-        sizePolicy2.setHeightForWidth(label_9->sizePolicy().hasHeightForWidth());
-        label_9->setSizePolicy(sizePolicy2);
+        sizePolicy.setHeightForWidth(label_9->sizePolicy().hasHeightForWidth());
+        label_9->setSizePolicy(sizePolicy);
         label_9->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
 
         gridLayout_15->addWidget(label_9, 0, 0, 1, 1);
@@ -783,6 +707,109 @@ public:
 
         dockWidget->setWidget(dockWidgetContents_3);
         MainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget);
+        dockWidget_2 = new QDockWidget(MainWindow);
+        dockWidget_2->setObjectName(QStringLiteral("dockWidget_2"));
+        dockWidgetContents = new QWidget();
+        dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
+        dockWidgetContents->setStyleSheet(QLatin1String("QWidget#dockWidgetContents\n"
+"{\n"
+"border:2px solid rgb(180,183,188)\n"
+"}"));
+        gridLayout = new QGridLayout(dockWidgetContents);
+        gridLayout->setSpacing(6);
+        gridLayout->setContentsMargins(11, 11, 11, 11);
+        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        frame = new QFrame(dockWidgetContents);
+        frame->setObjectName(QStringLiteral("frame"));
+        frame->setMinimumSize(QSize(0, 0));
+        frame->setMaximumSize(QSize(16777215, 16777215));
+        frame->setStyleSheet(QStringLiteral(""));
+        frame->setFrameShape(QFrame::StyledPanel);
+        frame->setFrameShadow(QFrame::Raised);
+        gridLayout_2 = new QGridLayout(frame);
+        gridLayout_2->setSpacing(6);
+        gridLayout_2->setContentsMargins(11, 11, 11, 11);
+        gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
+        gridLayout_2->setContentsMargins(0, 0, 0, 0);
+        verticalLayout = new QVBoxLayout();
+        verticalLayout->setSpacing(6);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        tabWidget = new QTabWidget(frame);
+        tabWidget->setObjectName(QStringLiteral("tabWidget"));
+        sizePolicy.setHeightForWidth(tabWidget->sizePolicy().hasHeightForWidth());
+        tabWidget->setSizePolicy(sizePolicy);
+        tabWidget->setMaximumSize(QSize(16777215, 16777215));
+        tabWidget->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
+        tabWidgetPage1 = new QWidget();
+        tabWidgetPage1->setObjectName(QStringLiteral("tabWidgetPage1"));
+        gridLayout_3 = new QGridLayout(tabWidgetPage1);
+        gridLayout_3->setSpacing(6);
+        gridLayout_3->setContentsMargins(11, 11, 11, 11);
+        gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
+        gridLayout_3->setContentsMargins(2, 0, 2, 0);
+        showTOF_label = new myLabel(tabWidgetPage1);
+        showTOF_label->setObjectName(QStringLiteral("showTOF_label"));
+        showTOF_label->setMinimumSize(QSize(0, 0));
+        showTOF_label->setMaximumSize(QSize(1677512, 1677512));
+        showTOF_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
+        showTOF_label->setScaledContents(true);
+
+        gridLayout_3->addWidget(showTOF_label, 0, 0, 1, 1);
+
+        tabWidget->addTab(tabWidgetPage1, QString());
+
+        verticalLayout->addWidget(tabWidget);
+
+        tabWidget_2 = new QTabWidget(frame);
+        tabWidget_2->setObjectName(QStringLiteral("tabWidget_2"));
+        sizePolicy.setHeightForWidth(tabWidget_2->sizePolicy().hasHeightForWidth());
+        tabWidget_2->setSizePolicy(sizePolicy);
+        tabWidget_2->setMinimumSize(QSize(0, 0));
+        tabWidget_2->setMaximumSize(QSize(16777215, 16777215));
+        tabWidget_2->setStyleSheet(QString::fromUtf8("font:10pt \"\351\273\221\344\275\223\";"));
+        tabWidget_2Page1 = new QWidget();
+        tabWidget_2Page1->setObjectName(QStringLiteral("tabWidget_2Page1"));
+        gridLayout_4 = new QGridLayout(tabWidget_2Page1);
+        gridLayout_4->setSpacing(6);
+        gridLayout_4->setContentsMargins(11, 11, 11, 11);
+        gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
+        gridLayout_4->setContentsMargins(2, 0, 2, 0);
+        showIntensity_label = new myLabel(tabWidget_2Page1);
+        showIntensity_label->setObjectName(QStringLiteral("showIntensity_label"));
+        showIntensity_label->setMinimumSize(QSize(0, 0));
+        showIntensity_label->setMaximumSize(QSize(1677512, 1677512));
+        showIntensity_label->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
+        showIntensity_label->setScaledContents(true);
+
+        gridLayout_4->addWidget(showIntensity_label, 0, 0, 1, 1);
+
+        tabWidget_2->addTab(tabWidget_2Page1, QString());
+        tab_3 = new QWidget();
+        tab_3->setObjectName(QStringLiteral("tab_3"));
+        gridLayout_18 = new QGridLayout(tab_3);
+        gridLayout_18->setSpacing(6);
+        gridLayout_18->setContentsMargins(11, 11, 11, 11);
+        gridLayout_18->setObjectName(QStringLiteral("gridLayout_18"));
+        gridLayout_18->setContentsMargins(2, 0, 2, 0);
+        video_widget = new QCameraViewfinder(tab_3);
+        video_widget->setObjectName(QStringLiteral("video_widget"));
+        video_widget->setMinimumSize(QSize(0, 0));
+        video_widget->setStyleSheet(QStringLiteral("background-color: rgb(0, 0, 0);"));
+
+        gridLayout_18->addWidget(video_widget, 0, 0, 1, 1);
+
+        tabWidget_2->addTab(tab_3, QString());
+
+        verticalLayout->addWidget(tabWidget_2);
+
+
+        gridLayout_2->addLayout(verticalLayout, 0, 0, 1, 1);
+
+
+        gridLayout->addWidget(frame, 0, 0, 1, 1);
+
+        dockWidget_2->setWidget(dockWidgetContents);
+        MainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget_2);
 
         menuBar->addAction(menu->menuAction());
         menuBar->addAction(menu_2->menuAction());
@@ -795,9 +822,9 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget_2->setCurrentIndex(0);
         toolBox->setCurrentIndex(0);
-        tabWidget_3->setCurrentIndex(0);
+        tabWidget_3->setCurrentIndex(1);
+        tabWidget_2->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -810,11 +837,6 @@ public:
         action_2->setText(QApplication::translate("MainWindow", "\347\273\237\350\256\241\350\256\276\347\275\256", Q_NULLPTR));
         action_3->setText(QApplication::translate("MainWindow", "\347\273\237\350\256\241\344\277\241\346\201\257", Q_NULLPTR));
         action_4->setText(QApplication::translate("MainWindow", "\346\211\223\345\274\200\346\234\254\345\234\260\346\226\207\344\273\266", Q_NULLPTR));
-        showTOF_label->setText(QString());
-        tabWidget->setTabText(tabWidget->indexOf(tabWidgetPage1), QApplication::translate("MainWindow", "\346\267\261\345\272\246\345\233\276\345\203\217(Tof)", Q_NULLPTR));
-        showIntensity_label->setText(QString());
-        tabWidget_2->setTabText(tabWidget_2->indexOf(tabWidget_2Page1), QApplication::translate("MainWindow", "\345\274\272\345\272\246\345\233\276\345\203\217(Peak)", Q_NULLPTR));
-        tabWidget_2->setTabText(tabWidget_2->indexOf(tab_3), QApplication::translate("MainWindow", "\345\217\257\350\247\201\345\205\211\350\256\276\345\244\207", Q_NULLPTR));
         groupBox_3->setTitle(QApplication::translate("MainWindow", "\347\202\271\344\272\221\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
         gainImage_lineEdit->setText(QApplication::translate("MainWindow", "1", Q_NULLPTR));
         pushButton_3->setText(QApplication::translate("MainWindow", "\346\255\243\350\247\206\345\233\276", Q_NULLPTR));
@@ -870,6 +892,11 @@ public:
         ___qtablewidgetitem7->setText(QApplication::translate("MainWindow", "y", Q_NULLPTR));
         QTableWidgetItem *___qtablewidgetitem8 = tableWidget_4->verticalHeaderItem(2);
         ___qtablewidgetitem8->setText(QApplication::translate("MainWindow", "z", Q_NULLPTR));
+        showTOF_label->setText(QString());
+        tabWidget->setTabText(tabWidget->indexOf(tabWidgetPage1), QApplication::translate("MainWindow", "\346\267\261\345\272\246\345\233\276\345\203\217(Tof)", Q_NULLPTR));
+        showIntensity_label->setText(QString());
+        tabWidget_2->setTabText(tabWidget_2->indexOf(tabWidget_2Page1), QApplication::translate("MainWindow", "\345\274\272\345\272\246\345\233\276\345\203\217(Peak)", Q_NULLPTR));
+        tabWidget_2->setTabText(tabWidget_2->indexOf(tab_3), QApplication::translate("MainWindow", "\345\217\257\350\247\201\345\205\211\350\256\276\345\244\207", Q_NULLPTR));
     } // retranslateUi
 
 };

@@ -1,4 +1,4 @@
-#include "mylabel.h"
+﻿#include "mylabel.h"
 #include<QDebug>
 
 myLabel::myLabel(QWidget *parent) : QLabel(parent)
@@ -16,4 +16,10 @@ void myLabel::mousePressEvent(QMouseEvent *event)
 
         emit queryPixSignal(x,y);
     }
+}
+
+
+QSize myLabel::sizeHint() const
+{
+return QSize( 384, 191 );
 }

@@ -1,4 +1,4 @@
-#ifndef MYLABEL_H
+﻿#ifndef MYLABEL_H
 #define MYLABEL_H
 
 //#include <QWidget>
@@ -12,6 +12,8 @@ public:
     explicit myLabel(QWidget *parent = 0);
 
     void mousePressEvent(QMouseEvent *event);        //单击
+
+    QSize sizeHint() const;
 
 signals:
     void queryPixSignal(int,int);
