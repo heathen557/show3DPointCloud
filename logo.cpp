@@ -136,7 +136,9 @@ Logo::Logo(QObject *parent):
 
 //    const int NumSectors = 50000;
 
-    const int NumSectors = 30000;
+//    const int NumSectors = 16384;
+
+    const int NumSectors = 16416;      //16380 + 31   30个点被用来显示y轴距离的辅助线
 
     isFilter = false;
 
@@ -156,27 +158,27 @@ Logo::Logo(QObject *parent):
 
 //    readPCDFile();
 
-    double x_min=100,y_min=100,z_min=100;
-    double x_max=0,y_max=0,z_max=0;
+//    double x_min=100,y_min=100,z_min=100;
+//    double x_max=0,y_max=0,z_max=0;
 
-    for(int i=0; i<m_data.size(); i+=6)
-    {
+//    for(int i=0; i<m_data.size(); i+=6)
+//    {
 
-        if(m_data[i]>x_max)
-            x_max = m_data[i];
-        if(m_data[i]<x_min)
-            x_min = m_data[i];
+//        if(m_data[i]>x_max)
+//            x_max = m_data[i];
+//        if(m_data[i]<x_min)
+//            x_min = m_data[i];
 
-        if(m_data[i+1]>y_max)
-            y_max = m_data[1+i];
-        if(m_data[1+i]<y_min)
-            y_min = m_data[i+1];
+//        if(m_data[i+1]>y_max)
+//            y_max = m_data[1+i];
+//        if(m_data[1+i]<y_min)
+//            y_min = m_data[i+1];
 
-        if(m_data[i+2]>z_max)
-            z_max = m_data[i];
-        if(m_data[i+2]<z_min)
-            z_min = m_data[i+2];
-    }
+//        if(m_data[i+2]>z_max)
+//            z_max = m_data[i];
+//        if(m_data[i+2]<z_min)
+//            z_min = m_data[i+2];
+//    }
 
 //    qDebug()<<"x_max="<<x_max<<"  x_min="<<x_min<<endl;
 //    qDebug()<<"y_max="<<y_max<<"  y_min="<<y_min<<endl;
@@ -353,13 +355,42 @@ void Logo::readPCDFile1()
         m += 6;
     }
 
-
-    for(;m<98304;m++)
+    for(;m<98304;m++)             //这样做 滤波以后清空上一帧存储的点云
     {
         m_data[m] = 0;
     }
 
-    m_data.resize(98304);
+
+    m = 98304;
+    int index_y = 0;
+    for(int n=16384; n<16415; n+=2)         //这个是存储分割的点
+    {
+//        qDebug()<<" index_y = "<<index_y<<endl;
+
+        m_data[0+m] = -7.0;
+        m_data[1+m] = index_y;
+        m_data[2+m] = 0;
+        m_data[3+m] = 1.0;
+        m_data[4+m] = 1.0;
+        m_data[5+m] = 1.0;
+
+        m_data[6+m] = 7.0;
+        m_data[7+m] = index_y;
+        m_data[8+m] = 0;
+        m_data[9+m] = 1.0;
+        m_data[10+m] = 1.0;
+        m_data[11+m] = 1.0;
+        index_y++;
+        m +=12;
+
+    }
+
+    for(;m<98490;m++)
+    {
+        m_data[m] = 0;
+    }
+
+    m_data.resize(98490);
 //    qDebug()<<"m_data.size"<<m_data.size()<<"   m="<<m<<endl;
 
 }

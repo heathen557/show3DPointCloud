@@ -21,5 +21,5 @@ void myLabel::mousePressEvent(QMouseEvent *event)
 
 QSize myLabel::sizeHint() const
 {
-return QSize( 384, 191 );
+return QSize( 350, 191 );
 }

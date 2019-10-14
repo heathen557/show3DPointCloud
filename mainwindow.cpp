@@ -781,13 +781,13 @@ void MainWindow::showImageSlot()
 //    float showWidth = ui->showIntensity_label->width();
 //    float showHeight = ui->showIntensity_label->height();
 
-    float showWidth = ui->showTOF_label->width();
-    float showHeight = ui->showTOF_label->height();
+//    float showWidth = ui->showTOF_label->width();
+//    float showHeight = ui->showTOF_label->height();
 
 
 //    showWidth = 384;
 //    showHeight = 191;
-    qDebug()<<"width= "<<showWidth<<"    height="<<showHeight<<endl;
+//    qDebug()<<"width= "<<showWidth<<"    height="<<showHeight<<endl;
 
 
     if(!tofImage.isNull() && !intensityImage.isNull())
@@ -1356,6 +1356,17 @@ void MainWindow::oneSecondSlot()
     yMaxItem_value.setText(QString::number(yMax_));
     zMinItem_value.setText(QString::number(zMin_));
     zMaxItem_value.setText(QString::number(zMax_));
+
+
+    //设置辅助线的显示最多的条数
+    int GuideLinePoints = int(yMax_)*2 + 2;  //因为在零点处添加了一道辅助线 所以总共要显示的点数应该为32
+    if(GuideLinePoints<=32)
+    {
+        ui->widget->guideLinePointNum = GuideLinePoints;
+    }
+
+
+
 }
 
 
@@ -4258,10 +4269,13 @@ void MainWindow::on_tabWidget_2_currentChanged(int index)
         QCameraInfo cameraInfo =  QCameraInfo::defaultCamera();
         camera = new QCamera(cameraInfo);
         ui->video_widget->setAspectRatioMode(Qt::IgnoreAspectRatio);
-        int height =ui->showTOF_label->height();
+        float height =ui->showTOF_label->height();
+        float width = ui->showTOF_label->width();
 //        int height = ui->showIntensity_label->height();
         ui->video_widget->setFixedHeight(height);
+        ui->video_widget->setFixedWidth(width);
         camera->setViewfinder(ui->video_widget);
+
         camera->start();
 
         isShowCamera = true;
@@ -4278,13 +4292,28 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    if(isShowCamera)
-    {
-        int height =ui->showTOF_label->height();
-        ui->video_widget->setFixedHeight(height);
-        qDebug()<<"size has changed height = "<<height<<endl;
-    }
+//    if(isShowCamera)
+//    {
+//        float height =ui->showTOF_label->height();
+//        float width = ui->showTOF_label->width();
+//        ui->video_widget->setFixedHeight(height);
+//        ui->video_widget->setFixedWidth(width);
+//        qDebug()<<"size has changed height = "<<height<<endl;
+//    }
 
 
 }
 
+
+//修改辅助线间隔的槽函数
+void MainWindow::on_guideLineOffset_lineEdit_returnPressed()
+{
+    int lineOffset = ui->guideLineOffset_lineEdit->text().toInt();
+
+    ui->widget->guideLineOffset = lineOffset;
+
+
+
+
+
+}

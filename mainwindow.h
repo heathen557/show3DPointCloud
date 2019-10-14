@@ -271,6 +271,8 @@ private slots:
 
     void on_tabWidget_2_currentChanged(int index);
 
+    void on_guideLineOffset_lineEdit_returnPressed();
+
 private:
     Ui::MainWindow *ui;
 

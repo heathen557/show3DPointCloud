@@ -76,6 +76,9 @@ public:
     QSize sizeHint() const override;
     QTimer readFileTimer;    //读取点云数据，开始显示
     Logo m_logo;
+    // 显示辅助线遍历点的个数   初始为32个点,实际显示时根据y的最大值进行自动调整  //第一条线为0点  显示15条线
+    int guideLinePointNum;
+    int guideLineOffset;   //间隔多少米 加一条辅助线
 
 public slots:
     void setXRotation(int angle);
@@ -134,6 +137,7 @@ private:
 
     QTcpSocket m_tcpSocket;
     QByteArray m_buffer;
+
 
 
 

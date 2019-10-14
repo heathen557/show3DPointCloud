@@ -136,7 +136,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                     tofPeakNum[i].clear();
                 }
 
-                if(flag)
+//                if(flag)
                     emit saveTXTSignal(tofPeakToSave_string);
                 tofPeakToSave_string.clear();
             }
@@ -965,7 +965,7 @@ void DealUsb_msg::selectLocalFile_slot(QString sPath)
         connect(localFile_timer,SIGNAL(timeout()),this,SLOT(readLocalPCDFile()));
     }
     fileIndex = 1;
-    localFile_timer->start(100);
+    localFile_timer->start(80);
 
 }
 
@@ -1209,35 +1209,36 @@ void DealUsb_msg::readLocalPCDFile()
     if(true == isFilterFlag)
     {
         /*******************开启滤波功能*********************************/
-        //先用直通滤波把所有零点重复的零点过滤掉
-        //        pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
-        //        pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
-        //        pass.setFilterFieldName("y");                                 //设置在Z轴方向上进行滤波
-        //        pass.setFilterLimits(0, 0.10);                                //设置滤波范围(从最高点向下0.10米去除)
-        //        pass.setFilterLimitsNegative(true);                           //保留
-        //        pass.filter(tempRgbCloud_pass);                                   //滤波并存储
-        //        if(tempRgbCloud_pass.size()<1)
-        //                return;
+//        //先用直通滤波把所有零点重复的零点过滤掉
+//        pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
+//        pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
+//        pass.setFilterFieldName("y");                                 //设置在Z轴方向上进行滤波
+//        pass.setFilterLimits(0, 0.10);                                //设置滤波范围(从最高点向下0.10米去除)
+//        pass.setFilterLimitsNegative(true);                           //保留
+//        pass.filter(tempRgbCloud_pass);                                   //滤波并存储
+//        if(tempRgbCloud_pass.size()<1)
+//                return;
+////        qDebug()<<"after PassThrough filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
 
-        //  统计
-        tempRgbCloud_radius.clear();
-        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> outrem(true);
-        outrem.setInputCloud(tempRgbCloud.makeShared());
-        outrem.setMeanK(40);
-        outrem.setStddevMulThresh(0.25);
-        //40  0.1 不见前面噪点
-        outrem.filter(tempRgbCloud_radius);
-        int len = outrem.getRemovedIndices()->size();
-//        qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
-
-
-//        tempRgbCloud_radius.resize(0);
-//        pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
-//        outrem.setInputCloud(tempRgbCloud.makeShared());              //设置输入点云
-//        outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
-//        outrem.setMinNeighborsInRadius(15);       //设置查询点的邻近点集数小于2的删除  30
-//        outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
+//        //  统计
+//        tempRgbCloud_radius.clear();
+//        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> outrem(false);
+//        outrem.setInputCloud(tempRgbCloud_pass.makeShared());
+//        outrem.setMeanK(40);
+//        outrem.setStddevMulThresh(0.25);
+//        //40  0.1 不见前面噪点
+//        outrem.filter(tempRgbCloud_radius);
 //        int len = outrem.getRemovedIndices()->size();
+////        qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
+
+
+        tempRgbCloud_radius.resize(0);
+        pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
+        outrem.setInputCloud(tempRgbCloud.makeShared());              //设置输入点云
+        outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
+        outrem.setMinNeighborsInRadius(15);       //设置查询点的邻近点集数小于2的删除  30
+        outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
+        int len = outrem.getRemovedIndices()->size();
 
         /*************************以上为滤波处理部分************************************************************/
 
@@ -1290,24 +1291,124 @@ void DealUsb_msg::readLocalPCDFile()
 
 
         mutex.lock();
-        tofImage = microQimage;
-        intensityImage = macroQimage;
+//        tofImage = microQimage;
+//        intensityImage = macroQimage;
+
+        tofImage = *blur(&microQimage);
+        intensityImage = *blur(&macroQimage);
+
         pcl::copyPointCloud(tempRgbCloud_radius,pointCloudRgb);
         mutex.unlock();
+
+
+
+
+//        pcl::getMinMax3D(*cloud,min,max);
+
         /***************************************************************/
 
     }else{                      //不进行滤波
         mutex.lock();
         tofImage = microQimage;
         intensityImage = macroQimage;
+
+
+
         pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
         mutex.unlock();
+
+
+//        pcl::PointXYZRGB tmp_min;
+//        pcl::PointXYZRGB tmp_max;
+//        pcl::getMinMax3D(pointCloudRgb,tmp_min,tmp_max);
+
+//        qDebug()<<"y_max ="<<tmp_max.y<<endl;
     }
     isShowPointCloud = true;
 
 
 }
 
+
+
+QImage *DealUsb_msg::blur(QImage *origin)
+{
+//    QImage * newImage = new QImage(*origin);
+//    int kernel [3][3]= {{5,4,3},
+//                        {4,0,0},
+//                        {3,0,0}};
+//    int kernelSize = 3;
+//    int sumKernel = 19;
+//    int r,g,b;
+//    QColor color;
+//    for(int x=kernelSize/2; x<newImage->width()-(kernelSize/2); x++){
+//        for(int y=kernelSize/2; y<newImage->height()-(kernelSize/2); y++){
+
+//            r = 0;
+//            g = 0;
+//            b = 0;
+
+//            for(int i = -kernelSize/2; i<= kernelSize/2; i++)
+//            {
+//                for(int j = -kernelSize/2; j<= kernelSize/2; j++)
+//                {
+//                    color = QColor(origin->pixel(x+i, y+j));
+//                    r += color.red()*kernel[kernelSize/2+i][kernelSize/2+j];
+//                    g += color.green()*kernel[kernelSize/2+i][kernelSize/2+j];
+//                    b += color.blue()*kernel[kernelSize/2+i][kernelSize/2+j];
+//                }
+//            }
+//            r = qBound(0, r/sumKernel, 255);
+//            g = qBound(0, g/sumKernel, 255);
+//            b = qBound(0, b/sumKernel, 255);
+//            newImage->setPixel(x,y, qRgb(r,g,b));
+//        }
+//    }
+//    return newImage;
+
+
+    QImage * newImage = new QImage(*origin);
+    vector<int> numArray;
+    QRgb tofColor;
+    int gainIndex_tof;
+    for(int imgX=0; imgX<256; imgX++)
+        for(int imgY=1; imgY<64; imgY++)
+        {
+            if(0 == mouseShowTOF[imgX][imgY])
+            {
+
+                if( imgX>=1 )
+                    numArray.push_back(mouseShowTOF[imgX-1][imgY]);
+                if( imgX<=254 )
+                    numArray.push_back(mouseShowTOF[imgX+1][imgY]);
+                if( imgY>=1)
+                    numArray.push_back(mouseShowTOF[imgX][imgY-1]);
+                if( imgY<=62)
+                    numArray.push_back(mouseShowTOF[imgX][imgY+1]);
+
+                sort(numArray.begin(),numArray.end());
+//                    int midNumTof = numArray[numArray.size()/2];                //存在bug  size=2时，  numArray[2]函数越界
+                int midNumTof = numArray[1];                //存在bug  size=2时，  numArray[2]函数越界
+
+                //更新该点的值（鼠标显示）；
+                mouseShowTOF[imgX][imgY] =midNumTof;
+
+                //更新TOF 图像的像素值
+                gainIndex_tof = midNumTof*gainImage;
+                if(gainIndex_tof<1024 && gainIndex_tof>=0)
+                    tofColor = qRgb(colormap[gainIndex_tof * 3], colormap[gainIndex_tof * 3 + 1], colormap[gainIndex_tof * 3 + 2]);
+                else
+                    tofColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
+                newImage->setPixel(imgX,imgY,tofColor);         //TOF图像的赋值
+                numArray.clear();
+            }
+        }
+    return newImage;
+
+
+
+
+}
 
 
 

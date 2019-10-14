@@ -88,7 +88,12 @@ GLWidget::GLWidget(QWidget *parent)
     translate_x = 0;
     translate_y = 0;
 
-    linkServer();
+
+    guideLinePointNum = 32;   //第一条线为0点  显示15条线
+    guideLineOffset = 0;
+
+
+//    linkServer();
 }
 
 void GLWidget::linkServer()
@@ -490,9 +495,22 @@ void GLWidget::paintGL()
     m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
 
     //    glDrawArrays(GL_TRIANGLES, 0, m_logo.vertexCount());
-    glDrawArrays(GL_POINTS, 0, m_logo.vertexCount());
+    glDrawArrays(GL_POINTS, 0, m_logo.vertexCount()-32);
 
-    //    glDrawArrays(GL_LINES, m_logo.vertexCount()-500, m_logo.vertexCount());
+    if(guideLineOffset >0)
+    {
+        for(int i=0; i<guideLinePointNum ; i+=2*(guideLineOffset))                             //量程为15米时，显示15条线，一共30个点需要
+        {
+            glDrawArrays(GL_LINES, 16384+i,2);
+//          qDebug()<<" i = "<<16384+i<<endl;
+        }
+    }
+
+
+
+
+
+//        qDebug()<<"count = "<<m_logo.vertexCount();
 
     m_program->release();
 }
@@ -618,8 +636,8 @@ void GLWidget::verticalView_slot()
 //    setZRotation(0);
 
     //俯视图
-    setXRotation(2736);
-    setYRotation(5712);
+    setXRotation(2728);
+    setYRotation(5768);
     setZRotation(0);
 }
 

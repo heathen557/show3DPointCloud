@@ -6,6 +6,7 @@
 #include <pcl/filters/passthrough.h>  //直通滤波相关
 #include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/filters/statistical_outlier_removal.h>
+#include<pcl/common/common.h>
 #include <QObject>
 #include<QImage>
 #include<QtNetwork/QTcpSocket>
@@ -99,6 +100,8 @@ public slots:
     void readLocalPCDFile();
 
     void selectLocalFile_slot(QString sPath);
+
+    QImage *blur(QImage *origin);
 
 
 };
