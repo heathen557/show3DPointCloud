@@ -131,7 +131,11 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                 for(int i=0; i<16384; i++)
                 {
                     if(tofPeakNum[i].isEmpty())
+                    {
                         flag =false;
+//                        tofPeakNum[i] = QString::number(0).append(", ").append(QString::number(0)).append("\n");    //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
+                        tofPeakNum[i] = QString("%1").arg(0, 5, 10, QChar('0')).append(",").append(QString("%1").arg(0, 5, 10, QChar('0'))).append("\n");    //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
+                    }
                     tofPeakToSave_string.append(tofPeakNum[i]);
                     tofPeakNum[i].clear();
                 }
@@ -451,7 +455,9 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             /*********文件保存相关*****************/
             if(formatFlag ==2  && isSaveFlag == true)
             {
-                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
+//                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
+                tofPeakNum[cloudIndex] = QString("%1").arg(tof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
+
             }else
             {
                 tofPeakNum[cloudIndex].clear();
@@ -1082,6 +1088,21 @@ void DealUsb_msg::readLocalPCDFile()
 
 //            qDebug()<<" cloudIndex = "<<cloudIndex<<endl;
 
+
+            /*********文件保存相关*****************/
+            if(formatFlag ==2  && isSaveFlag == true)
+            {
+//                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
+                tofPeakNum[cloudIndex] = QString("%1").arg(tof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
+            }else
+            {
+                tofPeakNum[cloudIndex].clear();
+
+            }
+
+
+
+
             /***************统计均值 、方差相关***********************/
             if(statisticStartFlag == true)
             {
@@ -1116,6 +1137,49 @@ void DealUsb_msg::readLocalPCDFile()
             qDebug()<<QStringLiteral("给像素赋值时出现异常 imgrow=")<<imgRow<<"   imgCol = "<<imgCol<<endl;
 
     }  //一帧数据已经读取完成
+
+
+
+
+    /*********************test saveFile HUAWEI ***********************************************/
+
+    //判断是否保存数据
+    if(isSaveFlag)
+    {
+        if(formatFlag == 0)   //保存二进制pcd
+        {
+            emit savePCDSignal(tempRgbCloud,0);
+        }else if(formatFlag == 1)      //保存ASCII码版本的 pcd文件
+        {
+            emit savePCDSignal(tempRgbCloud,1);
+        }else if(formatFlag == 2)   //保存原始的TOF 和 PEAK 数据
+        {
+            bool flag = true;
+            for(int i=0; i<16384; i++)
+            {
+                if(tofPeakNum[i].isEmpty())
+                {
+                    flag =false;
+//                    tofPeakNum[i] = QString::number(0).append(", ").append(QString::number(0)).append("\n");    //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
+
+                    tofPeakNum[i] = QString("%1").arg(0, 5, 10, QChar('0')).append(",").append(QString("%1").arg(0, 5, 10, QChar('0'))).append("\n");   //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
+
+
+                }
+                tofPeakToSave_string.append(tofPeakNum[i]);
+                tofPeakNum[i].clear();
+            }
+
+//                if(flag)
+                emit saveTXTSignal(tofPeakToSave_string);
+            tofPeakToSave_string.clear();
+        }
+    }
+
+    /**********************************************************************/
+
+
+
 
 
 

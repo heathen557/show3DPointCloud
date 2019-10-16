@@ -95,9 +95,9 @@ GLWidget::GLWidget(QWidget *parent)
 
 
     //////////缩放比例设置///////////////////
-    rotateRate = 8;    //旋转
-    scaleRate = 10;
-    translateRate = 30;
+//    rotateRate = 8;    //旋转
+//    scaleRate = 10;
+//    translateRate = 30;
 
 
 

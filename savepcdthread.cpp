@@ -61,7 +61,8 @@ void savePCDThread::writeTXT(QString text, int index)
     QString sFilePath = saveFilePath + QString::number(saveFileIndex-1)+".txt";
     saveFileIndex++;
     QFile file(sFilePath);
-    file.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Append);
+//    file.open(QIODevice::WriteOnly|QIODevice::Text|QIODevice::Append);
+    file.open(QIODevice::WriteOnly|QIODevice::Text);
 
     QTextStream out(&file);
     out<<text.toLocal8Bit()<<endl;

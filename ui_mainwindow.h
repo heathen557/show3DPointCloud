@@ -359,13 +359,13 @@ public:
         toolBox->setLayoutDirection(Qt::LeftToRight);
         page = new QWidget();
         page->setObjectName(QStringLiteral("page"));
-        page->setGeometry(QRect(0, 0, 235, 383));
+        page->setGeometry(QRect(0, 0, 252, 369));
         gridLayout_10 = new QGridLayout(page);
         gridLayout_10->setSpacing(6);
         gridLayout_10->setContentsMargins(11, 11, 11, 11);
         gridLayout_10->setObjectName(QStringLiteral("gridLayout_10"));
         verticalLayout_3 = new QVBoxLayout();
-        verticalLayout_3->setSpacing(6);
+        verticalLayout_3->setSpacing(0);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         groupBox_4 = new QGroupBox(page);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
@@ -1012,7 +1012,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        toolBox->setCurrentIndex(2);
+        toolBox->setCurrentIndex(0);
         tabWidget_3->setCurrentIndex(1);
         tabWidget_2->setCurrentIndex(0);
 

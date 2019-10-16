@@ -156,9 +156,60 @@ MainWindow::MainWindow(QWidget *parent) :
     initTreeWidget();
 
     //    init3DShow();
+    readLocalSettingFile();
 
 
 }
+
+
+//读取本地的配置文件，使程序初始化
+void MainWindow::readLocalSettingFile()
+{
+    QFile file("setting.ini");
+    QString line[20];
+    if (file.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        QTextStream in(&file);
+        int i = 0;
+        while (!in.atEnd())
+        {
+            line[i] = in.readLine();
+            i++;
+        }
+        file.close();
+    }
+
+
+    QString savePath = line[0];
+    int rotateRate = line[1].toInt();
+    int scaleRate = line[2].toInt();
+    int transtateRate = line[3].toInt();
+    if(rotateRate==0 || scaleRate==0 || transtateRate==0)    //防止第一次加载时，没有配置文件，这时候初始化为初始值
+    {
+        rotateRate = 8;
+        scaleRate = 10;
+        transtateRate = 30;
+    }
+
+    //设置界面上显示的值
+    ui->saveFilePath_lineEdit->setText(savePath);
+    ui->rotate_horizontalSlider->setValue(rotateRate);
+    ui->scale_horizontalSlider->setValue(scaleRate);
+    ui->translate_horizontalSlider->setValue(transtateRate);
+
+    //同步到三维显示窗口，使其发生作用
+    ui->widget->rotateRate = rotateRate;
+    ui->widget->scaleRate = scaleRate;
+    ui->widget->translateRate = 110 - transtateRate;
+
+
+    qDebug()<<"path ="<<savePath<<"  "<<rotateRate<<"  "<<scaleRate<<"  "<<transtateRate<<endl;
+
+
+}
+
+
+
 
 void MainWindow::init3DShow()
 {
@@ -4384,9 +4435,18 @@ void MainWindow::on_SaveFilePath_pushButton_clicked()
 //文件不保存与保存 确定按键被点击的 槽函数
 void MainWindow::on_saveFile_pushButton_clicked()
 {
-    saveFileIndex = 1;
-    formatFlag = 2;
-    isSaveFlag = true;
+    if(ui->saveFile_radioButton->isChecked())
+    {
+        saveFileIndex = 1;
+        formatFlag = 2;
+        saveFilePath = ui->saveFilePath_lineEdit->text();
+        isSaveFlag = true;
+
+        qDebug()<<saveFilePath;
+        saveLocalSettingFile();
+    }
+
+
 }
 
 
@@ -4397,6 +4457,7 @@ void MainWindow::on_rotate_horizontalSlider_sliderMoved(int position)
     qDebug()<<"position = "<<position<<endl;
     ui->widget->rotateRate = position;
 
+    saveLocalSettingFile();
 }
 
 //缩放比例设置的槽函数
@@ -4404,10 +4465,38 @@ void MainWindow::on_scale_horizontalSlider_sliderMoved(int position)
 {
     ui->widget->scaleRate = position;
 
+    saveLocalSettingFile();
 }
 
 //拖放比例的槽函数
 void MainWindow::on_translate_horizontalSlider_sliderMoved(int position)
 {
     ui->widget->translateRate = 110 - position;
+
+    saveLocalSettingFile();
+}
+
+
+void MainWindow::saveLocalSettingFile()
+{
+    //将配置保存到本地文件
+    QFile file("setting.ini");
+    QByteArray temp("\r\n");
+
+    QString savePath = ui->saveFilePath_lineEdit->text();
+    int rotateRate = ui->widget->rotateRate;
+    int scaleRate = ui->widget->scaleRate;
+    int translateRate = 110-ui->widget->translateRate;
+
+    if(file.open(QIODevice::WriteOnly))
+    {
+        QByteArray writeData;
+        writeData = savePath.toLatin1()+ temp + QString::number(rotateRate).toLatin1()+temp+\
+                 QString::number(scaleRate).toLatin1()+ temp +QString::number(translateRate).toLatin1();
+        if (-1 == file.write(writeData))
+        {
+            qDebug()<<"ERROR";
+        }
+        file.close();
+    }
 }

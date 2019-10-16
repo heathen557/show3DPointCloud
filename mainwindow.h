@@ -39,6 +39,10 @@ public:
 
     void initTreeWidget();          //设备寄存器读写的界面的初始化函数
 
+    void readLocalSettingFile();    //读取本地文件 存储保存路径以及 鼠标的旋转参数
+
+    void saveLocalSettingFile();
+
     void closeEvent(QCloseEvent *event);
 
     void resizeEvent(QResizeEvent *event);
