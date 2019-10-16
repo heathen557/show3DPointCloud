@@ -80,6 +80,11 @@ public:
     int guideLinePointNum;
     int guideLineOffset;   //间隔多少米 加一条辅助线
 
+
+    float rotateRate;      //旋转比例
+    float scaleRate;       //缩放比例
+    float translateRate;   //平移比例
+
 public slots:
     void setXRotation(int angle);
     void setYRotation(int angle);
@@ -137,6 +142,7 @@ private:
 
     QTcpSocket m_tcpSocket;
     QByteArray m_buffer;
+
 
 
 

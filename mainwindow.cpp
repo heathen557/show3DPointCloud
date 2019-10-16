@@ -63,6 +63,20 @@ MainWindow::MainWindow(QWidget *parent) :
     isTOF = true;
     gainImage = 1;
 
+
+
+    //新添加的文件保存相关的标识
+    ui->nosaveFile_radioButton->setChecked(true);   ;//默认设置为不保存
+    ui->saveFilePath_lineEdit->setEnabled(false);
+    ui->saveFilePath_lineEdit->setReadOnly(true);
+
+
+
+//    ui->radioButton_3->setChecked(true);  //默认设置为保存pcd(二进制格式)
+//    formatSelect = 0 ;
+
+
+
     //USB数据粗粒线程
     dealUsbMsg_obj = new DealUsb_msg();
     dealUsbThread = new QThread;
@@ -4316,4 +4330,84 @@ void MainWindow::on_guideLineOffset_lineEdit_returnPressed()
 
 
 
+}
+
+
+//接收是否保存pcd文件的槽函数
+//void MainWindow::isSaveFlagSlot(bool saveFlag, QString filePath,int formatSelect)
+//{
+//    if(saveFlag)
+//        saveFileIndex = 1;
+
+//    saveFilePath = filePath;
+//    formatFlag = formatSelect ;
+//    isSaveFlag = saveFlag;
+//}
+
+
+
+
+//不保存radioButton被点击的槽函数
+void MainWindow::on_nosaveFile_radioButton_clicked()
+{
+    isSaveFlag = false;
+    saveFileIndex = 1;     //把标识置为1
+    formatFlag = 2;
+}
+
+//保存文件radioButton被点击的槽函数
+void MainWindow::on_saveFile_radioButton_clicked()
+{
+    ui->saveFilePath_lineEdit->setEnabled(true);
+    ui->SaveFilePath_pushButton->setEnabled(true);
+}
+
+//选择路径的槽函数
+void MainWindow::on_SaveFilePath_pushButton_clicked()
+{
+    QString file_path = QFileDialog::getExistingDirectory(this,QStringLiteral("请选择文件保存路径..."),"./");
+    if(file_path.isEmpty())
+    {
+       qDebug()<<QStringLiteral("没有选择路径")<<endl;
+       QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("保存路径不能为空"));
+        return;
+    }
+    else
+    {
+        file_path.append("/");
+        qDebug() << file_path << endl;
+        ui->saveFilePath_lineEdit->setText(file_path);
+        saveFilePath = file_path;
+    }
+}
+
+//文件不保存与保存 确定按键被点击的 槽函数
+void MainWindow::on_saveFile_pushButton_clicked()
+{
+    saveFileIndex = 1;
+    formatFlag = 2;
+    isSaveFlag = true;
+}
+
+
+
+//旋转角度设置的槽函数
+void MainWindow::on_rotate_horizontalSlider_sliderMoved(int position)
+{
+    qDebug()<<"position = "<<position<<endl;
+    ui->widget->rotateRate = position;
+
+}
+
+//缩放比例设置的槽函数
+void MainWindow::on_scale_horizontalSlider_sliderMoved(int position)
+{
+    ui->widget->scaleRate = position;
+
+}
+
+//拖放比例的槽函数
+void MainWindow::on_translate_horizontalSlider_sliderMoved(int position)
+{
+    ui->widget->translateRate = 110 - position;
 }

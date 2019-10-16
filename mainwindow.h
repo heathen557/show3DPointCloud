@@ -273,6 +273,20 @@ private slots:
 
     void on_guideLineOffset_lineEdit_returnPressed();
 
+    void on_nosaveFile_radioButton_clicked();
+
+    void on_saveFile_radioButton_clicked();
+
+    void on_saveFile_pushButton_clicked();
+
+    void on_SaveFilePath_pushButton_clicked();
+
+    void on_rotate_horizontalSlider_sliderMoved(int position);
+
+    void on_scale_horizontalSlider_sliderMoved(int position);
+
+    void on_translate_horizontalSlider_sliderMoved(int position);
+
 private:
     Ui::MainWindow *ui;
 

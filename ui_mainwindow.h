@@ -26,6 +26,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
@@ -112,6 +113,32 @@ public:
     QTreeWidget *treeWidget;
     QPushButton *getALL_pushButton;
     QPushButton *setAll_pushButton;
+    QWidget *page_3;
+    QGridLayout *gridLayout_23;
+    QVBoxLayout *verticalLayout_4;
+    QGroupBox *groupBox;
+    QGridLayout *gridLayout_24;
+    QHBoxLayout *horizontalLayout_8;
+    QRadioButton *saveFile_radioButton;
+    QLabel *label_6;
+    QLineEdit *saveFilePath_lineEdit;
+    QPushButton *SaveFilePath_pushButton;
+    QHBoxLayout *horizontalLayout_11;
+    QPushButton *saveFile_pushButton;
+    QSpacerItem *horizontalSpacer_3;
+    QRadioButton *nosaveFile_radioButton;
+    QGroupBox *groupBox_2;
+    QGridLayout *gridLayout_22;
+    QHBoxLayout *horizontalLayout_9;
+    QLabel *label_7;
+    QSlider *rotate_horizontalSlider;
+    QHBoxLayout *horizontalLayout_10;
+    QLabel *label_10;
+    QSlider *scale_horizontalSlider;
+    QHBoxLayout *horizontalLayout_13;
+    QLabel *label_8;
+    QSlider *translate_horizontalSlider;
+    QSpacerItem *verticalSpacer_2;
     QMenuBar *menuBar;
     QMenu *menu;
     QMenu *menu_2;
@@ -332,7 +359,7 @@ public:
         toolBox->setLayoutDirection(Qt::LeftToRight);
         page = new QWidget();
         page->setObjectName(QStringLiteral("page"));
-        page->setGeometry(QRect(0, 0, 252, 396));
+        page->setGeometry(QRect(0, 0, 235, 383));
         gridLayout_10 = new QGridLayout(page);
         gridLayout_10->setSpacing(6);
         gridLayout_10->setContentsMargins(11, 11, 11, 11);
@@ -505,10 +532,10 @@ public:
 
         gridLayout_10->addItem(verticalSpacer, 1, 0, 1, 1);
 
-        toolBox->addItem(page, QString::fromUtf8("              \345\270\270\347\224\250\351\205\215\347\275\256"));
+        toolBox->addItem(page, QString::fromUtf8("             \345\270\270\347\224\250\351\205\215\347\275\256"));
         page_2 = new QWidget();
         page_2->setObjectName(QStringLiteral("page_2"));
-        page_2->setGeometry(QRect(0, 0, 252, 396));
+        page_2->setGeometry(QRect(0, 0, 252, 369));
         gridLayout_19 = new QGridLayout(page_2);
         gridLayout_19->setSpacing(6);
         gridLayout_19->setContentsMargins(11, 11, 11, 11);
@@ -532,7 +559,152 @@ public:
 
         gridLayout_19->addWidget(setAll_pushButton, 1, 1, 1, 1);
 
-        toolBox->addItem(page_2, QString::fromUtf8("           \350\256\276\345\244\207\345\257\204\345\255\230\345\231\250\351\205\215\347\275\256"));
+        toolBox->addItem(page_2, QString::fromUtf8("          \350\256\276\345\244\207\345\257\204\345\255\230\345\231\250\351\205\215\347\275\256"));
+        page_3 = new QWidget();
+        page_3->setObjectName(QStringLiteral("page_3"));
+        page_3->setGeometry(QRect(0, 0, 252, 369));
+        gridLayout_23 = new QGridLayout(page_3);
+        gridLayout_23->setSpacing(6);
+        gridLayout_23->setContentsMargins(11, 11, 11, 11);
+        gridLayout_23->setObjectName(QStringLiteral("gridLayout_23"));
+        verticalLayout_4 = new QVBoxLayout();
+        verticalLayout_4->setSpacing(6);
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+        groupBox = new QGroupBox(page_3);
+        groupBox->setObjectName(QStringLiteral("groupBox"));
+        gridLayout_24 = new QGridLayout(groupBox);
+        gridLayout_24->setSpacing(6);
+        gridLayout_24->setContentsMargins(11, 11, 11, 11);
+        gridLayout_24->setObjectName(QStringLiteral("gridLayout_24"));
+        horizontalLayout_8 = new QHBoxLayout();
+        horizontalLayout_8->setSpacing(6);
+        horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
+        saveFile_radioButton = new QRadioButton(groupBox);
+        saveFile_radioButton->setObjectName(QStringLiteral("saveFile_radioButton"));
+        saveFile_radioButton->setMaximumSize(QSize(50, 16777215));
+
+        horizontalLayout_8->addWidget(saveFile_radioButton);
+
+        label_6 = new QLabel(groupBox);
+        label_6->setObjectName(QStringLiteral("label_6"));
+        label_6->setMaximumSize(QSize(50, 16777215));
+
+        horizontalLayout_8->addWidget(label_6);
+
+        saveFilePath_lineEdit = new QLineEdit(groupBox);
+        saveFilePath_lineEdit->setObjectName(QStringLiteral("saveFilePath_lineEdit"));
+
+        horizontalLayout_8->addWidget(saveFilePath_lineEdit);
+
+        SaveFilePath_pushButton = new QPushButton(groupBox);
+        SaveFilePath_pushButton->setObjectName(QStringLiteral("SaveFilePath_pushButton"));
+        SaveFilePath_pushButton->setMaximumSize(QSize(25, 16777215));
+
+        horizontalLayout_8->addWidget(SaveFilePath_pushButton);
+
+
+        gridLayout_24->addLayout(horizontalLayout_8, 1, 0, 1, 1);
+
+        horizontalLayout_11 = new QHBoxLayout();
+        horizontalLayout_11->setSpacing(6);
+        horizontalLayout_11->setObjectName(QStringLiteral("horizontalLayout_11"));
+        saveFile_pushButton = new QPushButton(groupBox);
+        saveFile_pushButton->setObjectName(QStringLiteral("saveFile_pushButton"));
+
+        horizontalLayout_11->addWidget(saveFile_pushButton);
+
+        horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_11->addItem(horizontalSpacer_3);
+
+
+        gridLayout_24->addLayout(horizontalLayout_11, 2, 0, 1, 1);
+
+        nosaveFile_radioButton = new QRadioButton(groupBox);
+        nosaveFile_radioButton->setObjectName(QStringLiteral("nosaveFile_radioButton"));
+
+        gridLayout_24->addWidget(nosaveFile_radioButton, 0, 0, 1, 1);
+
+
+        verticalLayout_4->addWidget(groupBox);
+
+        groupBox_2 = new QGroupBox(page_3);
+        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
+        gridLayout_22 = new QGridLayout(groupBox_2);
+        gridLayout_22->setSpacing(6);
+        gridLayout_22->setContentsMargins(11, 11, 11, 11);
+        gridLayout_22->setObjectName(QStringLiteral("gridLayout_22"));
+        horizontalLayout_9 = new QHBoxLayout();
+        horizontalLayout_9->setSpacing(6);
+        horizontalLayout_9->setObjectName(QStringLiteral("horizontalLayout_9"));
+        label_7 = new QLabel(groupBox_2);
+        label_7->setObjectName(QStringLiteral("label_7"));
+
+        horizontalLayout_9->addWidget(label_7);
+
+        rotate_horizontalSlider = new QSlider(groupBox_2);
+        rotate_horizontalSlider->setObjectName(QStringLiteral("rotate_horizontalSlider"));
+        rotate_horizontalSlider->setMinimum(1);
+        rotate_horizontalSlider->setMaximum(50);
+        rotate_horizontalSlider->setOrientation(Qt::Horizontal);
+
+        horizontalLayout_9->addWidget(rotate_horizontalSlider);
+
+
+        gridLayout_22->addLayout(horizontalLayout_9, 0, 0, 1, 1);
+
+        horizontalLayout_10 = new QHBoxLayout();
+        horizontalLayout_10->setSpacing(6);
+        horizontalLayout_10->setObjectName(QStringLiteral("horizontalLayout_10"));
+        label_10 = new QLabel(groupBox_2);
+        label_10->setObjectName(QStringLiteral("label_10"));
+
+        horizontalLayout_10->addWidget(label_10);
+
+        scale_horizontalSlider = new QSlider(groupBox_2);
+        scale_horizontalSlider->setObjectName(QStringLiteral("scale_horizontalSlider"));
+        scale_horizontalSlider->setMinimum(1);
+        scale_horizontalSlider->setMaximum(50);
+        scale_horizontalSlider->setOrientation(Qt::Horizontal);
+
+        horizontalLayout_10->addWidget(scale_horizontalSlider);
+
+
+        gridLayout_22->addLayout(horizontalLayout_10, 1, 0, 1, 1);
+
+        horizontalLayout_13 = new QHBoxLayout();
+        horizontalLayout_13->setSpacing(6);
+        horizontalLayout_13->setObjectName(QStringLiteral("horizontalLayout_13"));
+        label_8 = new QLabel(groupBox_2);
+        label_8->setObjectName(QStringLiteral("label_8"));
+
+        horizontalLayout_13->addWidget(label_8);
+
+        translate_horizontalSlider = new QSlider(groupBox_2);
+        translate_horizontalSlider->setObjectName(QStringLiteral("translate_horizontalSlider"));
+        translate_horizontalSlider->setMinimum(10);
+        translate_horizontalSlider->setMaximum(100);
+        translate_horizontalSlider->setOrientation(Qt::Horizontal);
+
+        horizontalLayout_13->addWidget(translate_horizontalSlider);
+
+
+        gridLayout_22->addLayout(horizontalLayout_13, 2, 0, 1, 1);
+
+
+        verticalLayout_4->addWidget(groupBox_2);
+
+        verticalSpacer_2 = new QSpacerItem(20, 78, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout_4->addItem(verticalSpacer_2);
+
+        verticalLayout_4->setStretch(0, 3);
+        verticalLayout_4->setStretch(1, 3);
+        verticalLayout_4->setStretch(2, 2);
+
+        gridLayout_23->addLayout(verticalLayout_4, 0, 0, 1, 1);
+
+        toolBox->addItem(page_3, QString::fromUtf8("        \346\226\207\344\273\266\344\277\235\345\255\230\345\222\214\346\230\276\347\244\272\350\256\276\347\275\256"));
 
         gridLayout_12->addWidget(toolBox, 0, 0, 1, 1);
 
@@ -840,7 +1012,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        toolBox->setCurrentIndex(0);
+        toolBox->setCurrentIndex(2);
         tabWidget_3->setCurrentIndex(1);
         tabWidget_2->setCurrentIndex(0);
 
@@ -880,10 +1052,21 @@ public:
         loadSetting_pushButton->setText(QApplication::translate("MainWindow", "\345\212\240\350\275\275\351\205\215\347\275\256\351\233\206", Q_NULLPTR));
         saveSetting_pushButton->setText(QApplication::translate("MainWindow", "\344\277\235\345\255\230\351\205\215\347\275\256\351\233\206", Q_NULLPTR));
         pushButton_2->setText(QApplication::translate("MainWindow", "\346\222\255\346\224\276", Q_NULLPTR));
-        toolBox->setItemText(toolBox->indexOf(page), QApplication::translate("MainWindow", "              \345\270\270\347\224\250\351\205\215\347\275\256", Q_NULLPTR));
+        toolBox->setItemText(toolBox->indexOf(page), QApplication::translate("MainWindow", "             \345\270\270\347\224\250\351\205\215\347\275\256", Q_NULLPTR));
         getALL_pushButton->setText(QApplication::translate("MainWindow", "\345\205\250\351\203\250\350\257\273\345\217\226", Q_NULLPTR));
         setAll_pushButton->setText(QApplication::translate("MainWindow", "\345\205\250\351\203\250\345\206\231\345\205\245", Q_NULLPTR));
-        toolBox->setItemText(toolBox->indexOf(page_2), QApplication::translate("MainWindow", "           \350\256\276\345\244\207\345\257\204\345\255\230\345\231\250\351\205\215\347\275\256", Q_NULLPTR));
+        toolBox->setItemText(toolBox->indexOf(page_2), QApplication::translate("MainWindow", "          \350\256\276\345\244\207\345\257\204\345\255\230\345\231\250\351\205\215\347\275\256", Q_NULLPTR));
+        groupBox->setTitle(QApplication::translate("MainWindow", "\346\216\245\346\224\266\346\225\260\346\215\256\344\277\235\345\255\230\357\274\232", Q_NULLPTR));
+        saveFile_radioButton->setText(QApplication::translate("MainWindow", "\344\277\235\345\255\230", Q_NULLPTR));
+        label_6->setText(QApplication::translate("MainWindow", "\345\255\230\345\202\250\350\267\257\345\276\204\357\274\232", Q_NULLPTR));
+        SaveFilePath_pushButton->setText(QApplication::translate("MainWindow", "...", Q_NULLPTR));
+        saveFile_pushButton->setText(QApplication::translate("MainWindow", "\347\241\256\345\256\232", Q_NULLPTR));
+        nosaveFile_radioButton->setText(QApplication::translate("MainWindow", "\344\270\215\344\277\235\345\255\230\357\274\210\351\273\230\350\256\244\357\274\211", Q_NULLPTR));
+        groupBox_2->setTitle(QApplication::translate("MainWindow", "\344\270\211\347\273\264\346\230\276\347\244\272\350\256\276\347\275\256\357\274\232", Q_NULLPTR));
+        label_7->setText(QApplication::translate("MainWindow", "\346\227\213\350\275\254\350\247\222\345\272\246\357\274\232", Q_NULLPTR));
+        label_10->setText(QApplication::translate("MainWindow", "\347\274\251\346\224\276\346\257\224\344\276\213\357\274\232", Q_NULLPTR));
+        label_8->setText(QApplication::translate("MainWindow", "\346\213\226\345\212\250\346\257\224\344\276\213\357\274\232", Q_NULLPTR));
+        toolBox->setItemText(toolBox->indexOf(page_3), QApplication::translate("MainWindow", "        \346\226\207\344\273\266\344\277\235\345\255\230\345\222\214\346\230\276\347\244\272\350\256\276\347\275\256", Q_NULLPTR));
         menu->setTitle(QApplication::translate("MainWindow", "\346\226\207\344\273\266", Q_NULLPTR));
         menu_2->setTitle(QApplication::translate("MainWindow", "\347\233\270\346\234\272\345\261\236\346\200\247", Q_NULLPTR));
         menu_3->setTitle(QApplication::translate("MainWindow", "\350\256\276\347\275\256", Q_NULLPTR));

@@ -93,6 +93,16 @@ GLWidget::GLWidget(QWidget *parent)
     guideLineOffset = 0;
 
 
+
+    //////////缩放比例设置///////////////////
+    rotateRate = 8;    //旋转
+    scaleRate = 10;
+    translateRate = 30;
+
+
+
+
+
 //    linkServer();
 }
 
@@ -559,24 +569,26 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
     //    m_logo.readPCDFile();
 
+
+
     int dx = event->x() - m_lastPos.x();
     int dy = event->y() - m_lastPos.y();
 
-    qDebug()<<" x="<<m_xRot + 8 * dy<<",y="<<m_yRot + 8 * dx<<",z="<<m_zRot + 8 * dx<<endl;
+    qDebug()<<" x="<<m_xRot + rotateRate * dy<<",y="<<m_yRot + rotateRate * dx<<",z="<<m_zRot + rotateRate * dx<<endl;
 
 
     if (event->buttons() & Qt::LeftButton) {
-        setXRotation(m_xRot + 8 * dy);
-        setYRotation(m_yRot + 8 * dx);
+        setXRotation(m_xRot + rotateRate * dy);
+        setYRotation(m_yRot + rotateRate * dx);
         m_lastPos = event->pos();
     } else if (event->buttons() & Qt::RightButton) {
-        setXRotation(m_xRot + 8 * dy);
-        setZRotation(m_zRot + 8 * dx);
+        setXRotation(m_xRot + rotateRate * dy);
+        setZRotation(m_zRot + rotateRate * dx);
         m_lastPos = event->pos();
     }else if(event->buttons() & Qt::MidButton)
     {
-        float temp_x = (event->x() - m_lastPos.x())/50.0;
-        float temp_y = -(event->y() - m_lastPos.y())/30.0;
+        float temp_x = (event->x() - m_lastPos.x())/translateRate;
+        float temp_y = -(event->y() - m_lastPos.y())/translateRate;
 
 //        translate_x = temp_x + translate_x;
 //        translate_y = temp_y + translate_y;
@@ -594,12 +606,12 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 {
     if(event->delta()>0){//如果滚轮往上滚
         //        qDebug()<<"已经检测到向上滚轮"<<endl;
-        m_scale += 0.03*10;
+        m_scale += 0.03*scaleRate;
         update();
 
     }else{//同样的 如果向下滚轮
         //        qDebug()<<"已经检测到向下滚轮..."<<endl;
-        m_scale -= 0.03*10;
+        m_scale -= 0.03*scaleRate;
         update();
     }
 }

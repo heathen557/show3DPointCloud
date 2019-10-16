@@ -367,14 +367,14 @@ void Logo::readPCDFile1()
     {
 //        qDebug()<<" index_y = "<<index_y<<endl;
 
-        m_data[0+m] = -7.0;
+        m_data[0+m] = 7.0;
         m_data[1+m] = index_y;
         m_data[2+m] = 0;
         m_data[3+m] = 1.0;
         m_data[4+m] = 1.0;
         m_data[5+m] = 1.0;
 
-        m_data[6+m] = 7.0;
+        m_data[6+m] = 9.0;
         m_data[7+m] = index_y;
         m_data[8+m] = 0;
         m_data[9+m] = 1.0;
