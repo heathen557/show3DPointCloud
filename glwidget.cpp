@@ -612,8 +612,6 @@ void GLWidget::wheelEvent(QWheelEvent *event)
     }else{//同样的 如果向下滚轮
         //        qDebug()<<"已经检测到向下滚轮..."<<endl;
         m_scale -= 0.03*scaleRate;
-
-        qDebug()<<"m_scale ="<<m_scale<<endl;
         update();
     }
 }

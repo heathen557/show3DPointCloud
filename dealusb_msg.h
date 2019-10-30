@@ -55,7 +55,7 @@ public:
     QString tofPeakNum[16384];     //两者配合使用
 
 
-    int lastTOF[16384];         //存储上一帧的TOF值，然后此值和当前值做平均得出 现在的TOF值
+
 
     /*******tcp 协议相关*****/
     QTcpSocket m_tcpSocket;
@@ -80,6 +80,13 @@ public:
     /******角度矫正相关的变量******/
     float Lr;    //矩阵计算的中间变量
 
+
+    /******** 利用peak值进行滤波的相关变量****************/
+    int peakOffset;                     //设置为阈值，小于这个值的认为是无效数据，将tof值设置为0
+
+    float lastTOF[9][16384];         //存储上一帧的TOF值，然后此值和当前值做平均得出 现在的TOF值   ，取平均值的时候用  ,暂时取五帧
+
+    int haveIndex;
 
 
 signals:

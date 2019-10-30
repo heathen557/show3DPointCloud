@@ -53,7 +53,11 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     localFile_timer = NULL;
     gainImage = 1;
 
+    haveIndex = 0;
+
     //    linkServer();
+
+    peakOffset = 0;   //设置为阈值，小于这个值的认为是无效数据，将接收到的tof值设置为0  ::此功能预留，面阵_1028效果较好，但是对其他数据会滤掉大部分有效数据
 
 
 
@@ -67,11 +71,6 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
         tempStatisticPeakPoints.push_back(singlePoint);
         allStatisticTofPoints.push_back(singlePoint);
         allStatisticPeakPoints.push_back(singlePoint);
-    }
-
-    for(int k=0; k<20; k++)
-    {
-        qDebug()<<" k ="<<k<<"   "<<B_Array[k]<<endl;
     }
 
 
@@ -104,6 +103,8 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 {
     int ret;
     char *MyBuffer;
+
+    haveIndex++;
 
     MyBuffer = array.data();
 
@@ -403,11 +404,40 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         if(isTOF == false)   //设置一个不可能的值
         {
             tof = quint8(MyBuffer[4 + i * 4]) + ((quint8(MyBuffer[4 + i * 4 +1]))<<8);
+
+            if(haveIndex>10 && tof!=0 && lastTOF[0][i]!=0 && lastTOF[1][i]!=0 && lastTOF[2][i]!=0 && lastTOF[3][i]!=0 && lastTOF[4][i]!=0 && lastTOF[5][i]!=0 && lastTOF[6][i]!=0 && lastTOF[7][i]!=0 && lastTOF[8][i]!=0 )
+            {
+                haveIndex =11;
+                tof = (tof+lastTOF[0][i] +lastTOF[1][i] +lastTOF[2][i]+lastTOF[3][i] +lastTOF[4][i] +lastTOF[5][i]+lastTOF[6][i] +lastTOF[7][i] +lastTOF[8][i])/10.0;
+            }
+            lastTOF[0][i] = lastTOF[1][i];
+            lastTOF[1][i] = lastTOF[2][i];
+            lastTOF[2][i] = lastTOF[3][i];
+            lastTOF[3][i] = lastTOF[4][i];
+            lastTOF[4][i] = lastTOF[5][i];
+            lastTOF[5][i] = lastTOF[6][i];
+            lastTOF[6][i] = lastTOF[7][i];
+            lastTOF[7][i] = lastTOF[8][i];
+            lastTOF[8][i] = tof;
+
+
+
             intensity = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
         }else
         {
             intensity = quint8(MyBuffer[4 + i * 4]) + ((quint8(MyBuffer[4 + i * 4 +1]))<<8);
             tof = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
+
+
+            if(haveIndex>3 && tof!=0 && lastTOF[0][i]!=0 && lastTOF[1][i]!=0 && lastTOF[2][i]!=0 )
+            {
+                haveIndex =4;
+                tof = (tof+lastTOF[0][i] +lastTOF[1][i] +lastTOF[2][i])/4.0;
+            }
+            lastTOF[0][i] = lastTOF[1][i];
+            lastTOF[1][i] = lastTOF[2][i];
+            lastTOF[2][i] = tof;
+
         }
 
         tof = tof -70;
@@ -490,6 +520,13 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             if(imgRow>=78 && imgRow<=178)
             {
                 temp_y = temp_y + B_Array[imgRow-78]*LSB;
+            }
+
+            if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
+            {
+                temp_x = 0;
+                temp_y = 0;
+                temp_z = 0;
             }
 
 
@@ -1010,6 +1047,7 @@ void DealUsb_msg::readLocalPCDFile()
     int imgRow,imgCol;
 
 
+    haveIndex++;
 
     fileName = filePath + QString::number(fileIndex)+".txt";
     fileIndex++;
@@ -1045,7 +1083,26 @@ void DealUsb_msg::readLocalPCDFile()
 
         if(isTOF)
         {
+//            tof = tofPeakList[0].toInt();
             tof = tofPeakList[0].toInt();
+
+
+            if(haveIndex>10 && tof!=0 && lastTOF[0][i]!=0 && lastTOF[1][i]!=0 && lastTOF[2][i]!=0 && lastTOF[3][i]!=0 && lastTOF[4][i]!=0 && lastTOF[5][i]!=0 && lastTOF[6][i]!=0 && lastTOF[7][i]!=0 && lastTOF[8][i]!=0 )
+            {
+                haveIndex =11;
+                tof = (tof+lastTOF[0][i] +lastTOF[1][i] +lastTOF[2][i]+lastTOF[3][i] +lastTOF[4][i] +lastTOF[5][i]+lastTOF[6][i] +lastTOF[7][i] +lastTOF[8][i])/10.0;
+            }
+            lastTOF[0][i] = lastTOF[1][i];
+            lastTOF[1][i] = lastTOF[2][i];
+            lastTOF[2][i] = lastTOF[3][i];
+            lastTOF[3][i] = lastTOF[4][i];
+            lastTOF[4][i] = lastTOF[5][i];
+            lastTOF[5][i] = lastTOF[6][i];
+            lastTOF[6][i] = lastTOF[7][i];
+            lastTOF[7][i] = lastTOF[8][i];
+            lastTOF[8][i] = tof;
+
+//            qDebug()<<"here------------"<<endl;
             intensity = tofPeakList[1].toInt();
         }else
         {
@@ -1053,7 +1110,13 @@ void DealUsb_msg::readLocalPCDFile()
            tof = tofPeakList[1].toInt();
         }
 
-        tof = tof - 50;
+        if(intensity <peakOffset)
+        {
+            tof = 0;
+        }
+
+
+        tof = tof - 70;
         tof = tof<0? 0:tof;
 
 
@@ -1112,6 +1175,12 @@ void DealUsb_msg::readLocalPCDFile()
                 temp_y = temp_y + B_Array[imgRow-78]*LSB;
             }
 
+            if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
+            {
+                temp_x = 0;
+                temp_y = 0;
+                temp_z = 0;
+            }
 
             QColor mColor = QColor(tofColor);
             r = mColor.red();
@@ -1517,9 +1586,6 @@ QImage *DealUsb_msg::blur(QImage *origin)
             }
         }
     return newImage;
-
-
-
 
 }
 
