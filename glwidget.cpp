@@ -84,7 +84,7 @@ GLWidget::GLWidget(QWidget *parent)
     connect(&readFileTimer,SIGNAL(timeout()),this,SLOT(readFileSlot()));
 //    readFileTimer.start(100);
 
-    m_scale = 0.0;
+    m_scale = 0;
     translate_x = 0;
     translate_y = 0;
 
@@ -612,6 +612,8 @@ void GLWidget::wheelEvent(QWheelEvent *event)
     }else{//同样的 如果向下滚轮
         //        qDebug()<<"已经检测到向下滚轮..."<<endl;
         m_scale -= 0.03*scaleRate;
+
+        qDebug()<<"m_scale ="<<m_scale<<endl;
         update();
     }
 }

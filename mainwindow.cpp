@@ -158,6 +158,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //    init3DShow();
     readLocalSettingFile();
 
+    ui->toolBox->setCurrentIndex(0);
+
 
 }
 
