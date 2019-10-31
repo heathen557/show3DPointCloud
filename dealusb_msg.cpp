@@ -274,7 +274,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             //40  0.1 不见前面噪点
             outrem.filter(tempRgbCloud_radius);
             int len = outrem.getRemovedIndices()->size();
-//            qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
+            qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
 
             //            QTime time;
             //            time.start();
@@ -471,13 +471,15 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
         //这个是和90度直角矫正相关的  减去一个偏移量70  ；把处理之后小于0的值都过滤掉
         tof = tof -70;
-        tof = tof<0?0:tof;
+//        tof = tof<0?0:tof;
 
 
         //设置TOF图像、强度图像的颜色
         QRgb tofColor,intenColor;
         int gainIndex_tof = tof*gainImage;
+        gainIndex_tof = gainIndex_tof>0 ?gainIndex_tof:0;
         int gainIndex_intensity =intensity * gainImage;
+        gainIndex_intensity = gainIndex_intensity>0?gainIndex_intensity:0;
         if(gainIndex_tof<1024 && gainIndex_tof>=0)
             tofColor = qRgb(colormap[gainIndex_tof * 3], colormap[gainIndex_tof * 3 + 1], colormap[gainIndex_tof * 3 + 2]);
         else
@@ -487,6 +489,9 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             intenColor = qRgb(colormap[gainIndex_intensity * 3], colormap[gainIndex_intensity * 3 + 1], colormap[gainIndex_intensity * 3 + 2]);
         else
             intenColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
+
+
+
 
 
         if(imgRow>=0 && imgRow<256 && imgCol>=0 && imgCol<64)
@@ -521,13 +526,16 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
             //这部分是tof到三维点云的转换
             Lr =  (tof*tof - (5/1.5)*(5/1.5))/(2*(tof + (5/1.5)*sin(thetaArray[cloudIndex]))) * LSB;      //
-            temp_x = Lr * sin(thetaArray[cloudIndex]);                                   //  x坐标值
+            Lr = Lr<0?0:Lr;
+            temp_x = Lr *  sin(thetaArray[cloudIndex]);                                   //  x坐标值
             temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]);     //  y坐标值
             temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]);      // z坐标值
+
             if(imgRow>=78 && imgRow<=178)
             {
                 temp_y = temp_y + B_Array[imgRow-78]*LSB;
             }
+
 
 
             //这里是只显示中间光强度比较大的区域 显示行数：12-52   显示列数：78-178
@@ -537,10 +545,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                 temp_y = 0;
                 temp_z = 0;
             }
-
-
-
-
 
 
             QColor mColor = QColor(tofColor);
