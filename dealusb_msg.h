@@ -84,9 +84,11 @@ public:
     /******** 利用peak值进行滤波的相关变量****************/
     int peakOffset;                     //设置为阈值，小于这个值的认为是无效数据，将tof值设置为0
 
-    float lastTOF[9][16384];         //存储上一帧的TOF值，然后此值和当前值做平均得出 现在的TOF值   ，取平均值的时候用  ,暂时取五帧
+    float lastTOF[100][16384];         //存储上一帧的TOF值，然后此值和当前值做平均得出 现在的TOF值   ，取平均值的时候用  ,暂时取五帧
 
     int haveIndex;
+
+    bool isMeanFlag;
 
 
 signals:

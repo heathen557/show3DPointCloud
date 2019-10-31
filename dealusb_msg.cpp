@@ -104,7 +104,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
     int ret;
     char *MyBuffer;
 
-    haveIndex++;
+
 
     MyBuffer = array.data();
 
@@ -124,7 +124,9 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
     if(spadNum==0 && lastSpadNum==7)  //此时说明上一帧数据已经接收完毕，把整帧数据付给其他线程，供其显示，数据可以显示了
     {
 
-        //判断是否保存数据
+        haveIndex++;    //满足 足够一帧的数据了
+
+        //判断是否保存数据部分
         if(isSaveFlag)
         {
             if(formatFlag == 0)   //保存二进制pcd
@@ -272,7 +274,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             //40  0.1 不见前面噪点
             outrem.filter(tempRgbCloud_radius);
             int len = outrem.getRemovedIndices()->size();
-            qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
+//            qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
 
             //            QTime time;
             //            time.start();
@@ -388,7 +390,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         isShowPointCloud = true;
 
         //        tempRgbCloud.clear();
-    }//以上为处理完整的一帧数据
+    }  //以上为处理完整的一帧数据*********************************************************
 
 
 
@@ -400,27 +402,39 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
     for(int i=0; i<64; i++)
     {
 
+        imgRow = i * 4 + line_offset;
+        imgCol = line_number * 2 + row_offset;
+        cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
         int tof,intensity;
+
         if(isTOF == false)   //设置一个不可能的值
         {
             tof = quint8(MyBuffer[4 + i * 4]) + ((quint8(MyBuffer[4 + i * 4 +1]))<<8);
 
-            if(haveIndex>10 && tof!=0 && lastTOF[0][i]!=0 && lastTOF[1][i]!=0 && lastTOF[2][i]!=0 && lastTOF[3][i]!=0 && lastTOF[4][i]!=0 && lastTOF[5][i]!=0 && lastTOF[6][i]!=0 && lastTOF[7][i]!=0 && lastTOF[8][i]!=0 )
+            //循环赋值  存储100帧数据
+            for(int w=0; w<99; w++)
             {
-                haveIndex =11;
-                tof = (tof+lastTOF[0][i] +lastTOF[1][i] +lastTOF[2][i]+lastTOF[3][i] +lastTOF[4][i] +lastTOF[5][i]+lastTOF[6][i] +lastTOF[7][i] +lastTOF[8][i])/10.0;
+                lastTOF[w][cloudIndex] = lastTOF[w+1][cloudIndex];
             }
-            lastTOF[0][i] = lastTOF[1][i];
-            lastTOF[1][i] = lastTOF[2][i];
-            lastTOF[2][i] = lastTOF[3][i];
-            lastTOF[3][i] = lastTOF[4][i];
-            lastTOF[4][i] = lastTOF[5][i];
-            lastTOF[5][i] = lastTOF[6][i];
-            lastTOF[6][i] = lastTOF[7][i];
-            lastTOF[7][i] = lastTOF[8][i];
-            lastTOF[8][i] = tof;
+            lastTOF[99][cloudIndex] = tof;
 
+            //如果存够了100帧数据，则对这100帧数据的tof值进行取平均
+            if(haveIndex >100)
+            {
+                float zeroNum = 0;
+                haveIndex = 120;
+                float allTof_100 = 0;
+                for(int h=0; h<100; h++)     //100帧取平均   ，如果有0的数据则不进行平均处理
+                {
+                    if(lastTOF[h][cloudIndex] == 0)
+                    {
+                        zeroNum = zeroNum+1;
+                    }
+                    allTof_100 += lastTOF[h][cloudIndex];
+                }
 
+                    tof = allTof_100/(100.0-zeroNum);
+            }
 
             intensity = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
         }else
@@ -428,44 +442,37 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             intensity = quint8(MyBuffer[4 + i * 4]) + ((quint8(MyBuffer[4 + i * 4 +1]))<<8);
             tof = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
 
-
-            if(haveIndex>3 && tof!=0 && lastTOF[0][i]!=0 && lastTOF[1][i]!=0 && lastTOF[2][i]!=0 )
+            //循环赋值  100帧数据
+            for(int w=0; w<99; w++)
             {
-                haveIndex =4;
-                tof = (tof+lastTOF[0][i] +lastTOF[1][i] +lastTOF[2][i])/4.0;
+                lastTOF[w][cloudIndex] = lastTOF[w+1][cloudIndex];
             }
-            lastTOF[0][i] = lastTOF[1][i];
-            lastTOF[1][i] = lastTOF[2][i];
-            lastTOF[2][i] = tof;
+            lastTOF[99][cloudIndex] = tof;
+
+            //如果存够了100帧数据，则对这100帧数据的tof值进行取平均
+            if(haveIndex >100)
+            {
+                float zeroNum = 0;
+                haveIndex = 120;
+                float allTof_100 = 0;
+                for(int h=0; h<100; h++)     //100帧取平均   ，如果有0的数据则不进行平均处理
+                {
+                    if(lastTOF[h][cloudIndex] == 0)
+                    {
+                        zeroNum = zeroNum+1;
+                    }
+                    allTof_100 += lastTOF[h][cloudIndex];
+                }
+
+                tof = allTof_100/(100.0-zeroNum);
+            }
 
         }
 
+        //这个是和90度直角矫正相关的  减去一个偏移量70  ；把处理之后小于0的值都过滤掉
         tof = tof -70;
         tof = tof<0?0:tof;
 
-
-        //        //行列以及颜色传递给图像
-        //        //宏像素 颠倒一下位置 0...63 改为 1 0  3 2  5 4 ;
-        //        //方法为 偶数时 1+i; 奇数时 i-1;
-        //        int newi;
-        //        if(0 == i%2)
-        //        {
-        //            newi = i+1;
-        //        }else
-        //        {
-        //            newi = i-1;
-        //        }
-
-
-        imgRow = i * 4 + line_offset;
-        imgCol = line_number * 2 + row_offset;
-        cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
-
-        /********************对TOF 两针做平均*************************/
-        //        int tmpTof = tof;
-        //        tof = (lastTOF[cloudIndex] + tof)/2;
-        //        lastTOF[cloudIndex] = tmpTof;
-        /************************************************/
 
         //设置TOF图像、强度图像的颜色
         QRgb tofColor,intenColor;
@@ -512,16 +519,18 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 //            temp_y = tof * y_Weight[cloudIndex] * LSB;
 //            temp_z = tof * z_Weight[cloudIndex] * LSB;
 
+            //这部分是tof到三维点云的转换
             Lr =  (tof*tof - (5/1.5)*(5/1.5))/(2*(tof + (5/1.5)*sin(thetaArray[cloudIndex]))) * LSB;      //
             temp_x = Lr * sin(thetaArray[cloudIndex]);                                   //  x坐标值
             temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]);     //  y坐标值
             temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]);      // z坐标值
-
             if(imgRow>=78 && imgRow<=178)
             {
                 temp_y = temp_y + B_Array[imgRow-78]*LSB;
             }
 
+
+            //这里是只显示中间光强度比较大的区域 显示行数：12-52   显示列数：78-178
             if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
             {
                 temp_x = 0;
@@ -580,8 +589,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             qDebug()<<QStringLiteral("给像素赋值时出现异常 imgrow=")<<imgRow<<"   imgCol = "<<imgCol<<endl;
 
     }
-
-    //    qDebug()<<QStringLiteral("处理时间为：")<<time.elapsed()<<endl;
 
     lastSpadNum = spadNum ;
 }
@@ -1087,20 +1094,40 @@ void DealUsb_msg::readLocalPCDFile()
             tof = tofPeakList[0].toInt();
 
 
-            if(haveIndex>10 && tof!=0 && lastTOF[0][i]!=0 && lastTOF[1][i]!=0 && lastTOF[2][i]!=0 && lastTOF[3][i]!=0 && lastTOF[4][i]!=0 && lastTOF[5][i]!=0 && lastTOF[6][i]!=0 && lastTOF[7][i]!=0 && lastTOF[8][i]!=0 )
+//            if(haveIndex>10 && tof!=0 && lastTOF[0][i]!=0 && lastTOF[1][i]!=0 && lastTOF[2][i]!=0 && lastTOF[3][i]!=0 && lastTOF[4][i]!=0 && lastTOF[5][i]!=0 && lastTOF[6][i]!=0 && lastTOF[7][i]!=0 && lastTOF[8][i]!=0 )
+//            {
+//                haveIndex =11;
+//                tof = (tof+lastTOF[0][i] +lastTOF[1][i] +lastTOF[2][i]+lastTOF[3][i] +lastTOF[4][i] +lastTOF[5][i]+lastTOF[6][i] +lastTOF[7][i] +lastTOF[8][i])/10.0;
+//            }
+
+
+            //循环赋值
+            for(int n=0; n<99; n++)
             {
-                haveIndex =11;
-                tof = (tof+lastTOF[0][i] +lastTOF[1][i] +lastTOF[2][i]+lastTOF[3][i] +lastTOF[4][i] +lastTOF[5][i]+lastTOF[6][i] +lastTOF[7][i] +lastTOF[8][i])/10.0;
+                lastTOF[n][i] = lastTOF[n+1][i];
             }
-            lastTOF[0][i] = lastTOF[1][i];
-            lastTOF[1][i] = lastTOF[2][i];
-            lastTOF[2][i] = lastTOF[3][i];
-            lastTOF[3][i] = lastTOF[4][i];
-            lastTOF[4][i] = lastTOF[5][i];
-            lastTOF[5][i] = lastTOF[6][i];
-            lastTOF[6][i] = lastTOF[7][i];
-            lastTOF[7][i] = lastTOF[8][i];
-            lastTOF[8][i] = tof;
+            lastTOF[99][i] = tof;
+
+            if(haveIndex >100)
+            {
+                float zeroNum = 0;
+                haveIndex = 120;
+                float allTof_100 = 0;
+                for(int k=0; k<100; k++)     //100帧取平均   ，如果有0的数据则不进行平均处理
+                {
+                    if(lastTOF[k][i] == 0)
+                    {
+                        zeroNum = zeroNum+1;
+                    }
+                    allTof_100 += lastTOF[k][i];
+                }
+
+               tof = allTof_100/(100.0-zeroNum);
+            }
+
+
+
+
 
 //            qDebug()<<"here------------"<<endl;
             intensity = tofPeakList[1].toInt();
@@ -1406,7 +1433,7 @@ void DealUsb_msg::readLocalPCDFile()
         tempRgbCloud_radius.clear();
         pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> outrem(true);
         outrem.setInputCloud(tempRgbCloud_pass.makeShared());
-        outrem.setMeanK(40);
+        outrem.setMeanK(10);
         outrem.setStddevMulThresh(0.25);
         //40  0.1 不见前面噪点
         outrem.filter(tempRgbCloud_radius);
