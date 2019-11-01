@@ -326,7 +326,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         imgRow = i * 4 + line_offset;
         imgCol = line_number * 2 + row_offset;
         cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
-        int tof,intensity;
+        int tof,intensity ,tmpTof;     //tof：是用来做显示（二维、三维、最大最小值）（因为涉及到要进行校正）    tmpTof：用来存储本地数据 以及统计界面时候用
 
         if(isTOF == false)   //设置一个不可能的值
         {
@@ -340,6 +340,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
         //这个是和90度直角矫正相关的  减去一个偏移量70  ；把处理之后小于0的值都过滤掉
 //        tof = tof -70;
+        tmpTof = tof;
         tof =tof +32;
 //        tof = tof<0?0:tof;
 
@@ -379,7 +380,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             if(formatFlag ==2  && isSaveFlag == true)
             {
 //                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
-                tofPeakNum[cloudIndex] = QString("%1").arg(tof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
+                tofPeakNum[cloudIndex] = QString("%1").arg(tmpTof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
 
             }else
             {
@@ -400,7 +401,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             temp_x = Lr *  sin(thetaArray[cloudIndex]);                                   //  x坐标值
             temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]);     //  y坐标值
             temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]);      // z坐标值
-
 //            if(imgRow>=78 && imgRow<=178)
 //            {
 //                temp_y = temp_y + B_Array[imgRow-78]*LSB;
@@ -440,7 +440,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                     tempStatisticPeakPoints[cloudIndex].erase(tempStatisticPeakPoints[cloudIndex].begin(),tempStatisticPeakPoints[cloudIndex].begin() + offset + 1);
                 }
                 //向每个点的容器中添加一个新的点,完成循环存储
-                tempStatisticTofPoints[cloudIndex].push_back(tof);
+                tempStatisticTofPoints[cloudIndex].push_back(tmpTof);
                 tempStatisticPeakPoints[cloudIndex].push_back(intensity);
             }
 
@@ -954,7 +954,7 @@ void DealUsb_msg::readLocalPCDFile()
     }
     for(int i=0; i<countNum; i++)            //去掉空的数据
     {
-        int tof,intensity;
+        int tof,intensity,tmpTof;   //tof:用来显示（二维、三维、鼠标点击、最大最小值）,因为涉及到要减去一个偏移；     tmpTof：用来存储原始数据、以及统计界面的显示
         if(line[i].isEmpty())
             continue;
 
@@ -964,42 +964,32 @@ void DealUsb_msg::readLocalPCDFile()
 
         if(isTOF)
         {
-//            tof = tofPeakList[0].toInt();
             tof = tofPeakList[0].toInt();
 
 
-//            if(haveIndex>10 && tof!=0 && lastTOF[0][i]!=0 && lastTOF[1][i]!=0 && lastTOF[2][i]!=0 && lastTOF[3][i]!=0 && lastTOF[4][i]!=0 && lastTOF[5][i]!=0 && lastTOF[6][i]!=0 && lastTOF[7][i]!=0 && lastTOF[8][i]!=0 )
+//            //循环赋值    100帧数据取平均值
+//            for(int n=0; n<99; n++)
 //            {
-//                haveIndex =11;
-//                tof = (tof+lastTOF[0][i] +lastTOF[1][i] +lastTOF[2][i]+lastTOF[3][i] +lastTOF[4][i] +lastTOF[5][i]+lastTOF[6][i] +lastTOF[7][i] +lastTOF[8][i])/10.0;
+//                lastTOF[n][i] = lastTOF[n+1][i];
 //            }
+//            lastTOF[99][i] = tof;
 
+//            if(haveIndex >100)
+//            {
+//                float zeroNum = 0;
+//                haveIndex = 120;
+//                float allTof_100 = 0;
+//                for(int k=0; k<100; k++)     //100帧取平均   ，如果有0的数据则不进行平均处理
+//                {
+//                    if(lastTOF[k][i] == 0)
+//                    {
+//                        zeroNum = zeroNum+1;
+//                    }
+//                    allTof_100 += lastTOF[k][i];
+//                }
 
-            //循环赋值
-            for(int n=0; n<99; n++)
-            {
-                lastTOF[n][i] = lastTOF[n+1][i];
-            }
-            lastTOF[99][i] = tof;
-
-            if(haveIndex >100)
-            {
-                float zeroNum = 0;
-                haveIndex = 120;
-                float allTof_100 = 0;
-                for(int k=0; k<100; k++)     //100帧取平均   ，如果有0的数据则不进行平均处理
-                {
-                    if(lastTOF[k][i] == 0)
-                    {
-                        zeroNum = zeroNum+1;
-                    }
-                    allTof_100 += lastTOF[k][i];
-                }
-
-               tof = allTof_100/(100.0-zeroNum);
-            }
-
-
+//               tof = allTof_100/(100.0-zeroNum);
+//            }
 
 
 
@@ -1017,8 +1007,9 @@ void DealUsb_msg::readLocalPCDFile()
         }
 
 
+        tmpTof = tof;
         tof = tof - 70;
-        tof = tof<0? 0:tof;
+//        tof = tof<0? 0:tof;
 
 
         //行列以及颜色传递给图像
@@ -1068,6 +1059,7 @@ void DealUsb_msg::readLocalPCDFile()
 
 
             Lr =  (tof*tof - (5/1.5)*(5/1.5))/(2*(tof + (5/1.5)*sin(thetaArray[cloudIndex]))) *LSB ;      //
+            Lr = Lr<0?0:Lr;
             temp_x = Lr * sin(thetaArray[cloudIndex]);                                   //  x坐标值
             temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]);     //  y坐标值
             temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]);      // z坐标值
@@ -1076,12 +1068,12 @@ void DealUsb_msg::readLocalPCDFile()
                 temp_y = temp_y + B_Array[imgRow-78]*LSB;
             }
 
-            if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
-            {
-                temp_x = 0;
-                temp_y = 0;
-                temp_z = 0;
-            }
+//            if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
+//            {
+//                temp_x = 0;
+//                temp_y = 0;
+//                temp_z = 0;
+//            }
 
             QColor mColor = QColor(tofColor);
             r = mColor.red();
@@ -1102,7 +1094,7 @@ void DealUsb_msg::readLocalPCDFile()
             if(formatFlag ==2  && isSaveFlag == true)
             {
 //                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
-                tofPeakNum[cloudIndex] = QString("%1").arg(tof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
+                tofPeakNum[cloudIndex] = QString("%1").arg(tmpTof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
             }else
             {
                 tofPeakNum[cloudIndex].clear();
@@ -1123,7 +1115,7 @@ void DealUsb_msg::readLocalPCDFile()
                     tempStatisticPeakPoints[cloudIndex].erase(tempStatisticPeakPoints[cloudIndex].begin(),tempStatisticPeakPoints[cloudIndex].begin() + offset + 1);
                 }
                 //向每个点的容器中添加一个新的点,完成循环存储
-                tempStatisticTofPoints[cloudIndex].push_back(tof);
+                tempStatisticTofPoints[cloudIndex].push_back(tmpTof);
                 tempStatisticPeakPoints[cloudIndex].push_back(intensity);
             }
 
