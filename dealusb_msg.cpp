@@ -289,88 +289,9 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
 
             //条件滤波   设置半径 以及 圆周内的点数
-
-
             //            qDebug()<<"dealusb_msg    fileted size = "<<outrem.getRemovedIndices()->size();
             //            qDebug()<<" passThrough cost time = "<<time.elapsed()<<endl;
             /*************************以上为滤波处理部分************************************************************/
-
-            /***********************接下来 根据点云的序号 去除二维图像中的噪声************************/
-
-            /*            //此种方法采用取均值的方法，效果不是太好
-            int index,pix_x,pix_y;
-            QRgb clearTofCol,clearPeakCol;
-            for(int i=0; i<len; i++)
-            {
-                index = outrem.getRemovedIndices()->at(i);
-
-
-                pix_x = index % 256;
-                pix_y = index / 256;
-
-                //将像素去均值 后赋予噪点处的像素值
-                if(pix_y+1 < 64 && pix_y-1 >0)
-                {
-                     clearTofCol =  (microQimage.pixel(pix_x,pix_y+1) + microQimage.pixel(pix_x,pix_y-1))/2.0;
-                     clearPeakCol = (macroQimage.pixel(pix_x,pix_y+1) + macroQimage.pixel(pix_x,pix_y-1))/2.0;
-                }
-                else
-                {
-                     clearTofCol =  microQimage.pixel(pix_x,pix_y);
-                     clearPeakCol = macroQimage.pixel(pix_x,pix_y);
-                }
-                microQimage.setPixel(pix_x,pix_y,clearTofCol);
-                macroQimage.setPixel(pix_x,pix_y,clearPeakCol);
-            }
-*/
-
-
-            //屏蔽掉同步的部分
-//            int index,pix_x,pix_y;
-//            for(int i=0; i<len; i++)
-//            {
-//                index = outrem.getRemovedIndices()->at(i);
-//                pix_x = index % 256;
-//                pix_y = index / 256;
-//                mouseShowTOF[pix_x][pix_y] = 0;   //噪点赋值为黑色
-//            }
-
-//            vector<int> numArray;
-//            QRgb tofColor;
-//            int gainIndex_tof;
-//            for(int i=0;i<len; i++)
-//            {
-//                index = outrem.getRemovedIndices()->at(i);
-//                pix_x = index % 256;
-//                pix_y = index / 256;
-
-//                if( pix_x>=1 )
-//                    numArray.push_back(mouseShowTOF[pix_x-1][pix_y]);
-//                if( pix_x<=254 )
-//                    numArray.push_back(mouseShowTOF[pix_x+1][pix_y]);
-//                if( pix_y>=1)
-//                    numArray.push_back(mouseShowTOF[pix_x][pix_y-1]);
-//                if( pix_y<=62)
-//                    numArray.push_back(mouseShowTOF[pix_x][pix_y+1]);
-
-//                sort(numArray.begin(),numArray.end());
-//                int midNumTof = numArray[numArray.size()/2];
-//                //                qDebug()<<"midNumTof = "<<midNumTof<<endl;
-
-
-//                numArray.clear();
-
-//                //更新鼠标显示的TOF值
-//                mouseShowTOF[pix_x][pix_y] = midNumTof;
-
-//                //更新TOF 图像的像素值
-//                gainIndex_tof = midNumTof*gainImage;
-//                if(gainIndex_tof<1024 && gainIndex_tof>=0)
-//                    tofColor = qRgb(colormap[gainIndex_tof * 3], colormap[gainIndex_tof * 3 + 1], colormap[gainIndex_tof * 3 + 2]);
-//                else
-//                    tofColor = qRgb(colormap[1023 * 3], colormap[1023 * 3 + 1], colormap[1023 * 3 + 2]);
-//                microQimage.setPixel(pix_x,pix_y,tofColor);         //TOF图像的赋值
-//            }
 
 
             mutex.lock();
@@ -410,67 +331,16 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         if(isTOF == false)   //设置一个不可能的值
         {
             tof = quint8(MyBuffer[4 + i * 4]) + ((quint8(MyBuffer[4 + i * 4 +1]))<<8);
-
-            //循环赋值  存储100帧数据
-            for(int w=0; w<99; w++)
-            {
-                lastTOF[w][cloudIndex] = lastTOF[w+1][cloudIndex];
-            }
-            lastTOF[99][cloudIndex] = tof;
-
-            //如果存够了100帧数据，则对这100帧数据的tof值进行取平均
-            if(haveIndex >100)
-            {
-                float zeroNum = 0;
-                haveIndex = 120;
-                float allTof_100 = 0;
-                for(int h=0; h<100; h++)     //100帧取平均   ，如果有0的数据则不进行平均处理
-                {
-                    if(lastTOF[h][cloudIndex] == 0)
-                    {
-                        zeroNum = zeroNum+1;
-                    }
-                    allTof_100 += lastTOF[h][cloudIndex];
-                }
-
-                    tof = allTof_100/(100.0-zeroNum);
-            }
-
             intensity = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
         }else
         {
             intensity = quint8(MyBuffer[4 + i * 4]) + ((quint8(MyBuffer[4 + i * 4 +1]))<<8);
             tof = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
-
-            //循环赋值  100帧数据
-            for(int w=0; w<99; w++)
-            {
-                lastTOF[w][cloudIndex] = lastTOF[w+1][cloudIndex];
-            }
-            lastTOF[99][cloudIndex] = tof;
-
-            //如果存够了100帧数据，则对这100帧数据的tof值进行取平均
-            if(haveIndex >100)
-            {
-                float zeroNum = 0;
-                haveIndex = 120;
-                float allTof_100 = 0;
-                for(int h=0; h<100; h++)     //100帧取平均   ，如果有0的数据则不进行平均处理
-                {
-                    if(lastTOF[h][cloudIndex] == 0)
-                    {
-                        zeroNum = zeroNum+1;
-                    }
-                    allTof_100 += lastTOF[h][cloudIndex];
-                }
-
-                tof = allTof_100/(100.0-zeroNum);
-            }
-
         }
 
         //这个是和90度直角矫正相关的  减去一个偏移量70  ；把处理之后小于0的值都过滤掉
-        tof = tof -70;
+//        tof = tof -70;
+        tof =tof +32;
 //        tof = tof<0?0:tof;
 
 
@@ -531,20 +401,20 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]);     //  y坐标值
             temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]);      // z坐标值
 
-            if(imgRow>=78 && imgRow<=178)
-            {
-                temp_y = temp_y + B_Array[imgRow-78]*LSB;
-            }
+//            if(imgRow>=78 && imgRow<=178)
+//            {
+//                temp_y = temp_y + B_Array[imgRow-78]*LSB;
+//            }
 
 
 
-            //这里是只显示中间光强度比较大的区域 显示行数：12-52   显示列数：78-178
-            if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
-            {
-                temp_x = 0;
-                temp_y = 0;
-                temp_z = 0;
-            }
+//            //这里是只显示中间光强度比较大的区域 显示行数：12-52   显示列数：78-178
+//            if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
+//            {
+//                temp_x = 0;
+//                temp_y = 0;
+//                temp_z = 0;
+//            }
 
 
             QColor mColor = QColor(tofColor);
