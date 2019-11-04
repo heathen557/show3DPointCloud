@@ -110,6 +110,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //接收数据线程、处理数据线程
     connect(recvUsbMsg_obj,SIGNAL(recvMsgSignal(QByteArray)),dealUsbMsg_obj,SLOT(recvMsgSlot(QByteArray)),Qt::QueuedConnection   );
 
+    //接收数据线程 读取本地的File文件，加载到数组，是否成功信号与槽的连接
+    connect(dealUsbMsg_obj,SIGNAL(loadArrayFileSignal(bool,QString)),this,SLOT(loadArrayFileSlot(bool,QString)));
+
 
 
     connect(this,SIGNAL(read_usb_signal()),recvUsbMsg_obj,SLOT(read_usb()));
@@ -161,6 +164,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->toolBox->setCurrentIndex(0);
 
 
+    dealUsbMsg_obj->loadLocalArray();      //处理数据线程 记载角度矫正矩阵
 }
 
 
@@ -4501,4 +4505,16 @@ void MainWindow::saveLocalSettingFile()
         }
         file.close();
     }
+}
+
+
+
+// 数据处理线程 读取本地配置文件成功与否 的接收槽函数 ，成功与否
+void MainWindow::loadArrayFileSlot(bool flag ,QString str)
+{
+//    if(flag == false)
+//    {
+//        QMessageBox::information(NULL,"warn",str);
+//    }
+    showWarnInfoSlot(str);
 }

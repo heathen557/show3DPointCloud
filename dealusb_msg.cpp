@@ -73,10 +73,119 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
         allStatisticPeakPoints.push_back(singlePoint);
     }
 
-
-
     //    readLocalPCDFile();
+
+
+
+
+
 }
+
+
+
+void DealUsb_msg::loadLocalArray()
+{
+    //加载数据的配置四个相关的配置矩阵的部分
+
+    //加载tofOffsetArray.txt配置集
+    QFile tofOffsetArray_file("tofOffsetArray.txt");
+    QString tofOffsetArray_line[16400];
+    QString str;
+    if (tofOffsetArray_file.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        QTextStream in(&tofOffsetArray_file);
+        int i = 0;
+        while (!in.atEnd())
+        {
+            tofOffsetArray_line[i] = in.readLine();
+            i++;
+        }
+        tofOffsetArray_file.close();
+
+        if(i<16383)
+        {
+            str = "load the 'tofOffsetArray.txt' error!";
+            emit loadArrayFileSignal(false,str);
+        }else{
+            str = "load the 'tofOffsetArray.txt' success!";
+            emit loadArrayFileSignal(true,str);
+        }
+    }else{
+        str = "load the 'tofOffsetArray.txt' error!";
+        emit loadArrayFileSignal(false,str);
+    }
+
+
+
+    //加载thetaArray.txt配置集
+    QFile thetaArray_file("thetaArray.txt");
+    QString thetaArray_line[16400];
+    if (thetaArray_file.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        QTextStream in(&thetaArray_file);
+        int i = 0;
+        while (!in.atEnd())
+        {
+            thetaArray_line[i] = in.readLine();
+            i++;
+        }
+        thetaArray_file.close();
+
+        if(i<16383)
+        {
+            str = "load the 'thetaArray.txt' error!";
+            emit loadArrayFileSignal(false,str);
+        }else{
+            str = "load the 'thetaArray.txt success!'";
+            emit loadArrayFileSignal(true,str);
+        }
+    }else{
+        str = "load the 'thetaArray.txt' error!";
+        emit loadArrayFileSignal(false,str);
+    }
+
+
+    //加载betaArray.txt配置集
+    QFile betaArray_file("betaArray.txt");
+    QString betaArray_line[16400];
+    if (betaArray_file.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        QTextStream in(&betaArray_file);
+        int i = 0;
+        while (!in.atEnd())
+        {
+            betaArray_line[i] = in.readLine();
+            i++;
+        }
+        betaArray_file.close();
+
+        if(i<16383)
+        {
+            str = "load the 'betaArray.txt' error!";
+            emit loadArrayFileSignal(false,str);
+        }else {
+            str = "load the 'betaArray.txt' success!";
+            emit loadArrayFileSignal(true,str);
+        }
+    }else{
+        str = "load the 'betaArray.txt' error!";
+        emit loadArrayFileSignal(false,str);
+    }
+
+
+
+    for(int i=0;i<16384;i++)
+    {
+        tofOffsetArray[i] = tofOffsetArray_line[i].toFloat();
+        thetaArray[i] = thetaArray_line[i].toFloat();
+        betaArray[i] = betaArray_line[i].toFloat();
+
+//        qDebug()<<"thetaArray["<<i<<"] = "<<thetaArray[i]<<endl;
+    }
+}
+
+
+
 
 //修改统计帧数的槽函数
 void DealUsb_msg::alterStatisticFrameNum_slot(int num)
@@ -274,8 +383,11 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         //这个是和90度直角矫正相关的  减去一个偏移量70  ；把处理之后小于0的值都过滤掉
 //        tof = tof -70;
         tmpTof = tof;
-        tof =tof +32;
-//        tof = tof<0?0:tof;
+
+//        tof =tof +32;
+        tof = tof + tofOffsetArray[cloudIndex];
+
+
 
 
         //设置TOF图像、强度图像的颜色
@@ -339,6 +451,19 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 //                temp_y = temp_y + B_Array[imgRow-78]*LSB;
 //            }
 
+            if(tofOffsetArray[cloudIndex] ==tof)     //tof 原始值为0 处的位置会 显示成为一个弧度,所以将这里的三维点云坐标置为0
+            {
+                temp_x = 0;
+                temp_z = 0;
+                temp_y = 0;
+            }
+
+            if(intensity <peakOffset)
+            {
+                temp_x = 0;
+                temp_z = 0;
+                temp_y = 0;
+            }
 
 
 //            //这里是只显示中间光强度比较大的区域 显示行数：12-52   显示列数：78-178
@@ -934,14 +1059,13 @@ void DealUsb_msg::readLocalPCDFile()
            tof = tofPeakList[1].toInt();
         }
 
-        if(intensity <peakOffset)
-        {
-            tof = 0;
-        }
+
 
 
         tmpTof = tof;
 //        tof = tof - 70;
+
+        tof = tof + tofOffsetArray[cloudIndex];
 //        tof = tof<0? 0:tof;
 
 
@@ -996,10 +1120,10 @@ void DealUsb_msg::readLocalPCDFile()
             temp_x = Lr * sin(thetaArray[cloudIndex]);                                   //  x坐标值
             temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]);     //  y坐标值
             temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]);      // z坐标值
-            if(imgRow>=78 && imgRow<=178)
-            {
-                temp_y = temp_y + B_Array[imgRow-78]*LSB;
-            }
+//            if(imgRow>=78 && imgRow<=178)
+//            {
+//                temp_y = temp_y + B_Array[imgRow-78]*LSB;
+//            }
 
 //            if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
 //            {
@@ -1014,13 +1138,20 @@ void DealUsb_msg::readLocalPCDFile()
             b = mColor.blue();
             rgb = ((int)r << 16 | (int)g << 8 | (int)b);
 
-            if(intensity < 20)
+
+            if(intensity < peakOffset)
             {
                 temp_x = 0;
                 temp_z = 0;
                 temp_y = 0;
             }
 
+            if(tofOffsetArray[cloudIndex] == tof)
+            {
+                temp_x = 0;
+                temp_z = 0;
+                temp_y = 0;
+            }
 
             tempRgbCloud.points[cloudIndex].x = temp_x;
             tempRgbCloud.points[cloudIndex].y = temp_y;
@@ -1205,11 +1336,11 @@ void DealUsb_msg::readLocalPCDFile()
 
 
         mutex.lock();
-//        tofImage = microQimage;
-//        intensityImage = macroQimage;
+        tofImage = microQimage;
+        intensityImage = macroQimage;
 
-        tofImage = *blur(&microQimage);
-        intensityImage = *blur(&macroQimage);
+//        tofImage = *blur(&microQimage);
+//        intensityImage = *blur(&macroQimage);
 
         pcl::copyPointCloud(tempRgbCloud_radius,pointCloudRgb);
         mutex.unlock();

@@ -197,6 +197,8 @@ private slots:
 
     void reReadDevSlot(int regesiterAddress,QString str); //读取设备指令 返回槽函数
 
+    void loadArrayFileSlot(bool,QString);   //是否成功标识，成功与否信息的字符串
+
     /****************/
     void showSaveFileDialog();     //打开保存文件窗口的槽函数
 
