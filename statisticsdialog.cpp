@@ -39,7 +39,7 @@ void statisticsDialog::initTofMean_slot()
 
 
 //    QSize screenSize = ui->tofMean_widget->size();
-    tofMean_container->setMinimumSize(QSize(screenSize.width()/2.5 , screenSize.height()/3.2));
+    tofMean_container->setMinimumSize(QSize(screenSize.width()/2.5 , screenSize.height()/4.2));
 //     container->setMinimumSize(screenSize);
     tofMean_container->setMaximumSize(screenSize);
 //    container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -130,7 +130,7 @@ void statisticsDialog::initTofStd_slot()
 
 
 //    QSize screenSize = ui->tofMean_widget->size();
-    tofStd_container->setMinimumSize(QSize(screenSize.width()/2.5 , screenSize.height()/3.2));
+    tofStd_container->setMinimumSize(QSize(screenSize.width()/2.5 , screenSize.height()/4.2));
 //     container->setMinimumSize(screenSize);
     tofStd_container->setMaximumSize(screenSize);
 //    container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -214,7 +214,7 @@ void statisticsDialog::initPeakMean_slot()
 
 
 //    QSize screenSize = ui->tofMean_widget->size();
-    peakMean_container->setMinimumSize(QSize(screenSize.width()/2.5 , screenSize.height()/3.2));
+    peakMean_container->setMinimumSize(QSize(screenSize.width()/2.5 , screenSize.height()/4.2));
 //     container->setMinimumSize(screenSize);
     peakMean_container->setMaximumSize(screenSize);
 //    container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -298,7 +298,7 @@ void statisticsDialog::initPeakStd_slot()
 
 
 //    QSize screenSize = ui->tofMean_widget->size();
-    tofStd_container->setMinimumSize(QSize(screenSize.width()/2.5 , screenSize.height()/3.2));
+    tofStd_container->setMinimumSize(QSize(screenSize.width()/2.5 , screenSize.height()/4.2));
 //     container->setMinimumSize(screenSize);
     tofStd_container->setMaximumSize(screenSize);
 //    container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

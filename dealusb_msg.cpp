@@ -58,6 +58,7 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     //    linkServer();
 
     peakOffset = 0;   //设置为阈值，小于这个值的认为是无效数据，将接收到的tof值设置为0  ::此功能预留，面阵_1028效果较好，但是对其他数据会滤掉大部分有效数据
+    isOnlyCenterShow_flag = false;   //是否只显示中心区域的标识，设置为true则只显示中心光较强的区域（超过范围的点xyz坐标全部设置为0），设置为false则显示全部点云数据；默认false;
 
 
 
@@ -467,12 +468,15 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
 
 //            //这里是只显示中间光强度比较大的区域 显示行数：12-52   显示列数：78-178
-//            if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
-//            {
-//                temp_x = 0;
-//                temp_y = 0;
-//                temp_z = 0;
-//            }
+            if(isOnlyCenterShow_flag)
+            {
+                if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
+                {
+                    temp_x = 0;
+                    temp_y = 0;
+                    temp_z = 0;
+                }
+            }
 
 
             QColor mColor = QColor(tofColor);
@@ -1125,12 +1129,16 @@ void DealUsb_msg::readLocalPCDFile()
 //                temp_y = temp_y + B_Array[imgRow-78]*LSB;
 //            }
 
-//            if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
-//            {
-//                temp_x = 0;
-//                temp_y = 0;
-//                temp_z = 0;
-//            }
+            if(isOnlyCenterShow_flag)
+            {
+                if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
+                {
+                    temp_x = 0;
+                    temp_y = 0;
+                    temp_z = 0;
+                }
+            }
+
 
             QColor mColor = QColor(tofColor);
             r = mColor.red();

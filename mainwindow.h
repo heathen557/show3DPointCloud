@@ -293,6 +293,12 @@ private slots:
 
     void on_translate_horizontalSlider_sliderMoved(int position);
 
+    void on_peakOffset_lineEdit_returnPressed();
+
+    void on_centerShowYes_radioButton_clicked();
+
+    void on_centerShowNo_radioButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 

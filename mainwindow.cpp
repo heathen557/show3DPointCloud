@@ -4518,3 +4518,28 @@ void MainWindow::loadArrayFileSlot(bool flag ,QString str)
 //    }
     showWarnInfoSlot(str);
 }
+
+
+//更改peak的显示阈值的槽函数，回车后激发
+void MainWindow::on_peakOffset_lineEdit_returnPressed()
+{
+    int peakOffsetVal = ui->peakOffset_lineEdit->text().toInt();
+    dealUsbMsg_obj->peakOffset = peakOffsetVal;
+
+
+}
+
+//更改显示区域的槽函数，只显示中心区域
+void MainWindow::on_centerShowYes_radioButton_clicked()
+{
+    qDebug()<<" only show the center area";
+    dealUsbMsg_obj->isOnlyCenterShow_flag = true;
+}
+
+//更改显示区域的槽函数，全部显示
+void MainWindow::on_centerShowNo_radioButton_clicked()
+{
+    qDebug()<<"show all pointcloud flag";
+    dealUsbMsg_obj->isOnlyCenterShow_flag = false;
+
+}

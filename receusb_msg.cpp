@@ -705,6 +705,31 @@ void ReceUSB_Msg::loadSettingSlot(QString filePath,bool recvFlag)
             qDebug()<<"[w]Device write str1="<<str1.mid(3*k,2)<<"   res="<<res<<str1.mid(3*k,2).toInt(NULL,16) <<endl;
         }
 
+        //0号寄存器写1 -》48号寄存器写44 -》1ms ->48号寄存器写04 -》0号寄存器写0     //2019-11-05
+        //0号寄存器写1 -》48号寄存器写44 -》1ms ->48号寄存器写04 -》0号寄存器写0     //2019-11-05
+          int dataNum = 1;   //此命令只指定最低位，故不需要做位操作    写入1
+          QString writeData = QString::number(dataNum,16);
+          Device_Register_Write(216,0,writeData);
+
+          //48号寄存器写44
+         dataNum = 68;
+         writeData = QString::number(dataNum,16);
+         Device_Register_Write(216,48,writeData);
+
+         Sleep(1);
+
+          //48号寄存器写04
+         dataNum = 4;
+         writeData = QString::number(dataNum,16);
+         Device_Register_Write(216,48,writeData);
+
+
+          dataNum = 0;   //此命令只指定最低位，故不需要做位操作    写入1
+          writeData = QString::number(dataNum,16);
+          Device_Register_Write(216,0,writeData);
+
+
+
 
         //0x15 = 21
         str = "01";
