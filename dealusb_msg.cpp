@@ -60,6 +60,7 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     peakOffset = 0;   //设置为阈值，小于这个值的认为是无效数据，将接收到的tof值设置为0  ::此功能预留，面阵_1028效果较好，但是对其他数据会滤掉大部分有效数据
     isOnlyCenterShow_flag = false;   //是否只显示中心区域的标识，设置为true则只显示中心光较强的区域（超过范围的点xyz坐标全部设置为0），设置为false则显示全部点云数据；默认false;
 
+    averageNum = 1;            //滑动平均的帧数 , 默认为1
 
 
     //总共有16384个点，针对每一个点开启一个独立的容器进行存储相关内容    统计相关
@@ -319,9 +320,9 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             int len = outrem.getRemovedIndices()->size();
 //            qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
 
-            //            QTime time;
-            //            time.start();
-            //            int len;
+//            QTime time;
+//            time.start();
+//            int len;
 //            tempRgbCloud_radius.resize(0);
 //            pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
 //            outrem.setInputCloud(tempRgbCloud.makeShared());              //设置输入点云
@@ -1063,6 +1064,34 @@ void DealUsb_msg::readLocalPCDFile()
            tof = tofPeakList[1].toInt();
         }
 
+        //循环赋值
+        for(int n=0; n<averageNum-1; n++)
+        {
+            lastTOF[n][i] = lastTOF[n+1][i];
+        }
+        lastTOF[averageNum-1][i] = tof;
+
+        if(haveIndex >averageNum)
+        {
+            float zeroNum = 0;
+            haveIndex = averageNum+1;
+            float allTof_100 = 0;
+            for(int k=0; k<averageNum; k++)     //100帧取平均   ，如果有0的数据则不进行平均处理
+            {
+                if(lastTOF[k][i] == 0)
+                {
+                    zeroNum = zeroNum+1;
+                }
+                allTof_100 += lastTOF[k][i];
+            }
+            if(zeroNum != averageNum)
+
+           tof = allTof_100/(averageNum-zeroNum);
+        }
+
+
+
+
 
 
 
@@ -1070,6 +1099,8 @@ void DealUsb_msg::readLocalPCDFile()
 //        tof = tof - 70;
 
         tof = tof + tofOffsetArray[cloudIndex];
+
+//        qDebug()<<" tofOffsetArray[cloudIndex] "<<cloudIndex<<"      "<<tofOffsetArray[cloudIndex];
 //        tof = tof<0? 0:tof;
 
 
@@ -1225,6 +1256,7 @@ void DealUsb_msg::readLocalPCDFile()
 
     /*********************test saveFile HUAWEI ***********************************************/
 
+    haveIndex++;
     //判断是否保存数据
     if(isSaveFlag)
     {

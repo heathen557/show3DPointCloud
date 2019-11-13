@@ -63,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     isTOF = true;
     gainImage = 1;
 
+     ui->groupBox_5->setVisible(false);
 
 
     //新添加的文件保存相关的标识
@@ -4542,4 +4543,24 @@ void MainWindow::on_centerShowNo_radioButton_clicked()
     qDebug()<<"show all pointcloud flag";
     dealUsbMsg_obj->isOnlyCenterShow_flag = false;
 
+}
+
+//更改滑动平均时的帧数
+void MainWindow::on_averageNum_lineEdit_returnPressed()
+{
+    int averageNum = ui->averageNum_lineEdit->text().toInt();
+    dealUsbMsg_obj->averageNum = averageNum;
+}
+
+
+void MainWindow::keyPressEvent(QKeyEvent *e)
+{
+    qDebug()<<"key num = "<<e->key();
+    if(90 == e->key())
+    {
+        ui->groupBox_5->setVisible(true);
+    }else if(88 == e->key())
+    {
+        ui->groupBox_5->setVisible(false);
+    }
 }

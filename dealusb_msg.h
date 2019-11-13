@@ -99,6 +99,7 @@ public:
     bool isOnlyCenterShow_flag;         //是否只显示中心区域的标识，设置为true则只显示中心光较强的区域（超过范围的点xyz坐标全部设置为0），设置为false则显示全部点云数据；默认false
 
 
+    int averageNum;            //滑动平均的帧数 , 默认为1
 
 
 

@@ -14,7 +14,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QDockWidget>
-#include <QtWidgets/QFormLayout>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
@@ -140,13 +139,12 @@ public:
     QSlider *translate_horizontalSlider;
     QGroupBox *groupBox_5;
     QGridLayout *gridLayout_23;
-    QHBoxLayout *horizontalLayout_14;
     QLabel *label_12;
     QLineEdit *peakOffset_lineEdit;
-    QFormLayout *formLayout;
+    QLabel *label_14;
+    QLineEdit *averageNum_lineEdit;
     QLabel *label_13;
     QRadioButton *centerShowYes_radioButton;
-    QSpacerItem *horizontalSpacer_2;
     QRadioButton *centerShowNo_radioButton;
     QMenuBar *menuBar;
     QMenu *menu;
@@ -706,48 +704,43 @@ public:
         gridLayout_23->setSpacing(6);
         gridLayout_23->setContentsMargins(11, 11, 11, 11);
         gridLayout_23->setObjectName(QStringLiteral("gridLayout_23"));
-        horizontalLayout_14 = new QHBoxLayout();
-        horizontalLayout_14->setSpacing(6);
-        horizontalLayout_14->setObjectName(QStringLiteral("horizontalLayout_14"));
         label_12 = new QLabel(groupBox_5);
         label_12->setObjectName(QStringLiteral("label_12"));
 
-        horizontalLayout_14->addWidget(label_12);
+        gridLayout_23->addWidget(label_12, 0, 0, 1, 1);
 
         peakOffset_lineEdit = new QLineEdit(groupBox_5);
         peakOffset_lineEdit->setObjectName(QStringLiteral("peakOffset_lineEdit"));
         peakOffset_lineEdit->setAlignment(Qt::AlignCenter);
 
-        horizontalLayout_14->addWidget(peakOffset_lineEdit);
+        gridLayout_23->addWidget(peakOffset_lineEdit, 0, 1, 1, 2);
 
+        label_14 = new QLabel(groupBox_5);
+        label_14->setObjectName(QStringLiteral("label_14"));
 
-        gridLayout_23->addLayout(horizontalLayout_14, 0, 0, 1, 1);
+        gridLayout_23->addWidget(label_14, 1, 0, 1, 1);
 
-        formLayout = new QFormLayout();
-        formLayout->setSpacing(6);
-        formLayout->setObjectName(QStringLiteral("formLayout"));
+        averageNum_lineEdit = new QLineEdit(groupBox_5);
+        averageNum_lineEdit->setObjectName(QStringLiteral("averageNum_lineEdit"));
+        averageNum_lineEdit->setAlignment(Qt::AlignCenter);
+
+        gridLayout_23->addWidget(averageNum_lineEdit, 1, 1, 1, 2);
+
         label_13 = new QLabel(groupBox_5);
         label_13->setObjectName(QStringLiteral("label_13"));
 
-        formLayout->setWidget(0, QFormLayout::LabelRole, label_13);
+        gridLayout_23->addWidget(label_13, 2, 0, 1, 1);
 
         centerShowYes_radioButton = new QRadioButton(groupBox_5);
         centerShowYes_radioButton->setObjectName(QStringLiteral("centerShowYes_radioButton"));
 
-        formLayout->setWidget(0, QFormLayout::FieldRole, centerShowYes_radioButton);
-
-        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        formLayout->setItem(1, QFormLayout::LabelRole, horizontalSpacer_2);
+        gridLayout_23->addWidget(centerShowYes_radioButton, 2, 1, 1, 1);
 
         centerShowNo_radioButton = new QRadioButton(groupBox_5);
         centerShowNo_radioButton->setObjectName(QStringLiteral("centerShowNo_radioButton"));
         centerShowNo_radioButton->setChecked(true);
 
-        formLayout->setWidget(1, QFormLayout::FieldRole, centerShowNo_radioButton);
-
-
-        gridLayout_23->addLayout(formLayout, 1, 0, 1, 1);
+        gridLayout_23->addWidget(centerShowNo_radioButton, 2, 2, 1, 1);
 
 
         gridLayout_25->addWidget(groupBox_5, 2, 0, 1, 1);
@@ -1061,7 +1054,7 @@ public:
         retranslateUi(MainWindow);
 
         toolBox->setCurrentIndex(2);
-        tabWidget_3->setCurrentIndex(1);
+        tabWidget_3->setCurrentIndex(0);
         tabWidget_2->setCurrentIndex(0);
 
 
@@ -1117,9 +1110,11 @@ public:
         groupBox_5->setTitle(QApplication::translate("MainWindow", "\346\230\276\347\244\272\350\256\276\347\275\256\357\274\232", Q_NULLPTR));
         label_12->setText(QApplication::translate("MainWindow", "  peak\346\230\276\347\244\272\351\230\210\345\200\274\357\274\232", Q_NULLPTR));
         peakOffset_lineEdit->setText(QApplication::translate("MainWindow", "0", Q_NULLPTR));
+        label_14->setText(QApplication::translate("MainWindow", "      \345\271\263\345\235\207\345\270\247\346\225\260\357\274\232", Q_NULLPTR));
+        averageNum_lineEdit->setText(QApplication::translate("MainWindow", "1", Q_NULLPTR));
         label_13->setText(QApplication::translate("MainWindow", "\345\217\252\346\230\276\347\244\272\344\270\255\345\277\203\345\214\272\345\237\237\357\274\232", Q_NULLPTR));
-        centerShowYes_radioButton->setText(QApplication::translate("MainWindow", "   \346\230\257", Q_NULLPTR));
-        centerShowNo_radioButton->setText(QApplication::translate("MainWindow", "   \345\220\246", Q_NULLPTR));
+        centerShowYes_radioButton->setText(QApplication::translate("MainWindow", "\346\230\257", Q_NULLPTR));
+        centerShowNo_radioButton->setText(QApplication::translate("MainWindow", "\345\220\246", Q_NULLPTR));
         toolBox->setItemText(toolBox->indexOf(page_3), QApplication::translate("MainWindow", "        \346\226\207\344\273\266\344\277\235\345\255\230\345\222\214\346\230\276\347\244\272\350\256\276\347\275\256", Q_NULLPTR));
         menu->setTitle(QApplication::translate("MainWindow", "\346\226\207\344\273\266", Q_NULLPTR));
         menu_2->setTitle(QApplication::translate("MainWindow", "\347\233\270\346\234\272\345\261\236\346\200\247", Q_NULLPTR));

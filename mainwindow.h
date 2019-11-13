@@ -34,6 +34,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void keyPressEvent(QKeyEvent *e);
 
     void init3DShow();
 
@@ -298,6 +299,8 @@ private slots:
     void on_centerShowYes_radioButton_clicked();
 
     void on_centerShowNo_radioButton_clicked();
+
+    void on_averageNum_lineEdit_returnPressed();
 
 private:
     Ui::MainWindow *ui;

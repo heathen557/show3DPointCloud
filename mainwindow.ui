@@ -838,66 +838,62 @@ background-color: rgb(0, 0, 0);</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_23">
                    <item row="0" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_14">
-                     <item>
-                      <widget class="QLabel" name="label_12">
-                       <property name="text">
-                        <string>  peak显示阈值：</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="peakOffset_lineEdit">
-                       <property name="text">
-                        <string>0</string>
-                       </property>
-                       <property name="alignment">
-                        <set>Qt::AlignCenter</set>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    <widget class="QLabel" name="label_12">
+                     <property name="text">
+                      <string>  peak显示阈值：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1" colspan="2">
+                    <widget class="QLineEdit" name="peakOffset_lineEdit">
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
                    </item>
                    <item row="1" column="0">
-                    <layout class="QFormLayout" name="formLayout">
-                     <item row="0" column="0">
-                      <widget class="QLabel" name="label_13">
-                       <property name="text">
-                        <string>只显示中心区域：</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="1">
-                      <widget class="QRadioButton" name="centerShowYes_radioButton">
-                       <property name="text">
-                        <string>   是</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <spacer name="horizontalSpacer_2">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item row="1" column="1">
-                      <widget class="QRadioButton" name="centerShowNo_radioButton">
-                       <property name="text">
-                        <string>   否</string>
-                       </property>
-                       <property name="checked">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    <widget class="QLabel" name="label_14">
+                     <property name="text">
+                      <string>      平均帧数：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1" colspan="2">
+                    <widget class="QLineEdit" name="averageNum_lineEdit">
+                     <property name="text">
+                      <string>1</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_13">
+                     <property name="text">
+                      <string>只显示中心区域：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QRadioButton" name="centerShowYes_radioButton">
+                     <property name="text">
+                      <string>是</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="2">
+                    <widget class="QRadioButton" name="centerShowNo_radioButton">
+                     <property name="text">
+                      <string>否</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -1037,7 +1033,7 @@ background-color: rgb(0, 0, 0);</string>
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="movable">
         <bool>false</bool>
@@ -1528,15 +1524,15 @@ border:2px solid rgb(180,183,188)
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>myLabel</class>
-   <extends>QLabel</extends>
-   <header>mylabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>GLWidget</class>
    <extends>QWidget</extends>
    <header>glwidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>myLabel</class>
+   <extends>QLabel</extends>
+   <header>mylabel.h</header>
   </customwidget>
   <customwidget>
    <class>QCameraViewfinder</class>
