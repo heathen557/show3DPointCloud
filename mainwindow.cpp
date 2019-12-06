@@ -25,7 +25,7 @@ QImage tofImage;
 QImage intensityImage;
 
 QMutex mouseShowMutex;
-int mouseShowTOF[256][64];
+float mouseShowTOF[256][64];
 int mouseShowPEAK[256][64];
 
 bool isWriteSuccess;    //写入命令是否成功标识
@@ -1457,7 +1457,7 @@ void MainWindow::queryPixSlot(int x,int y)
 
 
     mouseShowMutex.lock();
-    QString str ="x="+QString::number(int(x/width_scale)) + ",y="+QString::number(int(y/height_scale)) + ",tof="+QString::number(mouseShowTOF[xIndex][yIndex])+",peak="+QString::number(mouseShowPEAK[xIndex][yIndex]);
+    QString str ="x="+QString::number(int(x/width_scale)) + ",y="+QString::number(int(y/height_scale)) + ",Dis="+QString::number(mouseShowTOF[xIndex][yIndex])+"m,peak="+QString::number(mouseShowPEAK[xIndex][yIndex]);
 //    QString str ="x="+QString::number(int(x/width_scale)) + ",y="+show_y+ ",tof="+QString::number(mouseShowTOF[xIndex][yIndex])+",peak="+QString::number(mouseShowPEAK[xIndex][yIndex]);
     mouseShowMutex.unlock();
 

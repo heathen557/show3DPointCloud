@@ -211,7 +211,7 @@ background-color: rgb(0, 0, 0);</string>
                    <widget class="QPushButton" name="pushButton_3">
                     <property name="minimumSize">
                      <size>
-                      <width>60</width>
+                      <width>20</width>
                       <height>20</height>
                      </size>
                     </property>
@@ -222,7 +222,11 @@ background-color: rgb(0, 0, 0);</string>
                      </size>
                     </property>
                     <property name="text">
-                     <string>正视图</string>
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="img.qrc">
+                      <normaloff>:/new/image/images/ccViewYpos.png</normaloff>:/new/image/images/ccViewYpos.png</iconset>
                     </property>
                    </widget>
                   </item>
@@ -230,7 +234,7 @@ background-color: rgb(0, 0, 0);</string>
                    <widget class="QPushButton" name="pushButton_5">
                     <property name="minimumSize">
                      <size>
-                      <width>60</width>
+                      <width>20</width>
                       <height>20</height>
                      </size>
                     </property>
@@ -241,7 +245,11 @@ background-color: rgb(0, 0, 0);</string>
                      </size>
                     </property>
                     <property name="text">
-                     <string>俯视图</string>
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="img.qrc">
+                      <normaloff>:/new/image/images/ccViewZpos.png</normaloff>:/new/image/images/ccViewZpos.png</iconset>
                     </property>
                    </widget>
                   </item>
@@ -281,7 +289,7 @@ background-color: rgb(0, 0, 0);</string>
                    <widget class="QPushButton" name="pushButton_4">
                     <property name="minimumSize">
                      <size>
-                      <width>60</width>
+                      <width>20</width>
                       <height>20</height>
                      </size>
                     </property>
@@ -292,7 +300,11 @@ background-color: rgb(0, 0, 0);</string>
                      </size>
                     </property>
                     <property name="text">
-                     <string>侧视图</string>
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="img.qrc">
+                      <normaloff>:/new/image/images/ccViewXneg.png</normaloff>:/new/image/images/ccViewXneg.png</iconset>
                     </property>
                    </widget>
                   </item>
@@ -377,8 +389,8 @@ background-color: rgb(0, 0, 0);</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>252</width>
-                 <height>389</height>
+                 <width>238</width>
+                 <height>386</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -616,7 +628,7 @@ background-color: rgb(0, 0, 0);</string>
                  <x>0</x>
                  <y>0</y>
                  <width>252</width>
-                 <height>389</height>
+                 <height>367</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -657,7 +669,7 @@ background-color: rgb(0, 0, 0);</string>
                  <x>0</x>
                  <y>0</y>
                  <width>252</width>
-                 <height>389</height>
+                 <height>367</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -962,6 +974,9 @@ background-color: rgb(0, 0, 0);</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action"/>
+   <addaction name="action_4"/>
+   <addaction name="action_3"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidget">
@@ -1501,21 +1516,37 @@ border:2px solid rgb(180,183,188)
    </widget>
   </widget>
   <action name="action">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/new/image/images/ccSave.png</normaloff>:/new/image/images/ccSave.png</iconset>
+   </property>
    <property name="text">
     <string>文件保存</string>
    </property>
   </action>
   <action name="action_2">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/new/image/images/ccGear.png</normaloff>:/new/image/images/ccGear.png</iconset>
+   </property>
    <property name="text">
     <string>统计设置</string>
    </property>
   </action>
   <action name="action_3">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/new/image/images/ccHistogram.png</normaloff>:/new/image/images/ccHistogram.png</iconset>
+   </property>
    <property name="text">
     <string>统计信息</string>
    </property>
   </action>
   <action name="action_4">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/new/image/images/ccOpen.png</normaloff>:/new/image/images/ccOpen.png</iconset>
+   </property>
    <property name="text">
     <string>打开本地文件</string>
    </property>
@@ -1541,6 +1572,8 @@ border:2px solid rgb(180,183,188)
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="img.qrc"/>
+ </resources>
  <connections/>
 </ui>

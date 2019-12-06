@@ -8,7 +8,7 @@ QT       += core gui network datavisualization
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets multimedia multimediawidgets
 
-TARGET = testOpenGL3D
+TARGET = Vidar_256x64
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -532,4 +532,7 @@ LIBS += -LD:/pcl/PCL1.8.1\3rdParty\VTK\lib\
 #        -lvtkViewsQt-8.0\
         -lvtkzlib-8.0
 }
+
+RESOURCES += \
+    img.qrc
 

@@ -12,7 +12,7 @@ extern bool isShowPointCloud;
 extern bool isWriteSuccess;    //写入命令是否成功标识
 
 extern QMutex mouseShowMutex;
-extern int mouseShowTOF[256][64];
+extern float mouseShowTOF[256][64];
 extern int mouseShowPEAK[256][64];
 
 /*保存用到的标识*/
@@ -382,6 +382,41 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             tof = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
         }
 
+
+
+        /*******************************************************************************/
+
+        //循环赋值
+        for(int n=0; n<averageNum-1; n++)
+        {
+            lastTOF[n][i] = lastTOF[n+1][cloudIndex];
+        }
+        lastTOF[averageNum-1][cloudIndex] = tof;
+
+        if(haveIndex >averageNum)
+        {
+            float zeroNum = 0;
+            haveIndex = averageNum+1;
+            float allTof_100 = 0;
+            for(int k=0; k<averageNum; k++)     //100帧取平均   ，如果有0的数据则不进行平均处理
+            {
+                if(lastTOF[k][cloudIndex] == 0)
+                {
+                    zeroNum = zeroNum+1;
+                }
+                allTof_100 += lastTOF[k][cloudIndex];
+            }
+            if(zeroNum != averageNum)
+
+           tof = allTof_100/(averageNum-zeroNum);
+//           qDebug()<<"  tof = "<<tof;
+        }
+        /************************************************************/
+
+
+
+
+
         //这个是和90度直角矫正相关的  减去一个偏移量70  ；把处理之后小于0的值都过滤掉
 //        tof = tof -70;
         tmpTof = tof;
@@ -467,6 +502,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                 temp_y = 0;
             }
 
+            mouseShowTOF[imgRow][imgCol] = temp_y;
 
 //            //这里是只显示中间光强度比较大的区域 显示行数：12-52   显示列数：78-178
             if(isOnlyCenterShow_flag)
@@ -1098,7 +1134,7 @@ void DealUsb_msg::readLocalPCDFile()
         tmpTof = tof;
 //        tof = tof - 70;
 
-        tof = tof + tofOffsetArray[cloudIndex];
+        tof = tof + tofOffsetArray[i];
 
 //        qDebug()<<" tofOffsetArray[cloudIndex] "<<cloudIndex<<"      "<<tofOffsetArray[cloudIndex];
 //        tof = tof<0? 0:tof;
@@ -1361,7 +1397,7 @@ void DealUsb_msg::readLocalPCDFile()
         //40  0.1 不见前面噪点
         outrem.filter(tempRgbCloud_radius);
         int len = outrem.getRemovedIndices()->size();
-        qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
+//        qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
 
 
 //        tempRgbCloud_radius.resize(0);

@@ -204,12 +204,24 @@ public:
         MainWindow->setTabShape(QTabWidget::Rounded);
         action = new QAction(MainWindow);
         action->setObjectName(QStringLiteral("action"));
+        QIcon icon1;
+        icon1.addFile(QStringLiteral(":/new/image/images/ccSave.png"), QSize(), QIcon::Normal, QIcon::Off);
+        action->setIcon(icon1);
         action_2 = new QAction(MainWindow);
         action_2->setObjectName(QStringLiteral("action_2"));
+        QIcon icon2;
+        icon2.addFile(QStringLiteral(":/new/image/images/ccGear.png"), QSize(), QIcon::Normal, QIcon::Off);
+        action_2->setIcon(icon2);
         action_3 = new QAction(MainWindow);
         action_3->setObjectName(QStringLiteral("action_3"));
+        QIcon icon3;
+        icon3.addFile(QStringLiteral(":/new/image/images/ccHistogram.png"), QSize(), QIcon::Normal, QIcon::Off);
+        action_3->setIcon(icon3);
         action_4 = new QAction(MainWindow);
         action_4->setObjectName(QStringLiteral("action_4"));
+        QIcon icon4;
+        icon4.addFile(QStringLiteral(":/new/image/images/ccOpen.png"), QSize(), QIcon::Normal, QIcon::Off);
+        action_4->setIcon(icon4);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout_7 = new QGridLayout(centralWidget);
@@ -289,15 +301,21 @@ public:
 
         pushButton_3 = new QPushButton(frame_7);
         pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
-        pushButton_3->setMinimumSize(QSize(60, 20));
+        pushButton_3->setMinimumSize(QSize(20, 20));
         pushButton_3->setMaximumSize(QSize(60, 20));
+        QIcon icon5;
+        icon5.addFile(QStringLiteral(":/new/image/images/ccViewYpos.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pushButton_3->setIcon(icon5);
 
         gridLayout_6->addWidget(pushButton_3, 0, 2, 1, 1);
 
         pushButton_5 = new QPushButton(frame_7);
         pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
-        pushButton_5->setMinimumSize(QSize(60, 20));
+        pushButton_5->setMinimumSize(QSize(20, 20));
         pushButton_5->setMaximumSize(QSize(60, 20));
+        QIcon icon6;
+        icon6.addFile(QStringLiteral(":/new/image/images/ccViewZpos.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pushButton_5->setIcon(icon6);
 
         gridLayout_6->addWidget(pushButton_5, 0, 4, 1, 1);
 
@@ -316,8 +334,11 @@ public:
 
         pushButton_4 = new QPushButton(frame_7);
         pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
-        pushButton_4->setMinimumSize(QSize(60, 20));
+        pushButton_4->setMinimumSize(QSize(20, 20));
         pushButton_4->setMaximumSize(QSize(60, 20));
+        QIcon icon7;
+        icon7.addFile(QStringLiteral(":/new/image/images/ccViewXneg.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pushButton_4->setIcon(icon7);
 
         gridLayout_6->addWidget(pushButton_4, 0, 3, 1, 1);
 
@@ -366,7 +387,7 @@ public:
         toolBox->setLayoutDirection(Qt::LeftToRight);
         page = new QWidget();
         page->setObjectName(QStringLiteral("page"));
-        page->setGeometry(QRect(0, 0, 252, 389));
+        page->setGeometry(QRect(0, 0, 238, 386));
         gridLayout_10 = new QGridLayout(page);
         gridLayout_10->setSpacing(6);
         gridLayout_10->setContentsMargins(11, 11, 11, 11);
@@ -542,7 +563,7 @@ public:
         toolBox->addItem(page, QString::fromUtf8("             \345\270\270\347\224\250\351\205\215\347\275\256"));
         page_2 = new QWidget();
         page_2->setObjectName(QStringLiteral("page_2"));
-        page_2->setGeometry(QRect(0, 0, 252, 389));
+        page_2->setGeometry(QRect(0, 0, 252, 367));
         gridLayout_19 = new QGridLayout(page_2);
         gridLayout_19->setSpacing(6);
         gridLayout_19->setContentsMargins(11, 11, 11, 11);
@@ -569,7 +590,7 @@ public:
         toolBox->addItem(page_2, QString::fromUtf8("          \350\256\276\345\244\207\345\257\204\345\255\230\345\231\250\351\205\215\347\275\256"));
         page_3 = new QWidget();
         page_3->setObjectName(QStringLiteral("page_3"));
-        page_3->setGeometry(QRect(0, 0, 252, 389));
+        page_3->setGeometry(QRect(0, 0, 252, 367));
         gridLayout_25 = new QGridLayout(page_3);
         gridLayout_25->setSpacing(6);
         gridLayout_25->setContentsMargins(11, 11, 11, 11);
@@ -1050,6 +1071,9 @@ public:
         menu->addAction(action);
         menu->addAction(action_4);
         menu_5->addAction(action_3);
+        mainToolBar->addAction(action);
+        mainToolBar->addAction(action_4);
+        mainToolBar->addAction(action_3);
 
         retranslateUi(MainWindow);
 
@@ -1071,11 +1095,11 @@ public:
         groupBox_3->setTitle(QApplication::translate("MainWindow", "\347\202\271\344\272\221\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
         label_5->setText(QApplication::translate("MainWindow", "\350\276\205\345\212\251\347\272\277\351\227\264\351\232\224(m)", Q_NULLPTR));
         gainImage_lineEdit->setText(QApplication::translate("MainWindow", "1", Q_NULLPTR));
-        pushButton_3->setText(QApplication::translate("MainWindow", "\346\255\243\350\247\206\345\233\276", Q_NULLPTR));
-        pushButton_5->setText(QApplication::translate("MainWindow", "\344\277\257\350\247\206\345\233\276", Q_NULLPTR));
+        pushButton_3->setText(QString());
+        pushButton_5->setText(QString());
         change_pushButton->setText(QApplication::translate("MainWindow", "\345\210\207\346\215\242tof/peak", Q_NULLPTR));
         radioButton->setText(QString());
-        pushButton_4->setText(QApplication::translate("MainWindow", "\344\276\247\350\247\206\345\233\276", Q_NULLPTR));
+        pushButton_4->setText(QString());
         guideLineOffset_lineEdit->setText(QApplication::translate("MainWindow", "0", Q_NULLPTR));
         groupBox_4->setTitle(QApplication::translate("MainWindow", "\350\256\276\345\244\207\351\223\276\346\216\245\357\274\232", Q_NULLPTR));
         label->setText(QApplication::translate("MainWindow", "VID:", Q_NULLPTR));
