@@ -1206,6 +1206,7 @@ void DealUsb_msg::readLocalPCDFile()
                 }
             }
 
+            mouseShowTOF[imgRow][imgCol] = temp_y;
 
             QColor mColor = QColor(tofColor);
             r = mColor.red();
