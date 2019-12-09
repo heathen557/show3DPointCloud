@@ -258,7 +258,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                         tofPeakNum[i] = QString("%1").arg(0, 5, 10, QChar('0')).append(",").append(QString("%1").arg(0, 5, 10, QChar('0'))).append("\n");    //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
                     }
                     tofPeakToSave_string.append(tofPeakNum[i]);
-                    tofPeakNum[i].clear();
+//                    tofPeakNum[i].clear();   //因为存在丢数据的问题，所以这里不置为0，当前帧丢失某个数据时，则保留上一帧的数据
                 }
 
 //                if(flag)
@@ -464,11 +464,12 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 //                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
                 tofPeakNum[cloudIndex] = QString("%1").arg(tmpTof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
 
-            }else
-            {
-                tofPeakNum[cloudIndex].clear();
-
             }
+//            else
+//            {
+//                tofPeakNum[cloudIndex].clear();
+
+//            }
 
 
             /************点云数据相关************/
@@ -1051,7 +1052,7 @@ void DealUsb_msg::readLocalPCDFile()
         fileIndex = 1;
         return;
     }
-    for(int i=0; i<countNum; i++)            //去掉空的数据
+    for(int i=0; i<16384; i++)            //去掉空的数据
     {
         int tof,intensity,tmpTof;   //tof:用来显示（二维、三维、鼠标点击、最大最小值）,因为涉及到要减去一个偏移；     tmpTof：用来存储原始数据、以及统计界面的显示
         if(line[i].isEmpty())
