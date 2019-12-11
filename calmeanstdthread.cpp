@@ -73,14 +73,6 @@ void calMeanStdThread::updateSlot()
                 });
             peakStd = sqrt(peakAccum/(frameSize-1));
 
-//            if( 0 == (i%10))
-//            {
-//                tofMean_string.append("\n");
-//                tofStd_string.append("\n");
-//                peakMean_string.append("\n");
-//                peakStd_string.append("\n");
-//            }
-
             tofMean_string.append(QString::number(tofMean));
             tofStd_string.append(QString::number(tofStd));
             peakMean_string.append(QString::number(peakMean));
@@ -92,9 +84,6 @@ void calMeanStdThread::updateSlot()
     emit statistic_MeanStdSignal(tofMean_string,tofStd_string,peakMean_string,peakStd_string);
 
     qDebug()<<QStringLiteral("统计信息信号已经发出")<<endl;
-//        ui->tofMean_textEdit->setText(tofMean_string);
-//        ui->tofStd_textEdit->setText(tofStd_string);
-//        ui->peakMean_textEdit->setText(peakMean_string);
-//        ui->peakStd_textEdit->setText(peakStd_string);
+
 
 }

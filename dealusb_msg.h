@@ -6,6 +6,7 @@
 #include <pcl/filters/passthrough.h>  //直通滤波相关
 #include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/filters/voxel_grid.h>
 #include<pcl/common/common.h>
 #include <QObject>
 #include<QImage>

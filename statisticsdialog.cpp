@@ -99,8 +99,6 @@ void statisticsDialog::initTofMean_slot()
     tofMean_modifier->setAxisMinSliderZ(axisMinSliderZ);
     tofMean_modifier->setAxisMaxSliderZ(axisMaxSliderZ);
     sqrtSinModelRB->setChecked(true);
-//    modeItemRB->setChecked(true);
-//    themeList->setCurrentIndex(2);
 
     tofMean_modifier->setAxisYRange(0,700,QStringLiteral("均值"));
 
@@ -376,7 +374,6 @@ void statisticsDialog::on_start_pushButton_clicked()
     int frameNumber = ui->frame_lineEdit->text().toInt();
     emit alterStatisticFrameNum_signal(frameNumber);
 
-//    initTofMean_slot();
     isRun =true;
     startStop_signal(1);
 }
@@ -405,14 +402,6 @@ void statisticsDialog::statistic_MeanStdSlot(QStringList tofMeanlist, QStringLis
         emit sendPeakStd_signal(peakStdlist);
     }
 
-
-
-
-//    ui->tofMean_textEdit->setText(tofMean);
-//    ui->tofStd_textEdit->setText(tofStd);
-
-//    ui->peakMean_textEdit->setText(peakMean);
-//    ui->peakStd_textEdit->setText(peakStd);
 }
 
 

@@ -3,7 +3,7 @@
 # Project created by QtCreator 2019-06-26T15:01:46
 #
 #-------------------------------------------------
-
+#QMAKE_LFLAGS += /MANIFESTUAC:"level='requireAdministrator'uiAccess='false'"
 QT       += core gui network datavisualization
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets multimedia multimediawidgets

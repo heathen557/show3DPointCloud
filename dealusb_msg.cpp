@@ -300,7 +300,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         {
             /*******************开启滤波功能*********************************/
             //先用直通滤波把所有零点重复的零点过滤掉
-            pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
+           /* pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
             pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
             pass.setFilterFieldName("y");                                 //设置在Z轴方向上进行滤波
             pass.setFilterLimits(0, 0.10);                                //设置滤波范围(从最高点向下0.10米去除)
@@ -317,24 +317,28 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             outrem.setStddevMulThresh(0.25);
             //40  0.1 不见前面噪点
             outrem.filter(tempRgbCloud_radius);
-            int len = outrem.getRemovedIndices()->size();
-//            qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
-
-//            QTime time;
-//            time.start();
-//            int len;
-//            tempRgbCloud_radius.resize(0);
-//            pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
-//            outrem.setInputCloud(tempRgbCloud.makeShared());              //设置输入点云
-//            outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
-//            outrem.setMinNeighborsInRadius(15);       //设置查询点的邻近点集数小于2的删除  30
-//            outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
-//            int len = outrem.getRemovedIndices()->size();
+            int len = outrem.getRemovedIndices()->size();*/
 
 
-            //条件滤波   设置半径 以及 圆周内的点数
-            //            qDebug()<<"dealusb_msg    fileted size = "<<outrem.getRemovedIndices()->size();
-            //            qDebug()<<" passThrough cost time = "<<time.elapsed()<<endl;
+            QTime t1,t2;
+            pcl::VoxelGrid<pcl::PointXYZRGB> sor;//滤波处理对象
+            sor.setInputCloud(tempRgbCloud.makeShared());
+            sor.setLeafSize(0.05f, 0.05f, 0.05f);//设置滤波器处理时采用的体素大小的参数
+            sor.filter(tempRgbCloud_pass);
+
+            tempRgbCloud_radius.resize(0);
+//            t1 = QTime::currentTime();
+            pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem;      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
+            outrem.setInputCloud(tempRgbCloud_pass.makeShared());              //设置输入点云
+            outrem.setRadiusSearch(0.2);              //设置在0.8半径的范围内找邻近点
+            outrem.setMinNeighborsInRadius(50);       //设置查询点的邻近点集数小于2的删除  30
+            outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
+//            t2 = QTime::currentTime();
+//            qDebug()<<"RadiusOutlierRemoval costs time = "<<  t1.msecsTo(t2) <<"ms"<<endl;
+
+
+
+
             /*************************以上为滤波处理部分************************************************************/
 
 
@@ -1369,46 +1373,41 @@ void DealUsb_msg::readLocalPCDFile()
     if(true == isFilterFlag)
     {
         /*******************开启滤波功能*********************************/
-        //先用直通滤波把所有零点重复的零点过滤掉
-        pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
-        pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
-        pass.setFilterFieldName("y");                                 //设置在Z轴方向上进行滤波
-        pass.setFilterLimits(0, 0.10);                                //设置滤波范围(从最高点向下0.10米去除)
-        pass.setFilterLimitsNegative(true);                           //保留
-        pass.filter(tempRgbCloud_pass);                                   //滤波并存储
-        if(tempRgbCloud_pass.size()<1)
-                return;
-////        qDebug()<<"after PassThrough filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
+//        //先用直通滤波把所有零点重复的零点过滤掉
+//        pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
+//        pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
+//        pass.setFilterFieldName("y");                                 //设置在Z轴方向上进行滤波
+//        pass.setFilterLimits(0, 0.10);                                //设置滤波范围(从最高点向下0.10米去除)
+//        pass.setFilterLimitsNegative(true);                           //保留
+//        pass.filter(tempRgbCloud_pass);                                   //滤波并存储
+//        if(tempRgbCloud_pass.size()<1)
+//                return;
 
-//        //  统计
 //        tempRgbCloud_radius.clear();
-//        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> outrem(false);
+//        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> outrem(true);
 //        outrem.setInputCloud(tempRgbCloud_pass.makeShared());
-//        outrem.setMeanK(40);
+//        outrem.setMeanK(10);
 //        outrem.setStddevMulThresh(0.25);
 //        //40  0.1 不见前面噪点
 //        outrem.filter(tempRgbCloud_radius);
 //        int len = outrem.getRemovedIndices()->size();
-////        qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
-///
-        tempRgbCloud_radius.clear();
-        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> outrem(true);
-        outrem.setInputCloud(tempRgbCloud_pass.makeShared());
-        outrem.setMeanK(10);
-        outrem.setStddevMulThresh(0.25);
-        //40  0.1 不见前面噪点
-        outrem.filter(tempRgbCloud_radius);
-        int len = outrem.getRemovedIndices()->size();
-//        qDebug()<<"after filter the points'Number = "<<tempRgbCloud_radius.size()<<endl;
 
 
-//        tempRgbCloud_radius.resize(0);
-//        pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem(true);      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
-//        outrem.setInputCloud(tempRgbCloud.makeShared());              //设置输入点云
-//        outrem.setRadiusSearch(0.25);              //设置在0.8半径的范围内找邻近点
-//        outrem.setMinNeighborsInRadius(15);       //设置查询点的邻近点集数小于2的删除  30
-//        outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
-//        int len = outrem.getRemovedIndices()->size();
+
+
+        QTime t1,t2;
+        pcl::VoxelGrid<pcl::PointXYZRGB> sor;//滤波处理对象
+        sor.setInputCloud(tempRgbCloud.makeShared());
+        sor.setLeafSize(0.05f, 0.05f, 0.05f);//设置滤波器处理时采用的体素大小的参数
+        sor.filter(tempRgbCloud_pass);
+        tempRgbCloud_radius.resize(0);
+//            t1 = QTime::currentTime();
+        pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem;      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
+        outrem.setInputCloud(tempRgbCloud_pass.makeShared());              //设置输入点云
+        outrem.setRadiusSearch(0.2);              //设置在0.8半径的范围内找邻近点
+        outrem.setMinNeighborsInRadius(50);       //设置查询点的邻近点集数小于2的删除  30
+        outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
+
 
         /*************************以上为滤波处理部分************************************************************/
 
