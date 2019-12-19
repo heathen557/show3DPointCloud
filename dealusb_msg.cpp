@@ -46,7 +46,7 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     tempRgbCloud.height = 1 ;
     tempRgbCloud.points.resize(tempRgbCloud.width);
 
-    LSB = 0.015; //时钟频率
+    LSB = 0.031; //时钟频率
     isFirstLink = true;
     isFilterFlag = false ;    //初始化时不进行滤波
     isTOF = true;
@@ -469,29 +469,18 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                 tofPeakNum[cloudIndex] = QString("%1").arg(tmpTof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
 
             }
-//            else
-//            {
-//                tofPeakNum[cloudIndex].clear();
 
-//            }
 
 
             /************点云数据相关************/
-            //获取三维坐标
-//            temp_x = tof * x_Weight[cloudIndex] * LSB;
-//            temp_y = tof * y_Weight[cloudIndex] * LSB;
-//            temp_z = tof * z_Weight[cloudIndex] * LSB;
 
             //这部分是tof到三维点云的转换
-            Lr =  (tof*tof - (5/1.5)*(5/1.5))/(2*(tof + (5/1.5)*sin(thetaArray[cloudIndex]))) * LSB;      //
+            Lr =  (tof*tof - (5/1.55)*(5/1.55))/(2*(tof + (5/1.55)*sin(thetaArray[cloudIndex]))) ;      //
             Lr = Lr<0?0:Lr;
-            temp_x = Lr *  sin(thetaArray[cloudIndex]);                                   //  x坐标值
-            temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]);     //  y坐标值
-            temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]);      // z坐标值
-//            if(imgRow>=78 && imgRow<=178)
-//            {
-//                temp_y = temp_y + B_Array[imgRow-78]*LSB;
-//            }
+            temp_x = Lr *  sin(thetaArray[cloudIndex]) * LSB;                                   //  x坐标值
+            temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]) * LSB;     //  y坐标值
+            temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]) * LSB -0.2;      // z坐标值
+
 
             if(tofOffsetArray[cloudIndex] ==tof)     //tof 原始值为0 处的位置会 显示成为一个弧度,所以将这里的三维点云坐标置为0
             {
@@ -1191,15 +1180,12 @@ void DealUsb_msg::readLocalPCDFile()
 //            temp_z = tof * z_Weight[cloudIndex] * LSB;
 
 
-            Lr =  (tof*tof - (5/1.5)*(5/1.5))/(2*(tof + (5/1.5)*sin(thetaArray[cloudIndex]))) *LSB ;      //
+            Lr =  (tof*tof - (5/1.55)*(5/1.55))/(2*(tof + (5/1.55)*sin(thetaArray[cloudIndex]))) ;      //
             Lr = Lr<0?0:Lr;
-            temp_x = Lr * sin(thetaArray[cloudIndex]);                                   //  x坐标值
-            temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]);     //  y坐标值
-            temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]);      // z坐标值
-//            if(imgRow>=78 && imgRow<=178)
-//            {
-//                temp_y = temp_y + B_Array[imgRow-78]*LSB;
-//            }
+            temp_x = Lr * sin(thetaArray[cloudIndex]) * LSB ;                                   //  x坐标值
+            temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]) * LSB;     //  y坐标值
+            temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]) * LSB - 0.2;      // z坐标值
+
 
             if(isOnlyCenterShow_flag)
             {
