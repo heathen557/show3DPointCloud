@@ -323,7 +323,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             QTime t1,t2;
             pcl::VoxelGrid<pcl::PointXYZRGB> sor;//滤波处理对象
             sor.setInputCloud(tempRgbCloud.makeShared());
-            sor.setLeafSize(0.05f, 0.05f, 0.05f);//设置滤波器处理时采用的体素大小的参数
+            sor.setLeafSize(0.03f, 0.03f, 0.03f);//设置滤波器处理时采用的体素大小的参数
             sor.filter(tempRgbCloud_pass);
 
             tempRgbCloud_radius.resize(0);
@@ -366,7 +366,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
 
     int line_offset = spadNum / 2;           //取值 0 1 2 3 ；
-    int row_offset = (spadNum + 1) % 2;      //表示是在第一行 还是在第二行
+    int row_offset = (spadNum) % 2;      //表示是在第一行 还是在第二行
 
     for(int i=0; i<64; i++)
     {
@@ -393,7 +393,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         //循环赋值
         for(int n=0; n<averageNum-1; n++)
         {
-            lastTOF[n][i] = lastTOF[n+1][cloudIndex];
+            lastTOF[n][cloudIndex] = lastTOF[n+1][cloudIndex];
         }
         lastTOF[averageNum-1][cloudIndex] = tof;
 
@@ -477,8 +477,8 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             //这部分是tof到三维点云的转换
             Lr =  (tof*tof - (5/1.55)*(5/1.55))/(2*(tof + (5/1.55)*sin(thetaArray[cloudIndex]))) ;      //
             Lr = Lr<0?0:Lr;
-            temp_x = Lr *  sin(thetaArray[cloudIndex]) * LSB;                                   //  x坐标值
-            temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]) * LSB;     //  y坐标值
+            temp_x = Lr *  sin(thetaArray[cloudIndex]) * LSB;                                          //  x坐标值
+            temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]) * LSB;            //  y坐标值
             temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]) * LSB -0.2;      // z坐标值
 
 
