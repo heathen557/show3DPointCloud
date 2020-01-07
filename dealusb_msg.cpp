@@ -237,36 +237,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
         haveIndex++;    //满足 足够一帧的数据了
 
-        //判断是否保存数据部分
-        if(isSaveFlag)
-        {
-            if(formatFlag == 0)   //保存二进制pcd
-            {
-                emit savePCDSignal(tempRgbCloud,0);
-            }else if(formatFlag == 1)      //保存ASCII码版本的 pcd文件
-            {
-                emit savePCDSignal(tempRgbCloud,1);
-            }else if(formatFlag == 2)   //保存原始的TOF 和 PEAK 数据
-            {
-                bool flag = true;
-                for(int i=0; i<16384; i++)
-                {
-                    if(tofPeakNum[i].isEmpty())
-                    {
-                        flag =false;
-//                        tofPeakNum[i] = QString::number(0).append(", ").append(QString::number(0)).append("\n");    //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
-                        tofPeakNum[i] = QString("%1").arg(0, 5, 10, QChar('0')).append(",").append(QString("%1").arg(0, 5, 10, QChar('0'))).append("\n");    //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
-                    }
-                    tofPeakToSave_string.append(tofPeakNum[i]);
-//                    tofPeakNum[i].clear();   //因为存在丢数据的问题，所以这里不置为0，当前帧丢失某个数据时，则保留上一帧的数据
-                }
-
-//                if(flag)
-                    emit saveTXTSignal(tofPeakToSave_string);
-                tofPeakToSave_string.clear();
-            }
-        }
-
 
         //统计信息相关的 ，将统计信息的容器赋值给全局变量
         if(statisticStartFlag)
@@ -318,8 +288,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             //40  0.1 不见前面噪点
             outrem.filter(tempRgbCloud_radius);
             int len = outrem.getRemovedIndices()->size();*/
-
-
             QTime t1,t2;
             pcl::VoxelGrid<pcl::PointXYZRGB> sor;//滤波处理对象
             sor.setInputCloud(tempRgbCloud.makeShared());
@@ -337,11 +305,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 //            qDebug()<<"RadiusOutlierRemoval costs time = "<<  t1.msecsTo(t2) <<"ms"<<endl;
 
 
-
-
             /*************************以上为滤波处理部分************************************************************/
-
-
             mutex.lock();
             tofImage = microQimage;
             intensityImage = macroQimage;
@@ -349,13 +313,62 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             mutex.unlock();
             /***************************************************************/
 
-        }else{                      //不进行滤波
+        }else
+        {                      //不进行滤波
             mutex.lock();
             tofImage = microQimage;
             intensityImage = macroQimage;
             pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
             mutex.unlock();
         }
+
+
+        //判断是否保存数据部分
+        if(isSaveFlag)
+        {
+            if(formatFlag == 0)   //保存二进制pcd
+            {
+                if(true == isFilterFlag)
+                {
+                    emit savePCDSignal(tempRgbCloud_radius,0);
+                }else
+                {
+                    emit savePCDSignal(tempRgbCloud,0);
+                }
+
+
+            }else if(formatFlag == 1)      //保存ASCII码版本的 pcd文件
+            {
+                if(true == isFilterFlag)
+                {
+                    emit savePCDSignal(tempRgbCloud_radius,1);
+                }else
+                {
+                    emit savePCDSignal(tempRgbCloud,1);
+                }
+
+            }else if(formatFlag == 2)   //保存原始的TOF 和 PEAK 数据
+            {
+                bool flag = true;
+                for(int i=0; i<16384; i++)
+                {
+                    if(tofPeakNum[i].isEmpty())
+                    {
+                        flag =false;
+                        tofPeakNum[i] = QString("%1").arg(0, 5, 10, QChar('0')).append(",").append(QString("%1").arg(0, 5, 10, QChar('0'))).append("\n");    //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
+                    }
+                    tofPeakToSave_string.append(tofPeakNum[i]);
+//                    tofPeakNum[i].clear();   //因为存在丢数据的问题，所以这里不置为0，当前帧丢失某个数据时，则保留上一帧的数据
+                }
+                emit saveTXTSignal(tofPeakToSave_string);
+                tofPeakToSave_string.clear();
+            }
+        }
+
+
+
+
+
         isShowPointCloud = true;
 
         //        tempRgbCloud.clear();
@@ -559,13 +572,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
     lastSpadNum = spadNum ;
 }
-
-
-
-
-
-
-
 
 
 
@@ -1285,38 +1291,7 @@ void DealUsb_msg::readLocalPCDFile()
     /*********************test saveFile HUAWEI ***********************************************/
 
     haveIndex++;
-    //判断是否保存数据
-    if(isSaveFlag)
-    {
-        if(formatFlag == 0)   //保存二进制pcd
-        {
-            emit savePCDSignal(tempRgbCloud,0);
-        }else if(formatFlag == 1)      //保存ASCII码版本的 pcd文件
-        {
-            emit savePCDSignal(tempRgbCloud,1);
-        }else if(formatFlag == 2)   //保存原始的TOF 和 PEAK 数据
-        {
-            bool flag = true;
-            for(int i=0; i<16384; i++)
-            {
-                if(tofPeakNum[i].isEmpty())
-                {
-                    flag =false;
-//                    tofPeakNum[i] = QString::number(0).append(", ").append(QString::number(0)).append("\n");    //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
 
-                    tofPeakNum[i] = QString("%1").arg(0, 5, 10, QChar('0')).append(",").append(QString("%1").arg(0, 5, 10, QChar('0'))).append("\n");   //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
-
-
-                }
-                tofPeakToSave_string.append(tofPeakNum[i]);
-                tofPeakNum[i].clear();
-            }
-
-//                if(flag)
-                emit saveTXTSignal(tofPeakToSave_string);
-            tofPeakToSave_string.clear();
-        }
-    }
 
     /**********************************************************************/
 
@@ -1384,7 +1359,7 @@ void DealUsb_msg::readLocalPCDFile()
         QTime t1,t2;
         pcl::VoxelGrid<pcl::PointXYZRGB> sor;//滤波处理对象
         sor.setInputCloud(tempRgbCloud.makeShared());
-        sor.setLeafSize(0.05f, 0.05f, 0.05f);//设置滤波器处理时采用的体素大小的参数
+        sor.setLeafSize(0.03f, 0.03f, 0.03f);//设置滤波器处理时采用的体素大小的参数
         sor.filter(tempRgbCloud_pass);
         tempRgbCloud_radius.resize(0);
 //            t1 = QTime::currentTime();
@@ -1415,23 +1390,58 @@ void DealUsb_msg::readLocalPCDFile()
 
         /***************************************************************/
 
-    }else{                      //不进行滤波
+    }else
+    {                      //不进行滤波
         mutex.lock();
         tofImage = microQimage;
         intensityImage = macroQimage;
 
-
-
         pcl::copyPointCloud(tempRgbCloud,pointCloudRgb);
         mutex.unlock();
-
-
-//        pcl::PointXYZRGB tmp_min;
-//        pcl::PointXYZRGB tmp_max;
-//        pcl::getMinMax3D(pointCloudRgb,tmp_min,tmp_max);
-
-//        qDebug()<<"y_max ="<<tmp_max.y<<endl;
     }
+
+    //判断是否保存数据
+    if(isSaveFlag)
+    {
+        if(formatFlag == 0)   //保存二进制pcd
+        {
+            if(true == isFilterFlag)
+            {
+                emit savePCDSignal(tempRgbCloud_radius,0);
+            }else
+            {
+                emit savePCDSignal(tempRgbCloud,0);
+            }
+        }else if(formatFlag == 1)      //保存ASCII码版本的 pcd文件
+        {
+            if(true == isFilterFlag)
+            {
+                emit savePCDSignal(tempRgbCloud_radius,1);
+            }else
+            {
+                emit savePCDSignal(tempRgbCloud,1);
+            }
+        }else if(formatFlag == 2)   //保存原始的TOF 和 PEAK 数据
+        {
+            bool flag = true;
+            for(int i=0; i<16384; i++)
+            {
+                if(tofPeakNum[i].isEmpty())
+                {
+                    flag =false;
+                    tofPeakNum[i] = QString("%1").arg(0, 5, 10, QChar('0')).append(",").append(QString("%1").arg(0, 5, 10, QChar('0'))).append("\n");   //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
+                }
+                tofPeakToSave_string.append(tofPeakNum[i]);
+                tofPeakNum[i].clear();
+            }
+
+            emit saveTXTSignal(tofPeakToSave_string);
+            tofPeakToSave_string.clear();
+        }
+    }
+
+
+
     isShowPointCloud = true;
 
 
