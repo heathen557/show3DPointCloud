@@ -102,6 +102,11 @@ public:
 
     int averageNum;            //滑动平均的帧数 , 默认为1
 
+    bool lineSelect;     //两个微像素 是否切换  默认false;
+
+
+    bool is_pileUp_flag;
+
 
 
 
@@ -140,6 +145,8 @@ public slots:
 
     //记载本地角度矫正矩阵
     void loadLocalArray();
+
+    int pileUp_calibration(int,int);
 
 
 };

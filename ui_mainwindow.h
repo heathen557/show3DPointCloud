@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
@@ -62,16 +63,19 @@ public:
     GLWidget *widget;
     QFrame *frame_7;
     QGridLayout *gridLayout_6;
-    QLabel *label_5;
+    QHBoxLayout *horizontalLayout_14;
     QSpacerItem *horizontalSpacer_5;
+    QCheckBox *pileUp_checkBox;
+    QCheckBox *checkBox;
     QLineEdit *gainImage_lineEdit;
     QPushButton *pushButton_3;
+    QPushButton *pushButton_4;
     QPushButton *pushButton_5;
     QPushButton *change_pushButton;
-    QRadioButton *radioButton;
-    QPushButton *pushButton_4;
-    QSpacerItem *horizontalSpacer_6;
+    QLabel *label_5;
     QLineEdit *guideLineOffset_lineEdit;
+    QRadioButton *radioButton;
+    QSpacerItem *horizontalSpacer_6;
     QFrame *frame_2;
     QGridLayout *gridLayout_12;
     QToolBox *toolBox;
@@ -194,7 +198,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1281, 753);
+        MainWindow->resize(1273, 748);
         MainWindow->setMinimumSize(QSize(80, 150));
         MainWindow->setMaximumSize(QSize(16777215, 16777215));
         QIcon icon;
@@ -284,20 +288,29 @@ public:
         gridLayout_6->setContentsMargins(11, 11, 11, 11);
         gridLayout_6->setObjectName(QStringLiteral("gridLayout_6"));
         gridLayout_6->setContentsMargins(-1, 0, -1, 0);
-        label_5 = new QLabel(frame_7);
-        label_5->setObjectName(QStringLiteral("label_5"));
-
-        gridLayout_6->addWidget(label_5, 0, 6, 1, 1);
-
+        horizontalLayout_14 = new QHBoxLayout();
+        horizontalLayout_14->setSpacing(6);
+        horizontalLayout_14->setObjectName(QStringLiteral("horizontalLayout_14"));
         horizontalSpacer_5 = new QSpacerItem(57, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        gridLayout_6->addItem(horizontalSpacer_5, 0, 0, 1, 1);
+        horizontalLayout_14->addItem(horizontalSpacer_5);
+
+        pileUp_checkBox = new QCheckBox(frame_7);
+        pileUp_checkBox->setObjectName(QStringLiteral("pileUp_checkBox"));
+        pileUp_checkBox->setChecked(true);
+
+        horizontalLayout_14->addWidget(pileUp_checkBox);
+
+        checkBox = new QCheckBox(frame_7);
+        checkBox->setObjectName(QStringLiteral("checkBox"));
+
+        horizontalLayout_14->addWidget(checkBox);
 
         gainImage_lineEdit = new QLineEdit(frame_7);
         gainImage_lineEdit->setObjectName(QStringLiteral("gainImage_lineEdit"));
         gainImage_lineEdit->setMaximumSize(QSize(30, 16777215));
 
-        gridLayout_6->addWidget(gainImage_lineEdit, 0, 1, 1, 1);
+        horizontalLayout_14->addWidget(gainImage_lineEdit);
 
         pushButton_3 = new QPushButton(frame_7);
         pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
@@ -307,55 +320,63 @@ public:
         icon5.addFile(QStringLiteral(":/new/image/images/ccViewYpos.png"), QSize(), QIcon::Normal, QIcon::Off);
         pushButton_3->setIcon(icon5);
 
-        gridLayout_6->addWidget(pushButton_3, 0, 2, 1, 1);
+        horizontalLayout_14->addWidget(pushButton_3);
+
+        pushButton_4 = new QPushButton(frame_7);
+        pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
+        pushButton_4->setMinimumSize(QSize(20, 20));
+        pushButton_4->setMaximumSize(QSize(60, 20));
+        QIcon icon6;
+        icon6.addFile(QStringLiteral(":/new/image/images/ccViewXneg.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pushButton_4->setIcon(icon6);
+
+        horizontalLayout_14->addWidget(pushButton_4);
 
         pushButton_5 = new QPushButton(frame_7);
         pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
         pushButton_5->setMinimumSize(QSize(20, 20));
         pushButton_5->setMaximumSize(QSize(60, 20));
-        QIcon icon6;
-        icon6.addFile(QStringLiteral(":/new/image/images/ccViewZpos.png"), QSize(), QIcon::Normal, QIcon::Off);
-        pushButton_5->setIcon(icon6);
+        QIcon icon7;
+        icon7.addFile(QStringLiteral(":/new/image/images/ccViewZpos.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pushButton_5->setIcon(icon7);
 
-        gridLayout_6->addWidget(pushButton_5, 0, 4, 1, 1);
+        horizontalLayout_14->addWidget(pushButton_5);
 
         change_pushButton = new QPushButton(frame_7);
         change_pushButton->setObjectName(QStringLiteral("change_pushButton"));
         change_pushButton->setMinimumSize(QSize(100, 20));
         change_pushButton->setMaximumSize(QSize(100, 16777215));
 
-        gridLayout_6->addWidget(change_pushButton, 0, 5, 1, 1);
+        horizontalLayout_14->addWidget(change_pushButton);
 
-        radioButton = new QRadioButton(frame_7);
-        radioButton->setObjectName(QStringLiteral("radioButton"));
-        radioButton->setMaximumSize(QSize(20, 16777215));
+        label_5 = new QLabel(frame_7);
+        label_5->setObjectName(QStringLiteral("label_5"));
 
-        gridLayout_6->addWidget(radioButton, 0, 8, 1, 1);
-
-        pushButton_4 = new QPushButton(frame_7);
-        pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
-        pushButton_4->setMinimumSize(QSize(20, 20));
-        pushButton_4->setMaximumSize(QSize(60, 20));
-        QIcon icon7;
-        icon7.addFile(QStringLiteral(":/new/image/images/ccViewXneg.png"), QSize(), QIcon::Normal, QIcon::Off);
-        pushButton_4->setIcon(icon7);
-
-        gridLayout_6->addWidget(pushButton_4, 0, 3, 1, 1);
-
-        horizontalSpacer_6 = new QSpacerItem(57, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        gridLayout_6->addItem(horizontalSpacer_6, 0, 11, 1, 1);
+        horizontalLayout_14->addWidget(label_5);
 
         guideLineOffset_lineEdit = new QLineEdit(frame_7);
         guideLineOffset_lineEdit->setObjectName(QStringLiteral("guideLineOffset_lineEdit"));
         guideLineOffset_lineEdit->setMaximumSize(QSize(30, 16777215));
 
-        gridLayout_6->addWidget(guideLineOffset_lineEdit, 0, 7, 1, 1);
+        horizontalLayout_14->addWidget(guideLineOffset_lineEdit);
+
+        radioButton = new QRadioButton(frame_7);
+        radioButton->setObjectName(QStringLiteral("radioButton"));
+        radioButton->setMaximumSize(QSize(20, 16777215));
+
+        horizontalLayout_14->addWidget(radioButton);
+
+        horizontalSpacer_6 = new QSpacerItem(57, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_14->addItem(horizontalSpacer_6);
+
+
+        gridLayout_6->addLayout(horizontalLayout_14, 0, 0, 1, 1);
 
 
         gridLayout_20->addWidget(frame_7, 1, 0, 1, 1);
 
-        gridLayout_20->setRowStretch(0, 16);
+        gridLayout_20->setRowStretch(0, 20);
         gridLayout_20->setRowStretch(1, 1);
 
         gridLayout_5->addWidget(groupBox_3, 0, 0, 1, 1);
@@ -563,7 +584,7 @@ public:
         toolBox->addItem(page, QString::fromUtf8("             \345\270\270\347\224\250\351\205\215\347\275\256"));
         page_2 = new QWidget();
         page_2->setObjectName(QStringLiteral("page_2"));
-        page_2->setGeometry(QRect(0, 0, 252, 367));
+        page_2->setGeometry(QRect(0, 0, 252, 362));
         gridLayout_19 = new QGridLayout(page_2);
         gridLayout_19->setSpacing(6);
         gridLayout_19->setContentsMargins(11, 11, 11, 11);
@@ -590,7 +611,7 @@ public:
         toolBox->addItem(page_2, QString::fromUtf8("          \350\256\276\345\244\207\345\257\204\345\255\230\345\231\250\351\205\215\347\275\256"));
         page_3 = new QWidget();
         page_3->setObjectName(QStringLiteral("page_3"));
-        page_3->setGeometry(QRect(0, 0, 252, 367));
+        page_3->setGeometry(QRect(0, 0, 238, 366));
         gridLayout_25 = new QGridLayout(page_3);
         gridLayout_25->setSpacing(6);
         gridLayout_25->setContentsMargins(11, 11, 11, 11);
@@ -784,7 +805,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1281, 22));
+        menuBar->setGeometry(QRect(0, 0, 1273, 22));
         menu = new QMenu(menuBar);
         menu->setObjectName(QStringLiteral("menu"));
         menu_2 = new QMenu(menuBar);
@@ -1077,7 +1098,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        toolBox->setCurrentIndex(2);
+        toolBox->setCurrentIndex(0);
         tabWidget_3->setCurrentIndex(0);
         tabWidget_2->setCurrentIndex(0);
 
@@ -1087,20 +1108,22 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\350\212\257\350\247\206\347\225\214\351\235\242\351\230\265\350\256\276\345\244\207\346\265\213\350\257\225\347\250\213\345\272\217", Q_NULLPTR));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\350\212\257\350\247\206\347\225\214\351\235\242\351\230\265\350\256\276\345\244\207\346\265\213\350\257\225\347\250\213\345\272\217(v1.0)", Q_NULLPTR));
         action->setText(QApplication::translate("MainWindow", "\346\226\207\344\273\266\344\277\235\345\255\230", Q_NULLPTR));
         action_2->setText(QApplication::translate("MainWindow", "\347\273\237\350\256\241\350\256\276\347\275\256", Q_NULLPTR));
         action_3->setText(QApplication::translate("MainWindow", "\347\273\237\350\256\241\344\277\241\346\201\257", Q_NULLPTR));
         action_4->setText(QApplication::translate("MainWindow", "\346\211\223\345\274\200\346\234\254\345\234\260\346\226\207\344\273\266", Q_NULLPTR));
         groupBox_3->setTitle(QApplication::translate("MainWindow", "\347\202\271\344\272\221\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
-        label_5->setText(QApplication::translate("MainWindow", "\350\276\205\345\212\251\347\272\277\351\227\264\351\232\224(m)", Q_NULLPTR));
+        pileUp_checkBox->setText(QApplication::translate("MainWindow", "pileup", Q_NULLPTR));
+        checkBox->setText(QApplication::translate("MainWindow", "line", Q_NULLPTR));
         gainImage_lineEdit->setText(QApplication::translate("MainWindow", "1", Q_NULLPTR));
         pushButton_3->setText(QString());
+        pushButton_4->setText(QString());
         pushButton_5->setText(QString());
         change_pushButton->setText(QApplication::translate("MainWindow", "\345\210\207\346\215\242tof/peak", Q_NULLPTR));
-        radioButton->setText(QString());
-        pushButton_4->setText(QString());
+        label_5->setText(QApplication::translate("MainWindow", "\350\276\205\345\212\251\347\272\277\351\227\264\351\232\224(m)", Q_NULLPTR));
         guideLineOffset_lineEdit->setText(QApplication::translate("MainWindow", "0", Q_NULLPTR));
+        radioButton->setText(QString());
         groupBox_4->setTitle(QApplication::translate("MainWindow", "\350\256\276\345\244\207\351\223\276\346\216\245\357\274\232", Q_NULLPTR));
         label->setText(QApplication::translate("MainWindow", "VID:", Q_NULLPTR));
         VID_lineEdit->setText(QApplication::translate("MainWindow", "8888", Q_NULLPTR));

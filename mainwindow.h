@@ -302,6 +302,14 @@ private slots:
 
     void on_averageNum_lineEdit_returnPressed();
 
+    void on_checkBox_clicked(bool checked);
+
+    void on_pileUp_checkBox_clicked();
+
+
+
+    void on_calibration_action_triggered();
+
 private:
     Ui::MainWindow *ui;
 

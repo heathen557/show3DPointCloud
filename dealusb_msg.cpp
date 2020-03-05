@@ -49,6 +49,7 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     LSB = 0.031; //时钟频率
     isFirstLink = true;
     isFilterFlag = false ;    //初始化时不进行滤波
+    lineSelect = false;       //初始化 不切换两行像素
     isTOF = true;
     localFile_timer = NULL;
     gainImage = 1;
@@ -61,6 +62,8 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     isOnlyCenterShow_flag = false;   //是否只显示中心区域的标识，设置为true则只显示中心光较强的区域（超过范围的点xyz坐标全部设置为0），设置为false则显示全部点云数据；默认false;
 
     averageNum = 1;            //滑动平均的帧数 , 默认为1
+
+    is_pileUp_flag = true;
 
 
     //总共有16384个点，针对每一个点开启一个独立的容器进行存储相关内容    统计相关
@@ -376,10 +379,18 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
 
 
+    int line_offset,row_offset;
+    if(lineSelect)
+    {
+        line_offset = spadNum / 2;           //取值 0 1 2 3 ；
+        row_offset = (spadNum+1) % 2;      //表示是在第一行 还是在第二行
+    }else
+    {                                             //这种方式应该是对的
+        line_offset = spadNum / 2;           //取值 0 1 2 3 ；
+        row_offset = (spadNum) % 2;      //表示是在第一行 还是在第二行
+    }
 
 
-    int line_offset = spadNum / 2;           //取值 0 1 2 3 ；
-    int row_offset = (spadNum) % 2;      //表示是在第一行 还是在第二行
 
     for(int i=0; i<64; i++)
     {
@@ -435,11 +446,20 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
 
         //这个是和90度直角矫正相关的  减去一个偏移量70  ；把处理之后小于0的值都过滤掉
-//        tof = tof -70;
+////        tof = tof -70;
         tmpTof = tof;
 
-//        tof =tof +32;
-        tof = tof + tofOffsetArray[cloudIndex];
+////        tof =tof +32;
+//        tof = tof + tofOffsetArray[cloudIndex];
+
+
+        //利用Peak值线性外插法可得对应校正量ΔTOF (Unit: mm)
+        if(true == is_pileUp_flag)
+        {
+             tof = pileUp_calibration(tmpTof,intensity);
+        }
+
+
 
 
 
@@ -479,7 +499,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             if(formatFlag ==2  && isSaveFlag == true)
             {
 //                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
-                tofPeakNum[cloudIndex] = QString("%1").arg(tmpTof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
+                tofPeakNum[cloudIndex] = QString("%1").arg(tof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
 
             }
 
@@ -491,8 +511,8 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             Lr =  (tof*tof - (5/1.55)*(5/1.55))/(2*(tof + (5/1.55)*sin(thetaArray[cloudIndex]))) ;      //
             Lr = Lr<0?0:Lr;
             temp_x = Lr *  sin(thetaArray[cloudIndex]) * LSB;                                          //  x坐标值
-            temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]) * LSB;            //  y坐标值
-            temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]) * LSB -0.2;      // z坐标值
+            temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]) * LSB;            // Z坐标值
+            temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]) * LSB;      // y坐标值
 
 
             if(tofOffsetArray[cloudIndex] ==tof)     //tof 原始值为0 处的位置会 显示成为一个弧度,所以将这里的三维点云坐标置为0
@@ -573,7 +593,59 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
     lastSpadNum = spadNum ;
 }
 
+//!
+//! \brief DealUsb_msg::pileUp_calibration
+//! \param srcTof
+//! \param peak
+//! \return
+//!利用Peak值线性外插法可得对应校正量ΔTOF (Unit: mm)
+int DealUsb_msg::pileUp_calibration(int srcTof,int peak)
+{
+    int resTof = 0;
+    int bias_tof = 0;
+    if(peak<=30)           //[0 30] [0 44]
+    {
+        bias_tof = peak*44/30;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }else if(peak<=51)    //(30 51] (44 91]
+    {
+        bias_tof = ((peak-30)*(91-44)/(51-30)) + 44;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }else if(peak<=65)   //(51,65] (91 138]
+    {
+        bias_tof = ((peak-51)*(138-91)/(65-51)) + 91;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }else if(peak<=77)   //(65,77] (138,194]
+    {
+        bias_tof = ((peak-65)*(194-138)/(77-65)) +138;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }else if(peak<=86)   //(77,86] (194,250]
+    {
+        bias_tof = ((peak-77)*(250-194)/(86-77)) +194;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }else if(peak<=90)  //(86,90] (250,289]
+    {
+        bias_tof = ((peak-86)*(289-250)/(90-86)) +250;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }else if(peak<=93)  //(90,93] (289,335]
+    {
+        bias_tof = ((peak-90)*(335-289)/(93-90)) +289;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }else if(peak>93)   //>93   bias = 335
+    {
+        bias_tof = 335;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }
 
+}
 
 
 

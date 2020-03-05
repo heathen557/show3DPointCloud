@@ -46,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ui->checkBox->setVisible(false);
+
+
     //    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint);
 
     ui->statusBar->addWidget(&explainLabel);
@@ -70,6 +74,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->nosaveFile_radioButton->setChecked(true);   ;//默认设置为不保存
     ui->saveFilePath_lineEdit->setEnabled(false);
     ui->saveFilePath_lineEdit->setReadOnly(true);
+
+
 
 
 
@@ -1533,6 +1539,8 @@ void MainWindow::on_gainImage_lineEdit_returnPressed()
 /***********显示统计均值、方差的槽函数******************************/
 void MainWindow::showStatisticDia_slot()
 {
+    QMessageBox::information(NULL,QStringLiteral("提示"),QStringLiteral("此功能需要程序以管理员身份运行，否则可能会异常退出"));
+
     statisticsDia_.show();
 }
 
@@ -1552,7 +1560,7 @@ void MainWindow::TDC_read_slot(int TDC_number)
 {
     if(!isLinkSuccess)
     {
-        QMessageBox::information(NULL,QStringLiteral("告警"),QStringLiteral("设备未连接"));
+        QMessageBox::information(NULL,QStringLiteral("提示"),QStringLiteral("设备未连接"));
         return;
     }
     int hardWareAddress = 216;
@@ -4563,4 +4571,34 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     {
         ui->groupBox_5->setVisible(false);
     }
+}
+
+
+
+
+
+//两行像素切换，默认不切换 选中后切换
+void MainWindow::on_checkBox_clicked(bool checked)
+{
+     dealUsbMsg_obj->lineSelect = checked;
+}
+
+
+//是否进行pile-up 矫正
+void MainWindow::on_pileUp_checkBox_clicked()
+{
+    bool  flag = ui->pileUp_checkBox->isChecked();
+    dealUsbMsg_obj->is_pileUp_flag = flag;
+
+    qDebug()<<"flag = "<<flag;
+
+
+}
+
+//!
+//! \brief MainWindow::on_calibration_action_triggered
+//!相机校正
+void MainWindow::on_calibration_action_triggered()
+{
+
 }
