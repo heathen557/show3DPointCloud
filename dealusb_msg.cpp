@@ -401,7 +401,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         imgRow = i * 4 + line_offset;
         imgCol = line_number * 2 + row_offset;
         cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
-        int tof,intensity ,tmpTof;     //tof：是用来做显示（二维、三维、最大最小值）（因为涉及到要进行校正）    tmpTof：用来存储本地数据 以及统计界面时候用
+        int tof,intensity ,rawTof,after_pileup_tof,after_offset_tof;     //tof：是用来做显示（二维、三维、最大最小值）（因为涉及到要进行校正）    tmpTof：用来存储本地数据 以及统计界面时候用
 
         if(isTOF == false)   //设置一个不可能的值
         {
@@ -445,15 +445,20 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         /************************************************************/
 
 
-        tmpTof = tof;
+        rawTof = tof;
 
         //利用Peak值线性外插法可得对应校正量ΔTOF (Unit: mm)
         if(true == is_pileUp_flag)
         {
-            tof = pileUp_calibration(tmpTof,intensity);
+            tof = pileUp_calibration(rawTof,intensity);
         }
 
+        after_pileup_tof = tof;
+
         tof = tof + tofOffsetArray[cloudIndex];
+
+        after_offset_tof = tof;
+
 
 //        tof = 64.6776;      //测试校正
 
@@ -489,13 +494,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             mouseShowPEAK[imgRow][imgCol] = intensity;
             mouseShowMutex.unlock();
 
-            /*********文件保存相关*****************/
-            if(formatFlag ==2  && isSaveFlag == true)
-            {
-                //                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
-                tofPeakNum[cloudIndex] = QString("%1").arg(tof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
-
-            }
 
 
 
@@ -535,6 +533,23 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             }
 
 
+            /*********文件保存相关*****************/
+            if(formatFlag ==2  && isSaveFlag == true)
+            {
+                QString raw_tof_str = QString("%1").arg(rawTof, 5, 10, QChar('0'));
+                QString after_pileUp_tof_str = QString("%1").arg(after_pileup_tof, 5, 10, QChar('0'));
+                QString after_offset_tof_str = QString("%1").arg(after_offset_tof, 5, 10, QChar('0'));
+                QString peak_str = QString("%1").arg(intensity, 5, 10, QChar('0'));
+                QString x_str = QString::number(temp_x);
+                QString y_str = QString::number(temp_y);
+                QString z_str = QString::number(temp_z);
+                tofPeakNum[cloudIndex] = raw_tof_str+","+after_pileUp_tof_str+","+after_offset_tof_str+","+peak_str+","+x_str+","+y_str+","+z_str+"\n";
+            }
+
+
+
+
+
             /***********************开启自动校正*************************************/
 
             //            qDebug()<<"tof = "<<tof<<"    Lr="<<Lr;
@@ -545,7 +560,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             {
                 if(8063 == cloudIndex)
                 {
-//                    qDebug()<<cloudIndex<< "   tof = "<<tof;
                     vec_tof_1.push_back(tof);
                     if(vec_tof_1.size() == calibration_mean_num)
                     {
@@ -557,7 +571,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                     }
                 }else if(8064 == cloudIndex)
                 {
-//                    qDebug()<<cloudIndex<< "   tof = "<<tof;
                     vec_tof_2.push_back(tof);
                     if(vec_tof_2.size() == calibration_mean_num)
                     {
@@ -569,7 +582,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                     }
                 }else if(8319 == cloudIndex)
                 {
-//                    qDebug()<<cloudIndex<< "   tof = "<<tof;
                     vec_tof_3.push_back(tof);
                     if(vec_tof_3.size() == calibration_mean_num)
                     {
@@ -581,8 +593,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                     }
                 }else if(8320 == cloudIndex)
                 {
-
-//                    qDebug()<<cloudIndex<< "   tof = "<<tof;
                     vec_tof_4.push_back(tof);
                     if(vec_tof_4.size() == calibration_mean_num)
                     {
@@ -624,7 +634,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                     tempStatisticPeakPoints[cloudIndex].erase(tempStatisticPeakPoints[cloudIndex].begin(),tempStatisticPeakPoints[cloudIndex].begin() + offset + 1);
                 }
                 //向每个点的容器中添加一个新的点,完成循环存储
-                tempStatisticTofPoints[cloudIndex].push_back(tmpTof);
+                tempStatisticTofPoints[cloudIndex].push_back(rawTof);      //原始数据
                 tempStatisticPeakPoints[cloudIndex].push_back(intensity);
             }
 
