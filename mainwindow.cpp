@@ -162,6 +162,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_4,SIGNAL(triggered()),this,SLOT(showOpenLocalDia_slot()));
     connect(&openLocalDia_,SIGNAL(selectLocalFile_signal(QString)),dealUsbMsg_obj,SLOT(selectLocalFile_slot(QString)));
 
+
+    //自动校正相关
+    connect(&autoCalbration_dia,SIGNAL(start_autoCalibration_signal(int)),dealUsbMsg_obj,SLOT(start_autoCalibration_slot(int)));
+    connect(dealUsbMsg_obj,SIGNAL(send_cali_success_signal(QString)),&autoCalbration_dia,SLOT(send_cali_success_slot(QString)));
+
+
     initGUI();
     initTreeWidget();
 
@@ -4600,5 +4606,5 @@ void MainWindow::on_pileUp_checkBox_clicked()
 //!相机校正
 void MainWindow::on_calibration_action_triggered()
 {
-
+    autoCalbration_dia.show();
 }

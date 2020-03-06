@@ -46,7 +46,7 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
     tempRgbCloud.height = 1 ;
     tempRgbCloud.points.resize(tempRgbCloud.width);
 
-    LSB = 0.031; //时钟频率
+    LSB = 0.031;
     isFirstLink = true;
     isFilterFlag = false ;    //初始化时不进行滤波
     lineSelect = false;       //初始化 不切换两行像素
@@ -65,6 +65,9 @@ DealUsb_msg::DealUsb_msg(QObject *parent) : QObject(parent),
 
     is_pileUp_flag = true;
 
+    isAutoCalibration_flag = false;  //默认不适用
+    ishave_Four = 0 ;               // 初始设置为0，逐渐+1 ==4 时进行判断
+    calibration_mean_num = 100;
 
     //总共有16384个点，针对每一个点开启一个独立的容器进行存储相关内容    统计相关
     statisticStartFlag = true;
@@ -185,7 +188,7 @@ void DealUsb_msg::loadLocalArray()
         thetaArray[i] = thetaArray_line[i].toFloat();
         betaArray[i] = betaArray_line[i].toFloat();
 
-//        qDebug()<<"thetaArray["<<i<<"] = "<<thetaArray[i]<<endl;
+        //        qDebug()<<"thetaArray["<<i<<"] = "<<thetaArray[i]<<endl;
     }
 }
 
@@ -226,7 +229,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
     int imgRow,imgCol;
     int spadNum = (quint8)(MyBuffer[0]) +  (((quint8)(MyBuffer[1]))<<8);
     int line_number = (quint8)(MyBuffer[2]) +  (((quint8)(MyBuffer[3]))<<8);
-//     qDebug()<<"spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;     //打包发布会导致打包发布后的程序卡顿
+    //     qDebug()<<"spadNum = "<<spadNum<<"  line_number = "<<line_number<<endl;     //打包发布会导致打包发布后的程序卡顿
 
     if(line_number!=0  && ( (lastLineNum+1) != line_number) )
     {
@@ -273,7 +276,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         {
             /*******************开启滤波功能*********************************/
             //先用直通滤波把所有零点重复的零点过滤掉
-           /* pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
+            /* pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
             pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
             pass.setFilterFieldName("y");                                 //设置在Z轴方向上进行滤波
             pass.setFilterLimits(0, 0.10);                                //设置滤波范围(从最高点向下0.10米去除)
@@ -298,14 +301,14 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             sor.filter(tempRgbCloud_pass);
 
             tempRgbCloud_radius.resize(0);
-//            t1 = QTime::currentTime();
+            //            t1 = QTime::currentTime();
             pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem;      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
             outrem.setInputCloud(tempRgbCloud_pass.makeShared());              //设置输入点云
             outrem.setRadiusSearch(0.2);              //设置在0.8半径的范围内找邻近点
             outrem.setMinNeighborsInRadius(50);       //设置查询点的邻近点集数小于2的删除  30
             outrem.filter (tempRgbCloud_radius);//执行条件滤波，存储结果到cloud_filtered
-//            t2 = QTime::currentTime();
-//            qDebug()<<"RadiusOutlierRemoval costs time = "<<  t1.msecsTo(t2) <<"ms"<<endl;
+            //            t2 = QTime::currentTime();
+            //            qDebug()<<"RadiusOutlierRemoval costs time = "<<  t1.msecsTo(t2) <<"ms"<<endl;
 
 
             /*************************以上为滤波处理部分************************************************************/
@@ -361,7 +364,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                         tofPeakNum[i] = QString("%1").arg(0, 5, 10, QChar('0')).append(",").append(QString("%1").arg(0, 5, 10, QChar('0'))).append("\n");    //把没有接收到的数据设置为0 并且保存  2019-10-16 华为需求更改
                     }
                     tofPeakToSave_string.append(tofPeakNum[i]);
-//                    tofPeakNum[i].clear();   //因为存在丢数据的问题，所以这里不置为0，当前帧丢失某个数据时，则保留上一帧的数据
+                    //                    tofPeakNum[i].clear();   //因为存在丢数据的问题，所以这里不置为0，当前帧丢失某个数据时，则保留上一帧的数据
                 }
                 emit saveTXTSignal(tofPeakToSave_string);
                 tofPeakToSave_string.clear();
@@ -436,32 +439,23 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             }
             if(zeroNum != averageNum)
 
-           tof = allTof_100/(averageNum-zeroNum);
-//           qDebug()<<"  tof = "<<tof;
+                tof = allTof_100/(averageNum-zeroNum);
+            //           qDebug()<<"  tof = "<<tof;
         }
         /************************************************************/
 
 
-
-
-
-        //这个是和90度直角矫正相关的  减去一个偏移量70  ；把处理之后小于0的值都过滤掉
-////        tof = tof -70;
         tmpTof = tof;
-
-////        tof =tof +32;
-//        tof = tof + tofOffsetArray[cloudIndex];
-
 
         //利用Peak值线性外插法可得对应校正量ΔTOF (Unit: mm)
         if(true == is_pileUp_flag)
         {
-             tof = pileUp_calibration(tmpTof,intensity);
+            tof = pileUp_calibration(tmpTof,intensity);
         }
 
+        tof = tof + tofOffsetArray[cloudIndex];
 
-
-
+//        tof = 64.6776;      //测试校正
 
 
         //设置TOF图像、强度图像的颜色
@@ -498,7 +492,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             /*********文件保存相关*****************/
             if(formatFlag ==2  && isSaveFlag == true)
             {
-//                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
+                //                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
                 tofPeakNum[cloudIndex] = QString("%1").arg(tof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
 
             }
@@ -513,8 +507,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             temp_x = Lr *  sin(thetaArray[cloudIndex]) * LSB;                                          //  x坐标值
             temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]) * LSB;            // Z坐标值
             temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]) * LSB;      // y坐标值
-
-
             if(tofOffsetArray[cloudIndex] ==tof)     //tof 原始值为0 处的位置会 显示成为一个弧度,所以将这里的三维点云坐标置为0
             {
                 temp_x = 0;
@@ -531,7 +523,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
             mouseShowTOF[imgRow][imgCol] = temp_y;
 
-//            //这里是只显示中间光强度比较大的区域 显示行数：12-52   显示列数：78-178
+            //            //这里是只显示中间光强度比较大的区域 显示行数：12-52   显示列数：78-178
             if(isOnlyCenterShow_flag)
             {
                 if(imgCol<12 || imgCol>52 || imgRow<78 || imgRow>178)
@@ -541,6 +533,72 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                     temp_z = 0;
                 }
             }
+
+
+            /***********************开启自动校正*************************************/
+
+            //            qDebug()<<"tof = "<<tof<<"    Lr="<<Lr;
+
+            //如果开启自动校正，则计算4个点的100帧的y均值
+            // 31*256 +127=8063     31*256+128=8064   32*256+127=8319  32*256+128=8320
+            if(true == isAutoCalibration_flag)
+            {
+                if(8063 == cloudIndex)
+                {
+//                    qDebug()<<cloudIndex<< "   tof = "<<tof;
+                    vec_tof_1.push_back(tof);
+                    if(vec_tof_1.size() == calibration_mean_num)
+                    {
+                        float mean_tof_1 = 0;
+                        mean_tof_1 =  std::accumulate(std::begin(vec_tof_1),std::end(vec_tof_1),0.0)/calibration_mean_num;
+                        calibrate_offset_slot(8063,mean_tof_1);
+                        vec_tof_1.clear();
+
+                    }
+                }else if(8064 == cloudIndex)
+                {
+//                    qDebug()<<cloudIndex<< "   tof = "<<tof;
+                    vec_tof_2.push_back(tof);
+                    if(vec_tof_2.size() == calibration_mean_num)
+                    {
+                        float mean_tof_2 = 0;
+                        mean_tof_2 = std::accumulate(std::begin(vec_tof_2),std::end(vec_tof_2),0.0)/calibration_mean_num;
+                        calibrate_offset_slot(8064,mean_tof_2);
+                        vec_tof_2.clear();
+
+                    }
+                }else if(8319 == cloudIndex)
+                {
+//                    qDebug()<<cloudIndex<< "   tof = "<<tof;
+                    vec_tof_3.push_back(tof);
+                    if(vec_tof_3.size() == calibration_mean_num)
+                    {
+                        float mean_tof_3 = 0;
+                        mean_tof_3 = std::accumulate(std::begin(vec_tof_3),std::end(vec_tof_3),0.0)/calibration_mean_num;
+                        calibrate_offset_slot(8319,mean_tof_3);
+                        vec_tof_3.clear();
+
+                    }
+                }else if(8320 == cloudIndex)
+                {
+
+//                    qDebug()<<cloudIndex<< "   tof = "<<tof;
+                    vec_tof_4.push_back(tof);
+                    if(vec_tof_4.size() == calibration_mean_num)
+                    {
+                        float mean_tof_4 = 0;
+                        mean_tof_4 = std::accumulate(std::begin(vec_tof_4),std::end(vec_tof_4),0.0)/calibration_mean_num;
+                        calibrate_offset_slot(8320,mean_tof_4);
+                        vec_tof_4.clear();
+
+                    }
+                }
+            }
+
+            /************************************************************/
+
+
+
 
 
             QColor mColor = QColor(tofColor);
@@ -644,6 +702,114 @@ int DealUsb_msg::pileUp_calibration(int srcTof,int peak)
         resTof = srcTof + bias_tof;
         return resTof;
     }
+
+}
+
+
+
+//!
+//! \brief autoCalibration_Dialog::on_startCalibration_pushButton_clicked
+//! 1、开始校正
+//! 2、发送信号到数据处理线程
+//! 3、首先清空tofOffsetArray数组，设置为0
+//! 4、设置校正的 flag = true
+//! 5、把 31*256 +127 31*256+128 32*256+127 32*256+128 的y值传入给处理函数                         （31 32）/（127 128）
+//! 6、数据处理函数首先判断够不够100帧，满100帧时，分别取y的均值，分别逆运算为resTof
+//! 7、计算理论的realTof值，根据用户指定的距离(单位:m);
+//! 8、offset = realTof - resTof
+//! 9、写入本地文件，程序重新设置tofOffsetArray数组，isAutoCalibration_flagfalse
+void  DealUsb_msg::start_autoCalibration_slot(int meters)
+{
+    for(int i=0;i<16384;i++)
+    {
+        tofOffsetArray[i] = 0;
+    }
+    calibration_real_dis = meters;
+    isAutoCalibration_flag = true;
+
+}
+
+//!
+//! \brief DealUsb_msg::calibrate_offset_slot
+//!  计算校验的offset
+//! 1、获取100帧数据的y坐标的均值（中间4个点的）
+//! 2、根据公式反推出realTof
+//! 3、offset = realTof - tof
+//!
+//!
+//!
+//!
+//! // 31*256 +127=8063     31*256+128=8064   32*256+127=8319  32*256+128=8320
+//! temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]) * LSB;      // y坐标值
+//! resTof = Lr +/-  sqrt(a^2 + Lr^2 + 2*a*b*sin0)
+void DealUsb_msg::calibrate_offset_slot(int index,float mean_tof)
+{
+
+
+    if(8063 == index)
+    {
+        resTof_1 = mean_tof;
+        float back_lr = calibration_real_dis/(cos(thetaArray[index]) * cos(betaArray[index]) * LSB);
+        float a = 5.0/1.55;
+        realTof_1 = back_lr + sqrt(a*a + back_lr*back_lr + 2*a*back_lr*sin(thetaArray[index]));
+    }
+    if(8064 == index)
+    {
+        resTof_2 = mean_tof;
+        float back_lr = calibration_real_dis/(cos(thetaArray[index]) * cos(betaArray[index]) * LSB);
+        float a = 5.0/1.55;
+        realTof_2 = back_lr + sqrt(a*a + back_lr*back_lr + 2*a*back_lr*sin(thetaArray[index]));
+    }
+    if(8319 == index)
+    {
+        resTof_3 = mean_tof;
+        float back_lr = calibration_real_dis/(cos(thetaArray[index]) * cos(betaArray[index]) * LSB);
+        float a = 5.0/1.55;
+        realTof_3 = back_lr + sqrt(a*a + back_lr*back_lr + 2*a*back_lr*sin(thetaArray[index]));
+    }
+    if(8320 == index)
+    {
+        resTof_4 = mean_tof;
+        float back_lr = calibration_real_dis/(cos(thetaArray[index]) * cos(betaArray[index]) * LSB);
+        float a = 5.0/1.55;
+        realTof_4 = back_lr + sqrt(a*a + back_lr*back_lr + 2*a*back_lr*sin(thetaArray[index]));
+    }
+
+
+    ishave_Four++;
+    if(4 == ishave_Four)   //此时说明中间区域的四个点都已经计算完均值
+    {
+        float mean_resTof = (resTof_1+ resTof_2+resTof_3+resTof_4)/4.0;
+        float mean_realTof = (realTof_1+realTof_2+realTof_3+realTof_4)/4.0;
+        int mean_offset  = int(mean_realTof - mean_resTof + 0.5f) ;   //四舍五入
+
+//        qDebug()<<"resTof_1="<<resTof_1<<"  resTof_2="<<resTof_2<<"  resTof_3="<<resTof_3<<"  resTof_4="<<resTof_4;
+//        qDebug()<<"realTof_1="<<realTof_1<<"  realTof_2="<<realTof_2<<"  realTof_3="<<realTof_3<<"  realTof_4="<<realTof_4;
+
+
+        qDebug()<<"mean_resTof = "<<mean_resTof;
+        qDebug()<<"mean_realTof = "<<mean_realTof;
+        qDebug()<<"mean_offset = "<<mean_offset;
+
+        //修改偏移的offset的值
+        QFile file("tofOffsetArray.txt");
+        file.open(QIODevice::WriteOnly|QIODevice::Text);
+        QTextStream out(&file);
+        QString text = QString::number(mean_offset);
+        for(int i=0; i<16384; i++)
+        {
+            tofOffsetArray[i] = mean_offset;
+            out<<text.toLocal8Bit()<<endl;
+        }
+
+        file.close();
+
+        isAutoCalibration_flag = false;
+        ishave_Four = 0;
+        QString msg = "raw_tof="+QString::number(mean_resTof)+",dst_tof="+QString::number(mean_realTof)+",offset="+QString::number(mean_offset);
+        emit send_cali_success_signal(msg);   //发送给设置自动校准的界面
+    }
+
 
 }
 
@@ -804,10 +970,10 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
                                         /********点云相关*********获取三维坐标***************/
                                         if(isTOF)
                                         {
-//                                            temp_x = tof * x_Weight[cloudIndex] * LSB;
-//                                            temp_y = tof * y_Weight[cloudIndex] * LSB;
-//                                                                                        temp_y = tof * LSB;
-//                                            temp_z = tof * z_Weight[cloudIndex] * LSB;
+                                            //                                            temp_x = tof * x_Weight[cloudIndex] * LSB;
+                                            //                                            temp_y = tof * y_Weight[cloudIndex] * LSB;
+                                            //                                                                                        temp_y = tof * LSB;
+                                            //                                            temp_z = tof * z_Weight[cloudIndex] * LSB;
 
                                             QColor mColor = QColor(tofColor);
                                             r = mColor.red();
@@ -817,10 +983,10 @@ void DealUsb_msg::ClientRecvData()  //接收点云数据的槽函数
 
                                         }else
                                         {
-//                                            temp_x = intensity * x_Weight[cloudIndex] * LSB;
-//                                            temp_y = intensity * y_Weight[cloudIndex] * LSB;
+                                            //                                            temp_x = intensity * x_Weight[cloudIndex] * LSB;
+                                            //                                            temp_y = intensity * y_Weight[cloudIndex] * LSB;
                                             //                                            temp_y = intensity * LSB;
-//                                            temp_z = intensity * z_Weight[cloudIndex] * LSB;
+                                            //                                            temp_z = intensity * z_Weight[cloudIndex] * LSB;
 
 
                                             QColor mColor = QColor(intenColor);
@@ -1138,38 +1304,38 @@ void DealUsb_msg::readLocalPCDFile()
             tof = tofPeakList[0].toInt();
 
 
-//            //循环赋值    100帧数据取平均值
-//            for(int n=0; n<99; n++)
-//            {
-//                lastTOF[n][i] = lastTOF[n+1][i];
-//            }
-//            lastTOF[99][i] = tof;
+            //            //循环赋值    100帧数据取平均值
+            //            for(int n=0; n<99; n++)
+            //            {
+            //                lastTOF[n][i] = lastTOF[n+1][i];
+            //            }
+            //            lastTOF[99][i] = tof;
 
-//            if(haveIndex >100)
-//            {
-//                float zeroNum = 0;
-//                haveIndex = 120;
-//                float allTof_100 = 0;
-//                for(int k=0; k<100; k++)     //100帧取平均   ，如果有0的数据则不进行平均处理
-//                {
-//                    if(lastTOF[k][i] == 0)
-//                    {
-//                        zeroNum = zeroNum+1;
-//                    }
-//                    allTof_100 += lastTOF[k][i];
-//                }
+            //            if(haveIndex >100)
+            //            {
+            //                float zeroNum = 0;
+            //                haveIndex = 120;
+            //                float allTof_100 = 0;
+            //                for(int k=0; k<100; k++)     //100帧取平均   ，如果有0的数据则不进行平均处理
+            //                {
+            //                    if(lastTOF[k][i] == 0)
+            //                    {
+            //                        zeroNum = zeroNum+1;
+            //                    }
+            //                    allTof_100 += lastTOF[k][i];
+            //                }
 
-//               tof = allTof_100/(100.0-zeroNum);
-//            }
+            //               tof = allTof_100/(100.0-zeroNum);
+            //            }
 
 
 
-//            qDebug()<<"here------------"<<endl;
+            //            qDebug()<<"here------------"<<endl;
             intensity = tofPeakList[1].toInt();
         }else
         {
-           intensity = tofPeakList[0].toInt();
-           tof = tofPeakList[1].toInt();
+            intensity = tofPeakList[0].toInt();
+            tof = tofPeakList[1].toInt();
         }
 
         //循环赋值
@@ -1194,7 +1360,7 @@ void DealUsb_msg::readLocalPCDFile()
             }
             if(zeroNum != averageNum)
 
-           tof = allTof_100/(averageNum-zeroNum);
+                tof = allTof_100/(averageNum-zeroNum);
         }
 
 
@@ -1204,12 +1370,12 @@ void DealUsb_msg::readLocalPCDFile()
 
 
         tmpTof = tof;
-//        tof = tof - 70;
+        //        tof = tof - 70;
 
         tof = tof + tofOffsetArray[i];
 
-//        qDebug()<<" tofOffsetArray[cloudIndex] "<<cloudIndex<<"      "<<tofOffsetArray[cloudIndex];
-//        tof = tof<0? 0:tof;
+        //        qDebug()<<" tofOffsetArray[cloudIndex] "<<cloudIndex<<"      "<<tofOffsetArray[cloudIndex];
+        //        tof = tof<0? 0:tof;
 
 
         //行列以及颜色传递给图像
@@ -1224,8 +1390,8 @@ void DealUsb_msg::readLocalPCDFile()
         int gainIndex_tof = tof*gainImage;
         int gainIndex_intensity =intensity * gainImage;
 
-//        int gainIndex_tof = tof *0.5;
-//        int gainIndex_intensity = intensity * 0.5;
+        //        int gainIndex_tof = tof *0.5;
+        //        int gainIndex_intensity = intensity * 0.5;
 
         if(gainIndex_tof<1024 && gainIndex_tof>=0)
             tofColor = qRgb(colormap[gainIndex_tof * 3], colormap[gainIndex_tof * 3 + 1], colormap[gainIndex_tof * 3 + 2]);
@@ -1253,9 +1419,9 @@ void DealUsb_msg::readLocalPCDFile()
             /************点云数据相关************/
             //获取三维坐标
 
-//            temp_x = tof * x_Weight[cloudIndex] * LSB;
-//            temp_y = tof * y_Weight[cloudIndex] * LSB;
-//            temp_z = tof * z_Weight[cloudIndex] * LSB;
+            //            temp_x = tof * x_Weight[cloudIndex] * LSB;
+            //            temp_y = tof * y_Weight[cloudIndex] * LSB;
+            //            temp_z = tof * z_Weight[cloudIndex] * LSB;
 
 
             Lr =  (tof*tof - (5/1.55)*(5/1.55))/(2*(tof + (5/1.55)*sin(thetaArray[cloudIndex]))) ;      //
@@ -1303,7 +1469,7 @@ void DealUsb_msg::readLocalPCDFile()
             tempRgbCloud.points[cloudIndex].z = temp_z;
             tempRgbCloud.points[cloudIndex].rgb = *reinterpret_cast<float*>(&rgb);
 
-//            qDebug()<<" cloudIndex = "<<cloudIndex<<endl;
+            //            qDebug()<<" cloudIndex = "<<cloudIndex<<endl;
 
 
 
@@ -1311,7 +1477,7 @@ void DealUsb_msg::readLocalPCDFile()
             /*********文件保存相关*****************/
             if(formatFlag ==2  && isSaveFlag == true)
             {
-//                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
+                //                tofPeakNum[cloudIndex] = QString::number(tof).append(", ").append(QString::number(intensity)).append("\n");
                 tofPeakNum[cloudIndex] = QString("%1").arg(tmpTof, 5, 10, QChar('0')).append(",").append(QString("%1").arg(intensity, 5, 10, QChar('0'))).append("\n");
             }else
             {
@@ -1406,24 +1572,24 @@ void DealUsb_msg::readLocalPCDFile()
     if(true == isFilterFlag)
     {
         /*******************开启滤波功能*********************************/
-//        //先用直通滤波把所有零点重复的零点过滤掉
-//        pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
-//        pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
-//        pass.setFilterFieldName("y");                                 //设置在Z轴方向上进行滤波
-//        pass.setFilterLimits(0, 0.10);                                //设置滤波范围(从最高点向下0.10米去除)
-//        pass.setFilterLimitsNegative(true);                           //保留
-//        pass.filter(tempRgbCloud_pass);                                   //滤波并存储
-//        if(tempRgbCloud_pass.size()<1)
-//                return;
+        //        //先用直通滤波把所有零点重复的零点过滤掉
+        //        pcl::PassThrough<pcl::PointXYZRGB> pass;                      //创建滤波器对象
+        //        pass.setInputCloud(tempRgbCloud.makeShared());                //设置待滤波的点云
+        //        pass.setFilterFieldName("y");                                 //设置在Z轴方向上进行滤波
+        //        pass.setFilterLimits(0, 0.10);                                //设置滤波范围(从最高点向下0.10米去除)
+        //        pass.setFilterLimitsNegative(true);                           //保留
+        //        pass.filter(tempRgbCloud_pass);                                   //滤波并存储
+        //        if(tempRgbCloud_pass.size()<1)
+        //                return;
 
-//        tempRgbCloud_radius.clear();
-//        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> outrem(true);
-//        outrem.setInputCloud(tempRgbCloud_pass.makeShared());
-//        outrem.setMeanK(10);
-//        outrem.setStddevMulThresh(0.25);
-//        //40  0.1 不见前面噪点
-//        outrem.filter(tempRgbCloud_radius);
-//        int len = outrem.getRemovedIndices()->size();
+        //        tempRgbCloud_radius.clear();
+        //        pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> outrem(true);
+        //        outrem.setInputCloud(tempRgbCloud_pass.makeShared());
+        //        outrem.setMeanK(10);
+        //        outrem.setStddevMulThresh(0.25);
+        //        //40  0.1 不见前面噪点
+        //        outrem.filter(tempRgbCloud_radius);
+        //        int len = outrem.getRemovedIndices()->size();
 
 
 
@@ -1434,7 +1600,7 @@ void DealUsb_msg::readLocalPCDFile()
         sor.setLeafSize(0.03f, 0.03f, 0.03f);//设置滤波器处理时采用的体素大小的参数
         sor.filter(tempRgbCloud_pass);
         tempRgbCloud_radius.resize(0);
-//            t1 = QTime::currentTime();
+        //            t1 = QTime::currentTime();
         pcl::RadiusOutlierRemoval<pcl::PointXYZRGB> outrem;      //设置为true以后才能获取到滤出的噪点的 个数以及点的序列号
         outrem.setInputCloud(tempRgbCloud_pass.makeShared());              //设置输入点云
         outrem.setRadiusSearch(0.2);              //设置在0.8半径的范围内找邻近点
@@ -1449,8 +1615,8 @@ void DealUsb_msg::readLocalPCDFile()
         tofImage = microQimage;
         intensityImage = macroQimage;
 
-//        tofImage = *blur(&microQimage);
-//        intensityImage = *blur(&macroQimage);
+        //        tofImage = *blur(&microQimage);
+        //        intensityImage = *blur(&macroQimage);
 
         pcl::copyPointCloud(tempRgbCloud_radius,pointCloudRgb);
         mutex.unlock();
@@ -1458,7 +1624,7 @@ void DealUsb_msg::readLocalPCDFile()
 
 
 
-//        pcl::getMinMax3D(*cloud,min,max);
+        //        pcl::getMinMax3D(*cloud,min,max);
 
         /***************************************************************/
 
@@ -1523,38 +1689,38 @@ void DealUsb_msg::readLocalPCDFile()
 
 QImage *DealUsb_msg::blur(QImage *origin)
 {
-//    QImage * newImage = new QImage(*origin);
-//    int kernel [3][3]= {{5,4,3},
-//                        {4,0,0},
-//                        {3,0,0}};
-//    int kernelSize = 3;
-//    int sumKernel = 19;
-//    int r,g,b;
-//    QColor color;
-//    for(int x=kernelSize/2; x<newImage->width()-(kernelSize/2); x++){
-//        for(int y=kernelSize/2; y<newImage->height()-(kernelSize/2); y++){
+    //    QImage * newImage = new QImage(*origin);
+    //    int kernel [3][3]= {{5,4,3},
+    //                        {4,0,0},
+    //                        {3,0,0}};
+    //    int kernelSize = 3;
+    //    int sumKernel = 19;
+    //    int r,g,b;
+    //    QColor color;
+    //    for(int x=kernelSize/2; x<newImage->width()-(kernelSize/2); x++){
+    //        for(int y=kernelSize/2; y<newImage->height()-(kernelSize/2); y++){
 
-//            r = 0;
-//            g = 0;
-//            b = 0;
+    //            r = 0;
+    //            g = 0;
+    //            b = 0;
 
-//            for(int i = -kernelSize/2; i<= kernelSize/2; i++)
-//            {
-//                for(int j = -kernelSize/2; j<= kernelSize/2; j++)
-//                {
-//                    color = QColor(origin->pixel(x+i, y+j));
-//                    r += color.red()*kernel[kernelSize/2+i][kernelSize/2+j];
-//                    g += color.green()*kernel[kernelSize/2+i][kernelSize/2+j];
-//                    b += color.blue()*kernel[kernelSize/2+i][kernelSize/2+j];
-//                }
-//            }
-//            r = qBound(0, r/sumKernel, 255);
-//            g = qBound(0, g/sumKernel, 255);
-//            b = qBound(0, b/sumKernel, 255);
-//            newImage->setPixel(x,y, qRgb(r,g,b));
-//        }
-//    }
-//    return newImage;
+    //            for(int i = -kernelSize/2; i<= kernelSize/2; i++)
+    //            {
+    //                for(int j = -kernelSize/2; j<= kernelSize/2; j++)
+    //                {
+    //                    color = QColor(origin->pixel(x+i, y+j));
+    //                    r += color.red()*kernel[kernelSize/2+i][kernelSize/2+j];
+    //                    g += color.green()*kernel[kernelSize/2+i][kernelSize/2+j];
+    //                    b += color.blue()*kernel[kernelSize/2+i][kernelSize/2+j];
+    //                }
+    //            }
+    //            r = qBound(0, r/sumKernel, 255);
+    //            g = qBound(0, g/sumKernel, 255);
+    //            b = qBound(0, b/sumKernel, 255);
+    //            newImage->setPixel(x,y, qRgb(r,g,b));
+    //        }
+    //    }
+    //    return newImage;
 
 
     QImage * newImage = new QImage(*origin);
@@ -1577,7 +1743,7 @@ QImage *DealUsb_msg::blur(QImage *origin)
                     numArray.push_back(mouseShowTOF[imgX][imgY+1]);
 
                 sort(numArray.begin(),numArray.end());
-//                    int midNumTof = numArray[numArray.size()/2];                //存在bug  size=2时，  numArray[2]函数越界
+                //                    int midNumTof = numArray[numArray.size()/2];                //存在bug  size=2时，  numArray[2]函数越界
                 int midNumTof = numArray[1];                //存在bug  size=2时，  numArray[2]函数越界
 
                 //更新该点的值（鼠标显示）；

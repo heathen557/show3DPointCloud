@@ -105,9 +105,18 @@ public:
     bool lineSelect;     //两个微像素 是否切换  默认false;
 
 
-    bool is_pileUp_flag;
+    bool is_pileUp_flag;   //是否进行pile_up
 
-
+    int calibration_real_dis;   //用户设定的真实距离
+    bool isAutoCalibration_flag;
+    int ishave_Four ;     //判断是不是4个均值都计算完毕
+    int calibration_mean_num;    //校正时 取的平均的个数
+    vector<float> vec_tof_1;   //31*256 +127
+    vector<float> vec_tof_2;   //31*256+128
+    vector<float> vec_tof_3;   //32*256+127
+    vector<float> vec_tof_4;   //32*256+128
+    float resTof_1,resTof_2,resTof_3,resTof_4;
+    float realTof_1,realTof_2,realTof_3,realTof_4;
 
 
 signals:
@@ -118,6 +127,8 @@ signals:
     void saveTXTSignal(QString );
 
     void loadArrayFileSignal(bool,QString);   //是否成功标识，成功与否信息的字符串
+
+    void send_cali_success_signal(QString);
 
 public slots:
     void recvMsgSlot(QByteArray array);
@@ -146,7 +157,15 @@ public slots:
     //记载本地角度矫正矩阵
     void loadLocalArray();
 
+
+    //校正
     int pileUp_calibration(int,int);
+
+
+    //自动校正相关
+    void start_autoCalibration_slot(int meters);
+    void calibrate_offset_slot(int index,float mean_tof);
+
 
 
 };

@@ -51,6 +51,7 @@ public:
     QAction *action_2;
     QAction *action_3;
     QAction *action_4;
+    QAction *calibration_action;
     QWidget *centralWidget;
     QGridLayout *gridLayout_7;
     QFrame *frame_4;
@@ -226,6 +227,11 @@ public:
         QIcon icon4;
         icon4.addFile(QStringLiteral(":/new/image/images/ccOpen.png"), QSize(), QIcon::Normal, QIcon::Off);
         action_4->setIcon(icon4);
+        calibration_action = new QAction(MainWindow);
+        calibration_action->setObjectName(QStringLiteral("calibration_action"));
+        QIcon icon5;
+        icon5.addFile(QStringLiteral("images/ccPivotAuto.png"), QSize(), QIcon::Normal, QIcon::Off);
+        calibration_action->setIcon(icon5);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout_7 = new QGridLayout(centralWidget);
@@ -316,9 +322,9 @@ public:
         pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
         pushButton_3->setMinimumSize(QSize(20, 20));
         pushButton_3->setMaximumSize(QSize(60, 20));
-        QIcon icon5;
-        icon5.addFile(QStringLiteral(":/new/image/images/ccViewYpos.png"), QSize(), QIcon::Normal, QIcon::Off);
-        pushButton_3->setIcon(icon5);
+        QIcon icon6;
+        icon6.addFile(QStringLiteral(":/new/image/images/ccViewYpos.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pushButton_3->setIcon(icon6);
 
         horizontalLayout_14->addWidget(pushButton_3);
 
@@ -326,9 +332,9 @@ public:
         pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
         pushButton_4->setMinimumSize(QSize(20, 20));
         pushButton_4->setMaximumSize(QSize(60, 20));
-        QIcon icon6;
-        icon6.addFile(QStringLiteral(":/new/image/images/ccViewXneg.png"), QSize(), QIcon::Normal, QIcon::Off);
-        pushButton_4->setIcon(icon6);
+        QIcon icon7;
+        icon7.addFile(QStringLiteral(":/new/image/images/ccViewXneg.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pushButton_4->setIcon(icon7);
 
         horizontalLayout_14->addWidget(pushButton_4);
 
@@ -336,9 +342,9 @@ public:
         pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
         pushButton_5->setMinimumSize(QSize(20, 20));
         pushButton_5->setMaximumSize(QSize(60, 20));
-        QIcon icon7;
-        icon7.addFile(QStringLiteral(":/new/image/images/ccViewZpos.png"), QSize(), QIcon::Normal, QIcon::Off);
-        pushButton_5->setIcon(icon7);
+        QIcon icon8;
+        icon8.addFile(QStringLiteral(":/new/image/images/ccViewZpos.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pushButton_5->setIcon(icon8);
 
         horizontalLayout_14->addWidget(pushButton_5);
 
@@ -1091,10 +1097,12 @@ public:
         menuBar->addAction(menu_4->menuAction());
         menu->addAction(action);
         menu->addAction(action_4);
+        menu_2->addAction(calibration_action);
         menu_5->addAction(action_3);
         mainToolBar->addAction(action);
         mainToolBar->addAction(action_4);
         mainToolBar->addAction(action_3);
+        mainToolBar->addAction(calibration_action);
 
         retranslateUi(MainWindow);
 
@@ -1113,6 +1121,7 @@ public:
         action_2->setText(QApplication::translate("MainWindow", "\347\273\237\350\256\241\350\256\276\347\275\256", Q_NULLPTR));
         action_3->setText(QApplication::translate("MainWindow", "\347\273\237\350\256\241\344\277\241\346\201\257", Q_NULLPTR));
         action_4->setText(QApplication::translate("MainWindow", "\346\211\223\345\274\200\346\234\254\345\234\260\346\226\207\344\273\266", Q_NULLPTR));
+        calibration_action->setText(QApplication::translate("MainWindow", "\347\233\270\346\234\272\346\240\241\346\255\243", Q_NULLPTR));
         groupBox_3->setTitle(QApplication::translate("MainWindow", "\347\202\271\344\272\221\345\233\276\345\203\217\357\274\232", Q_NULLPTR));
         pileUp_checkBox->setText(QApplication::translate("MainWindow", "pileup", Q_NULLPTR));
         checkBox->setText(QApplication::translate("MainWindow", "line", Q_NULLPTR));
@@ -1164,7 +1173,7 @@ public:
         centerShowNo_radioButton->setText(QApplication::translate("MainWindow", "\345\220\246", Q_NULLPTR));
         toolBox->setItemText(toolBox->indexOf(page_3), QApplication::translate("MainWindow", "        \346\226\207\344\273\266\344\277\235\345\255\230\345\222\214\346\230\276\347\244\272\350\256\276\347\275\256", Q_NULLPTR));
         menu->setTitle(QApplication::translate("MainWindow", "\346\226\207\344\273\266", Q_NULLPTR));
-        menu_2->setTitle(QApplication::translate("MainWindow", "\347\233\270\346\234\272\345\261\236\346\200\247", Q_NULLPTR));
+        menu_2->setTitle(QApplication::translate("MainWindow", "\347\233\270\346\234\272\350\256\276\347\275\256", Q_NULLPTR));
         menu_3->setTitle(QApplication::translate("MainWindow", "\350\256\276\347\275\256", Q_NULLPTR));
         menu_4->setTitle(QApplication::translate("MainWindow", "\345\270\256\345\212\251", Q_NULLPTR));
         menu_5->setTitle(QApplication::translate("MainWindow", "\350\260\203\350\257\225", Q_NULLPTR));

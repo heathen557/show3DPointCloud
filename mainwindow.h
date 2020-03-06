@@ -21,6 +21,7 @@
 #include <QCameraInfo>
 #include <QCameraViewfinder>
 #include<openlocaldialog.h>
+#include"autocalibration_dialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -158,6 +159,8 @@ public:
      QCamera *camera;
 
      bool isShowCamera;
+
+     autoCalibration_Dialog  autoCalbration_dia;
 
 
 private slots:

@@ -42,7 +42,8 @@ SOURCES += main.cpp\
     statisticsdialog.cpp \
     calmeanstdthread.cpp \
     surfacegraph.cpp \
-    openlocaldialog.cpp
+    openlocaldialog.cpp \
+    autocalibration_dialog.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -58,13 +59,15 @@ HEADERS  += mainwindow.h \
     statisticsdialog.h \
     calmeanstdthread.h \
     surfacegraph.h \
-    openlocaldialog.h
+    openlocaldialog.h \
+    autocalibration_dialog.h
 
 
 FORMS    += mainwindow.ui \
     filesave.ui \
     statisticsdialog.ui \
-    openlocaldialog.ui
+    openlocaldialog.ui \
+    autocalibration_dialog.ui
 
 INCLUDEPATH += "D:/programInstall/libsub"
 #INCLUDEPATH += -lD:/programInstall/libsub
