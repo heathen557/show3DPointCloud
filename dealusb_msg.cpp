@@ -634,7 +634,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
                     tempStatisticPeakPoints[cloudIndex].erase(tempStatisticPeakPoints[cloudIndex].begin(),tempStatisticPeakPoints[cloudIndex].begin() + offset + 1);
                 }
                 //向每个点的容器中添加一个新的点,完成循环存储
-                tempStatisticTofPoints[cloudIndex].push_back(rawTof);      //原始数据
+                tempStatisticTofPoints[cloudIndex].push_back(rawTof);      //统计均值和方差的时候采用的是最原始的tof数据
                 tempStatisticPeakPoints[cloudIndex].push_back(intensity);
             }
 
