@@ -401,7 +401,10 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         imgRow = i * 4 + line_offset;
         imgCol = line_number * 2 + row_offset;
         cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
-        int tof,intensity ,rawTof,after_pileup_tof,after_offset_tof;     //tof：是用来做显示（二维、三维、最大最小值）（因为涉及到要进行校正）    tmpTof：用来存储本地数据 以及统计界面时候用
+//        int tof,intensity ,rawTof,after_pileup_tof,after_offset_tof;     //tof：是用来做显示（二维、三维、最大最小值）（因为涉及到要进行校正）    tmpTof：用来存储本地数据 以及统计界面时候用
+        int intensity;
+        float tof,rawTof,after_pileup_tof,after_offset_tof;     //tof：是用来做显示（二维、三维、最大最小值）（因为涉及到要进行校正）    tmpTof：用来存储本地数据 以及统计界面时候用
+
 
         if(isTOF == false)   //设置一个不可能的值
         {
@@ -536,10 +539,14 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             /*********文件保存相关*****************/
             if(formatFlag ==2  && isSaveFlag == true)
             {
-                QString raw_tof_str = QString("%1").arg(rawTof, 5, 10, QChar('0'));
-                QString after_pileUp_tof_str = QString("%1").arg(after_pileup_tof, 5, 10, QChar('0'));
-                QString after_offset_tof_str = QString("%1").arg(after_offset_tof, 5, 10, QChar('0'));
-                QString peak_str = QString("%1").arg(intensity, 5, 10, QChar('0'));
+//                QString raw_tof_str = QString("%1").arg(rawTof, 5, 10, QChar('0'));
+//                QString after_pileUp_tof_str = QString("%1").arg(after_pileup_tof, 5, 10, QChar('0'));
+//                QString after_offset_tof_str = QString("%1").arg(after_offset_tof, 5, 10, QChar('0'));
+//                QString peak_str = QString("%1").arg(intensity, 5, 10, QChar('0'));
+                QString raw_tof_str = QString::number(rawTof);// QString("%1").arg(rawTof, 5, 10, QChar('0'));
+                QString after_pileUp_tof_str = QString::number(after_pileup_tof);  //  QString("%1").arg(after_pileup_tof, 5, 10, QChar('0'));
+                QString after_offset_tof_str = QString::number(after_offset_tof);  // QString("%1").arg(after_offset_tof, 5, 10, QChar('0'));
+                QString peak_str = QString::number(intensity);              //QString("%1").arg(intensity, 5, 10, QChar('0'));
                 QString x_str = QString::number(temp_x);
                 QString y_str = QString::number(temp_y);
                 QString z_str = QString::number(temp_z);
@@ -667,48 +674,85 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 //! \param peak
 //! \return
 //!利用Peak值线性外插法可得对应校正量ΔTOF (Unit: mm)
-int DealUsb_msg::pileUp_calibration(int srcTof,int peak)
+float DealUsb_msg::pileUp_calibration(int srcTof,int peak)
 {
-    int resTof = 0;
-    int bias_tof = 0;
-    if(peak<=30)           //[0 30] [0 44]
+    float resTof = 0;
+    float bias_tof = 0;
+
+    float begin_tof,end_tof,offset_start,offset_end;
+
+    if(peak<=30)           //[0 30] [0/31 44/31]
     {
-        bias_tof = peak*44/30;
+        begin_tof = 0;
+        end_tof = 30;
+        offset_start = 0;
+        offset_end = 44.0/31.0;
+        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=51)    //(30 51] (44 91]
+    }else if(peak<=51)    //(30 51] (44/31 91/31]
     {
-        bias_tof = ((peak-30)*(91-44)/(51-30)) + 44;
+        begin_tof = 30;
+        end_tof = 51;
+        offset_start = 44.0/31.0;
+        offset_end = 91.0/31.0;
+        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        bias_tof = ((peak-30)*(91-44)/(51-30)) + 44;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=65)   //(51,65] (91 138]
+    }else if(peak<=65)   //(51,65] (91/31 138/31]
     {
-        bias_tof = ((peak-51)*(138-91)/(65-51)) + 91;
+        begin_tof = 51;
+        end_tof = 65;
+        offset_start = 91.0/31.0;
+        offset_end = 138.0/31.0;
+        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        bias_tof = ((peak-51)*(138-91)/(65-51)) + 91;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=77)   //(65,77] (138,194]
+    }else if(peak<=77)   //(65,77] (138/31,194/31]
     {
-        bias_tof = ((peak-65)*(194-138)/(77-65)) +138;
+        begin_tof = 65;
+        end_tof = 77;
+        offset_start = 138.0/31.0;
+        offset_end = 194.0/31.0;
+        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        bias_tof = ((peak-65)*(194-138)/(77-65)) +138;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=86)   //(77,86] (194,250]
+    }else if(peak<=86)   //(77,86] (194/31,250/31]
     {
-        bias_tof = ((peak-77)*(250-194)/(86-77)) +194;
+        begin_tof = 77;
+        end_tof = 86;
+        offset_start = 194.0/31.0;
+        offset_end = 250.0/31.0;
+        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        bias_tof = ((peak-77)*(250-194)/(86-77)) +194;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=90)  //(86,90] (250,289]
+    }else if(peak<=90)  //(86,90] (250/31,289/31]
     {
-        bias_tof = ((peak-86)*(289-250)/(90-86)) +250;
+        begin_tof = 86;
+        end_tof = 90;
+        offset_start = 250.0/31.0;
+        offset_end = 289.0/31.0;
+        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        bias_tof = ((peak-86)*(289-250)/(90-86)) +250;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=93)  //(90,93] (289,335]
+    }else if(peak<=93)  //(90,93] (289/31,335/31]
     {
-        bias_tof = ((peak-90)*(335-289)/(93-90)) +289;
+        begin_tof = 90;
+        end_tof = 93;
+        offset_start = 289.0/31.0;
+        offset_end = 335.0/31.0;
+        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        bias_tof = ((peak-90)*(335-289)/(93-90)) +289;
         resTof = srcTof + bias_tof;
         return resTof;
     }else if(peak>93)   //>93   bias = 335
     {
-        bias_tof = 335;
+        bias_tof = 335.0/31.0;
         resTof = srcTof + bias_tof;
         return resTof;
     }
