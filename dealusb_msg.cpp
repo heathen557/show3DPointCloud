@@ -508,6 +508,9 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             temp_x = Lr *  sin(thetaArray[cloudIndex]) * LSB;                                          //  x坐标值
             temp_z = Lr *  cos(thetaArray[cloudIndex]) * sin(betaArray[cloudIndex]) * LSB;            // Z坐标值
             temp_y = Lr *  cos(thetaArray[cloudIndex]) * cos(betaArray[cloudIndex]) * LSB;      // y坐标值
+
+//            qDebug()<<"tof = "<<tof <<"   Lr="<<Lr;
+
             if(tofOffsetArray[cloudIndex] ==tof)     //tof 原始值为0 处的位置会 显示成为一个弧度,所以将这里的三维点云坐标置为0
             {
                 temp_x = 0;
@@ -676,83 +679,114 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 //!利用Peak值线性外插法可得对应校正量ΔTOF (Unit: mm)
 float DealUsb_msg::pileUp_calibration(int srcTof,int peak)
 {
+
+
+
+//    int peak_cal = [0,     31,      50,        63,      72,        77.7,        84,   89.7,    92,   94.4,   96.3,   120];
+//    int bias_cal = [0,    36.19,  72.88,    106.2,  134.8,       158.6,       191,   234,    256,  285,    318,     318];
+
+    //    peak_cal = [0,	  	31,		50,		63,		72,		78,	     84,		90,	    92,		 94,	 96,	120];
+    //    bias_cal = [0,	 36.19,    72.88,  106.2,  134.8,   158.6,   191,       234,    256,     285,    318,   318];
+
     float resTof = 0;
     float bias_tof = 0;
 
     float begin_tof,end_tof,offset_start,offset_end;
 
-    if(peak<=30)           //[0 30] [0/31 44/31]
+    if(peak<=31)           //[0 31] [0/31 36.19/31]
     {
         begin_tof = 0;
-        end_tof = 30;
+        end_tof = 31;
         offset_start = 0;
-        offset_end = 44.0/31.0;
+        offset_end = 36.19/31.0;
         bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=51)    //(30 51] (44/31 91/31]
+    }else if(peak<=50)    //(31 50] (36.19/31 72.88/31]
     {
-        begin_tof = 30;
-        end_tof = 51;
-        offset_start = 44.0/31.0;
-        offset_end = 91.0/31.0;
+        begin_tof = 31;
+        end_tof = 50;
+        offset_start = 36.19/31.0;
+        offset_end = 72.88/31.0;
         bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-//        bias_tof = ((peak-30)*(91-44)/(51-30)) + 44;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=65)   //(51,65] (91/31 138/31]
+    }else if(peak<=63)   //(50,63] (72.88/31 106.2/31]
     {
-        begin_tof = 51;
-        end_tof = 65;
-        offset_start = 91.0/31.0;
-        offset_end = 138.0/31.0;
+        begin_tof = 50;
+        end_tof = 63;
+        offset_start = 72.88/31.0;
+        offset_end = 106.2/31.0;
         bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-//        bias_tof = ((peak-51)*(138-91)/(65-51)) + 91;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=77)   //(65,77] (138/31,194/31]
+    }else if(peak<=72)   //(63,72] (106.2/31,134.8/31]
     {
-        begin_tof = 65;
-        end_tof = 77;
-        offset_start = 138.0/31.0;
-        offset_end = 194.0/31.0;
+        begin_tof = 63;
+        end_tof = 72;
+        offset_start = 106.2/31.0;
+        offset_end = 134.8/31.0;
         bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-//        bias_tof = ((peak-65)*(194-138)/(77-65)) +138;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=86)   //(77,86] (194/31,250/31]
+    }else if(peak<=78)   //(72,78] (134.8/31,158.6/31]
     {
-        begin_tof = 77;
-        end_tof = 86;
-        offset_start = 194.0/31.0;
-        offset_end = 250.0/31.0;
+        begin_tof = 72;
+        end_tof = 78;
+        offset_start = 134.8/31.0;
+        offset_end = 158.6/31.0;
         bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-//        bias_tof = ((peak-77)*(250-194)/(86-77)) +194;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=90)  //(86,90] (250/31,289/31]
+    }else if(peak<=84)  //(78,84] (158.6/31,191.0/31]
     {
-        begin_tof = 86;
+        begin_tof = 78;
+        end_tof = 84;
+        offset_start = 158.6/31.0;
+        offset_end = 191.0/31.0;
+        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }else if(peak<=90)  //(84,90] (191.0/31,234.0/31]
+    {
+        begin_tof = 84;
         end_tof = 90;
-        offset_start = 250.0/31.0;
-        offset_end = 289.0/31.0;
+        offset_start = 191.0/31.0;
+        offset_end = 234.0/31.0;
         bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-//        bias_tof = ((peak-86)*(289-250)/(90-86)) +250;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak<=93)  //(90,93] (289/31,335/31]
+    }else if(peak<=92)  //(90,92] (234/31, 256/31)
     {
         begin_tof = 90;
-        end_tof = 93;
-        offset_start = 289.0/31.0;
-        offset_end = 335.0/31.0;
+        end_tof = 92;
+        offset_start = 234.0/31.0;
+        offset_end = 256.0/31.0;
         bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-//        bias_tof = ((peak-90)*(335-289)/(93-90)) +289;
         resTof = srcTof + bias_tof;
         return resTof;
-    }else if(peak>93)   //>93   bias = 335
+    }else if(peak<=94)  //(92,94] (256/31, 285/31)
     {
-        bias_tof = 335.0/31.0;
+        begin_tof = 92;
+        end_tof = 94;
+        offset_start = 256.0/31.0;
+        offset_end = 285.0/31.0;
+        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }else if(peak<=96) //(94,96] (285/31,318/31)
+    {
+        begin_tof = 94;
+        end_tof = 96;
+        offset_start = 285.0/31.0;
+        offset_end = 318.0/31.0;
+        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+        resTof = srcTof + bias_tof;
+        return resTof;
+    }
+    else if(peak>96)   //>96   bias = 318
+    {
+        bias_tof = 318.0/31.0;
         resTof = srcTof + bias_tof;
         return resTof;
     }

@@ -8,11 +8,6 @@ vector<vector<int>> allStatisticPeakPoints;   //用于统计 均值和方差的 
 
 calMeanStdThread::calMeanStdThread(QObject *parent) : QObject(parent)
 {
-//    qDebug()<<QStringLiteral("计算均值和标准差的函数已经进来了")<<endl;
-
-//    connect(&updateTimer,SIGNAL(timeout()),this,SLOT(updateSlot()));
-
-//    updateTimer.start(5000);   //1 sec刷新一次
     updateTimer = NULL;
 }
 
