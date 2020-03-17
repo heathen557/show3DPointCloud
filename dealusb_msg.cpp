@@ -401,7 +401,6 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         imgRow = i * 4 + line_offset;
         imgCol = line_number * 2 + row_offset;
         cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
-//        int tof,intensity ,rawTof,after_pileup_tof,after_offset_tof;     //tof：是用来做显示（二维、三维、最大最小值）（因为涉及到要进行校正）    tmpTof：用来存储本地数据 以及统计界面时候用
         int intensity;
         float tof,rawTof,after_pileup_tof,after_offset_tof;     //tof：是用来做显示（二维、三维、最大最小值）（因为涉及到要进行校正）    tmpTof：用来存储本地数据 以及统计界面时候用
 
@@ -443,26 +442,20 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
             if(zeroNum != averageNum)
 
                 tof = allTof_100/(averageNum-zeroNum);
-            //           qDebug()<<"  tof = "<<tof;
+//           qDebug()<<"  tof = "<<tof;
         }
         /************************************************************/
 
 
         rawTof = tof;
-
         //利用Peak值线性外插法可得对应校正量ΔTOF (Unit: mm)
         if(true == is_pileUp_flag)
         {
             tof = pileUp_calibration(rawTof,intensity);
         }
-
         after_pileup_tof = tof;
-
         tof = tof + tofOffsetArray[cloudIndex];
-
         after_offset_tof = tof;
-
-
 //        tof = 64.6776;      //测试校正
 
 
@@ -564,7 +557,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 
             //            qDebug()<<"tof = "<<tof<<"    Lr="<<Lr;
 
-            //如果开启自动校正，则计算4个点的100帧的y均值
+            //如果开启自动校正，则计算4个点的100帧的tof均值
             // 31*256 +127=8063     31*256+128=8064   32*256+127=8319  32*256+128=8320
             if(true == isAutoCalibration_flag)
             {
@@ -682,114 +675,141 @@ float DealUsb_msg::pileUp_calibration(int srcTof,int peak)
 
 
 
-//    int peak_cal = [0,     31,      50,        63,      72,        77.7,        84,   89.7,    92,   94.4,   96.3,   120];
-//    int bias_cal = [0,    36.19,  72.88,    106.2,  134.8,       158.6,       191,   234,    256,  285,    318,     318];
+////    int peak_cal = [0,     31,      50,        63,      72,        77.7,        84,   89.7,    92,   94.4,   96.3,   120];
+////    int bias_cal = [0,    36.19,  72.88,    106.2,  134.8,       158.6,       191,   234,    256,  285,    318,     318];
 
-    //    peak_cal = [0,	  	31,		50,		63,		72,		78,	     84,		90,	    92,		 94,	 96,	120];
-    //    bias_cal = [0,	 36.19,    72.88,  106.2,  134.8,   158.6,   191,       234,    256,     285,    318,   318];
+//    //    peak_cal = [0,	  	31,		50,		63,		72,		78,	     84,		90,	    92,		 94,	 96,	120];
+//    //    bias_cal = [0,	 36.19,    72.88,  106.2,  134.8,   158.6,   191,       234,    256,     285,    318,   318];
 
+//    float resTof = 0;
+//    float bias_tof = 0;
+
+//    float begin_tof,end_tof,offset_start,offset_end;
+
+//    if(peak<=31)           //[0 31] [0/31 36.19/31]
+//    {
+//        begin_tof = 0;
+//        end_tof = 31;
+//        offset_start = 0;
+//        offset_end = 36.19/31.0;
+//        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }else if(peak<=50)    //(31 50] (36.19/31 72.88/31]
+//    {
+//        begin_tof = 31;
+//        end_tof = 50;
+//        offset_start = 36.19/31.0;
+//        offset_end = 72.88/31.0;
+//        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }else if(peak<=63)   //(50,63] (72.88/31 106.2/31]
+//    {
+//        begin_tof = 50;
+//        end_tof = 63;
+//        offset_start = 72.88/31.0;
+//        offset_end = 106.2/31.0;
+//        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }else if(peak<=72)   //(63,72] (106.2/31,134.8/31]
+//    {
+//        begin_tof = 63;
+//        end_tof = 72;
+//        offset_start = 106.2/31.0;
+//        offset_end = 134.8/31.0;
+//        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }else if(peak<=78)   //(72,78] (134.8/31,158.6/31]
+//    {
+//        begin_tof = 72;
+//        end_tof = 78;
+//        offset_start = 134.8/31.0;
+//        offset_end = 158.6/31.0;
+//        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }else if(peak<=84)  //(78,84] (158.6/31,191.0/31]
+//    {
+//        begin_tof = 78;
+//        end_tof = 84;
+//        offset_start = 158.6/31.0;
+//        offset_end = 191.0/31.0;
+//        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }else if(peak<=90)  //(84,90] (191.0/31,234.0/31]
+//    {
+//        begin_tof = 84;
+//        end_tof = 90;
+//        offset_start = 191.0/31.0;
+//        offset_end = 234.0/31.0;
+//        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }else if(peak<=92)  //(90,92] (234/31, 256/31)
+//    {
+//        begin_tof = 90;
+//        end_tof = 92;
+//        offset_start = 234.0/31.0;
+//        offset_end = 256.0/31.0;
+//        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }else if(peak<=94)  //(92,94] (256/31, 285/31)
+//    {
+//        begin_tof = 92;
+//        end_tof = 94;
+//        offset_start = 256.0/31.0;
+//        offset_end = 285.0/31.0;
+//        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }else if(peak<=96) //(94,96] (285/31,318/31)
+//    {
+//        begin_tof = 94;
+//        end_tof = 96;
+//        offset_start = 285.0/31.0;
+//        offset_end = 318.0/31.0;
+//        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }
+//    else if(peak>96)   //>96   bias = 318
+//    {
+//        bias_tof = 318.0/31.0;
+//        resTof = srcTof + bias_tof;
+//        return resTof;
+//    }
+
+
+    float cal[] = {0,15,31,50,  63  ,72,    77.7,    84, 89.7,  92,  94.4, 96.3,  120};
+    float val[] = {0,14,36.19,72.88,106.2, 134.8,  158.6, 191, 234,  256,  285,   318,318};
+    float begin_tof,end_tof,offset_start,offset_end;
     float resTof = 0;
     float bias_tof = 0;
 
-    float begin_tof,end_tof,offset_start,offset_end;
+//    qDebug()<<"len = "<<sizeof(cal)/sizeof(cal[0]);
+    int len = sizeof(cal)/sizeof(cal[0]);
+    for(int i=0; i<len-1; i++)
+    {
+        if(peak>=cal[i] && peak<cal[i+1])
+        {
+            begin_tof = cal[i];
+            end_tof = cal[1+i];
+            offset_start = val[i]/31.0;
+            offset_end = val[1+i]/31.0;
+            bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
+            resTof = srcTof + bias_tof;
+//            qDebug()<<"resTof = "<<resTof;
+            return  resTof;
+        }
+    }
+    return srcTof + val[len-1]/31.0;
+//    qDebug()<<"end restof = "<<srcTof + val[len-1]/31.0;
 
-    if(peak<=31)           //[0 31] [0/31 36.19/31]
-    {
-        begin_tof = 0;
-        end_tof = 31;
-        offset_start = 0;
-        offset_end = 36.19/31.0;
-        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }else if(peak<=50)    //(31 50] (36.19/31 72.88/31]
-    {
-        begin_tof = 31;
-        end_tof = 50;
-        offset_start = 36.19/31.0;
-        offset_end = 72.88/31.0;
-        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }else if(peak<=63)   //(50,63] (72.88/31 106.2/31]
-    {
-        begin_tof = 50;
-        end_tof = 63;
-        offset_start = 72.88/31.0;
-        offset_end = 106.2/31.0;
-        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }else if(peak<=72)   //(63,72] (106.2/31,134.8/31]
-    {
-        begin_tof = 63;
-        end_tof = 72;
-        offset_start = 106.2/31.0;
-        offset_end = 134.8/31.0;
-        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }else if(peak<=78)   //(72,78] (134.8/31,158.6/31]
-    {
-        begin_tof = 72;
-        end_tof = 78;
-        offset_start = 134.8/31.0;
-        offset_end = 158.6/31.0;
-        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }else if(peak<=84)  //(78,84] (158.6/31,191.0/31]
-    {
-        begin_tof = 78;
-        end_tof = 84;
-        offset_start = 158.6/31.0;
-        offset_end = 191.0/31.0;
-        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }else if(peak<=90)  //(84,90] (191.0/31,234.0/31]
-    {
-        begin_tof = 84;
-        end_tof = 90;
-        offset_start = 191.0/31.0;
-        offset_end = 234.0/31.0;
-        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }else if(peak<=92)  //(90,92] (234/31, 256/31)
-    {
-        begin_tof = 90;
-        end_tof = 92;
-        offset_start = 234.0/31.0;
-        offset_end = 256.0/31.0;
-        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }else if(peak<=94)  //(92,94] (256/31, 285/31)
-    {
-        begin_tof = 92;
-        end_tof = 94;
-        offset_start = 256.0/31.0;
-        offset_end = 285.0/31.0;
-        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }else if(peak<=96) //(94,96] (285/31,318/31)
-    {
-        begin_tof = 94;
-        end_tof = 96;
-        offset_start = 285.0/31.0;
-        offset_end = 318.0/31.0;
-        bias_tof = (peak-begin_tof)*(offset_end-offset_start)/(end_tof-begin_tof) + offset_start;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }
-    else if(peak>96)   //>96   bias = 318
-    {
-        bias_tof = 318.0/31.0;
-        resTof = srcTof + bias_tof;
-        return resTof;
-    }
 
 }
 
