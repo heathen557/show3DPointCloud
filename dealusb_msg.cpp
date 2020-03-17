@@ -401,7 +401,8 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         imgRow = i * 4 + line_offset;
         imgCol = line_number * 2 + row_offset;
         cloudIndex = imgCol*256+imgRow;      //在点云数据中的标号
-        int intensity;
+//        int intensity;
+        float intensity;
         float tof,rawTof,after_pileup_tof,after_offset_tof;     //tof：是用来做显示（二维、三维、最大最小值）（因为涉及到要进行校正）    tmpTof：用来存储本地数据 以及统计界面时候用
 
 
@@ -409,10 +410,12 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
         {
             tof = quint8(MyBuffer[4 + i * 4]) + ((quint8(MyBuffer[4 + i * 4 +1]))<<8);
             intensity = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
+            intensity = intensity /10.0;
         }else
         {
             intensity = quint8(MyBuffer[4 + i * 4]) + ((quint8(MyBuffer[4 + i * 4 +1]))<<8);
             tof = quint8(MyBuffer[4 + i * 4 + 2]) + ((quint8(MyBuffer[4 + i * 4 + 3 ]))<<8);
+            intensity = intensity /10.0;
         }
 
 
@@ -670,7 +673,7 @@ void DealUsb_msg::recvMsgSlot(QByteArray array)
 //! \param peak
 //! \return
 //!利用Peak值线性外插法可得对应校正量ΔTOF (Unit: mm)
-float DealUsb_msg::pileUp_calibration(int srcTof,int peak)
+float DealUsb_msg::pileUp_calibration(int srcTof,float peak)
 {
 
 

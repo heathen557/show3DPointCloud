@@ -159,7 +159,7 @@ public slots:
 
 
     //校正
-    float pileUp_calibration(int,int);
+    float pileUp_calibration(int,float);
 
 
     //自动校正相关
